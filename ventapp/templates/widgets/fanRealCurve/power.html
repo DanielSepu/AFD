@@ -1,0 +1,13 @@
+   <div class="row">
+      <div class="col">
+         <button class="btn btn-outline-secondary" role="button" onclick="changeChartType('total_pressure')">Total Preassure</button>
+         <button class="btn btn-outline-secondary ms-1" role="button" onclick="changeChartType('static_pressure')">Static Preassure</button>
+         <button class="btn btn-secondary ms-1" role="button" onclick="changeChartType('power')">Power</button>
+      </div>
+   </div>
+
+   <div class="row h-100">
+      <div class="col m-4">
+         <div class="h-100" id="graphContainer" data-scatter-data="{{ scatter_data|safe }}"></div>
+      </div>
+   </div>

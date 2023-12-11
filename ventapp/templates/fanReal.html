@@ -15,21 +15,57 @@
 
 {% block body_content %}
 {# All your page content goes here! #}
-   <div class="container-fluid h-100">
+
+ 
+ <div class="container-fluid h-100">
+      <div class="row mb-2"   >
+         <div class= "col">
+            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+
+               <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off"    {% if section == 'current_Operation' %}checked{% endif %} >
+               <label class="btn btn-outline-secondary" for="btnradio1" onclick="sectionSelector('current_Operation')"  >Current Operation </label>
+
+               <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"  {% if section == 'last_Measurement' %}checked{% endif %} >
+               <label class="btn btn-outline-secondary" for="btnradio2"  onclick="sectionSelector('last_Measurement')"  >Last Measurement</label>
+
+               <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off"  {% if section == 'average_Curve' %}checked{% endif %} >
+               <label class="btn btn-outline-secondary" for="btnradio3" onclick="sectionSelector('average_Curve')" >Average Curve</label>
+            
+            </div>
+      </div>
+      
+   </div>
+
+
+
+   <div class="row mb-2"   >
+      <div class= "col">
+
+
+            <div class="btn-group" role="group" aria-label="Basic radio toggle button group" id  = "chart_type"> 
+
+               <input type="radio" class="btn-check" name="btnradioChart" id="t_preassure" autocomplete="off"   checked >
+               <label class="btn btn-outline-secondary" for="t_preassure"  onclick="changeDataChart({{total_pressure |safe}})" >Total Preassure</label>
+
+               <input type="radio" class="btn-check" name="btnradioChart" id="s_pressure" autocomplete="off"  >
+               <label class="btn btn-outline-secondary" for="s_pressure"    onclick="changeDataChart({{static_pressure |safe}})" >Static Preassure</label>
+
+               <input type="radio" class="btn-check" name="btnradioChart" id="power" autocomplete="off" >
+               <label class="btn btn-outline-secondary" for="power" onclick="changeDataChart({{power |safe}})" >Power</label>
+
+            </div>
+      </div>
+
+   </div>
+
+
+
       <div class="row " style="height: calc(100% - 40px);">
-         <div class="col-8 border-end border-3 border-dark h-100">
-            {% if chart_type == 'total_pressure' %}
-               {% include "widgets/fanRealCurve/totalPreassure.html" %}
-            {% elif chart_type == 'static_pressure' %}
-               {% include "widgets/fanRealCurve/staticPreassure.html" %}
-            {% elif chart_type == 'power' %}
-               {% include "widgets/fanRealCurve/power.html" %}
-            {% else %}
-               {% include "widgets/fanRealCurve/totalPreassure.html" %}
-            {% endif %}
+         <div class="col-9 border-end border-3 border-dark h-100">
+               {% include "widgets/fanRealCurve/graphic.html" %}
          </div>
 
-         <div class="col-4">
+         <div class="col-3">
             <div class="row justify-content-center align-items-center">
                <div class="col-12 col-md-10 col-xl-8">
                   {#  Model #}
@@ -67,16 +103,29 @@
 
    <script type="text/javascript">
       
-      const dataV = {{ scatter_data|safe }};
-      console.log(Object.keys(dataV[0]));
-      // Call the function initially
+      const dataV = {{ total_pressure | safe }};
+
+      
+
       document.addEventListener("DOMContentLoaded", function() { createChartScatterplot(dataV); });
-      // Call the function on window resize
-      window.addEventListener("resize", function() { updateChart(dataV); });
+
+      
       // Cambiar vista
       function changeChartType(type) {
          window.location.href = "{% url 'fanreal:fanreal' %}?chart_type=" + type;
       }
+      
+      function sectionSelector(section) {
+         window.location.href = "{% url 'fanreal:fanreal' %}?section=" + section;
+      }
+
+      function changeDataChart(dataV){
+         console.log('update')
+         updateData(dataV);
+      }
+
+
+      
    </script> 
 {% endblock %}
 

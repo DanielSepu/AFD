@@ -5,7 +5,7 @@
       function  createChartScatterplot(data) {
          // Get the dimensions of the container
          const containerWidth = graphContainer.clientWidth - margin.right;
-         const containerHeight = graphContainer.clientHeight;
+         const containerHeight = 400;
          //const containerHeight = 500;
          const keys = Object.keys(data[0]);
          // Declare the x (horizontal position) scale for "Q1".
@@ -19,9 +19,7 @@
          .range([containerHeight - margin.bottom, margin.top]);
 
          // Create the SVG container.
-         const svg = d3.create("svg")
-            .attr("width", containerWidth)
-            .attr("height", containerHeight);
+         const svg = d3.create("svg").attr("viewBox", `0 0  ${containerWidth} ${ containerHeight}   `)
 
          // Add the x-axis.
          svg.append("g")
@@ -102,4 +100,9 @@
          .attr("r", 5); // Tamaño de los punto
          // Append the SVG element.
          graphContainer.appendChild(svg.node());
+      }
+
+      function updateData(data){
+         d3.select("#graphContainer").selectAll("*").remove()
+         createChartScatterplot(data)
       }

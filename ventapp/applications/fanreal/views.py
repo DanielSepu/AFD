@@ -12,22 +12,55 @@ def fanreal(request):
       df = pd.read_csv(csv_file_path)
 
       # Obtener el tipo de gráfico seleccionado desde la solicitud
-      chart_type = request.GET.get('chart_type')
+      print(request.GET)
 
+      section = request.GET.get('section')
+
+            
       # Lógica para diferentes tipos de gráficos
-      if chart_type == 'total_pressure':
-         scatter_data = df[["caudal", "presionTotal"]]
-      elif chart_type == 'static_pressure':
-         scatter_data = df[["caudal", "presion"]]
-      elif chart_type == 'power':
-         scatter_data = df[["caudal", "potencia"]]
+      context  = { 
+         'total_pressure':[],
+         'static_preassure':[],
+         'power':[],
+         'section': section
+      }
 
-      # Convierte los datos a una lista de diccionarios
-      scatter_data_list = scatter_data.to_dict(orient='records')
+      if section == 'current_Operation':
+         
+         context = { 
 
-      # Pasa los datos a la plantilla
-      context = {'scatter_data': scatter_data_list, 'chart_type': chart_type}
+            'total_pressure': df[["caudal", "presionTotal"]].to_dict(orient='records') ,
+            'static_pressure': df[["caudal", "presion"]].to_dict(orient='records'),
+            'power': df[["caudal", "potencia"]].to_dict(orient='records'),
+            'section': section
+
+         }  
+
+      elif section == 'last_Measurement':
+         
+         context = { 
+
+            'total_pressure': df[["caudal", "presionTotal"]].to_dict(orient='records') ,
+            'static_pressure': df[["caudal", "presion"]].to_dict(orient='records'),
+            'power': df[["caudal", "potencia"]].to_dict(orient='records'),
+            'section': section
+
+         }  
+      elif section == 'average_Curve':
+         
+         context = { 
+
+            'total_pressure': df[["caudal", "presionTotal"]].to_dict(orient='records') ,
+            'static_pressure': df[["caudal", "presion"]].to_dict(orient='records'),
+            'power': df[["caudal", "potencia"]].to_dict(orient='records'),
+            'section': section
+
+         }  
+
+      
+      print(context)
       return render(request, 'fanReal.html', context)
 
    # Si la solicitud no es un POST, simplemente renderiza la página sin datos
    return render(request, 'fanReal.html')
+

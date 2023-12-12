@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block head_extra_meta %}{# <meta> tags go here #}{% endblock %}
 
@@ -12,32 +13,148 @@
 {% block body_container_classes %}mx-0 w-100 mw-100{% endblock %}
 
 {% block body_content %}
-<div class="container-fluid border border-primary">
-   <div class="row">
-      <div class="col">
-            <div class="w-25">
-               <h1>Leer datos .csv</h1>
-               
-               <!-- Agrega un formulario para enviar la solicitud POST -->
-               <form method="post">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-primary">Leer CSV</button>
-               </form>
-            
-               <!-- Muestra la tabla HTML generada por pandas -->
-               {% if table_html %}
-                  {{ table_html|safe }}
-               {% endif %}
 
+
+<div class="container-fluid h-100">
+
+   <div class="row mb-2"   >
+      <div class= "col">
+
+
+            <div class="btn-group" role="group" aria-label="Basic radio toggle button group" id  = "chart_type"> 
+
+               <input type="radio" class="btn-check" name="btnradioChart" id="general" autocomplete="off"   checked >
+               <label class="btn btn-outline-secondary" for="general"  onclick="changeDataChart({{general |safe}} ,  'general')" >General</label>
+
+
+               <input type="radio" class="btn-check" name="btnradioChart" id="t_preassure" autocomplete="off" >
+               <label class="btn btn-outline-secondary" for="t_preassure"  onclick="changeDataChart({{total_pressure |safe}},'t_preassure')" >Total Preassure</label>
+
+               <input type="radio" class="btn-check" name="btnradioChart" id="s_pressure" autocomplete="off"  >
+               <label class="btn btn-outline-secondary" for="s_pressure"    onclick="changeDataChart({{static_pressure|safe}}, 's_pressure')" >Static Preassure</label>
+
+               <input type="radio" class="btn-check" name="btnradioChart" id="power" autocomplete="off" >
+               <label class="btn btn-outline-secondary" for="power" onclick="changeDataChart({{power|safe}},'power')" >Power</label>
 
             </div>
+      
+            <div class = "row-4 mt-2">
+            
+               <div class="btn-group" role="group" aria-label="Basic radio toggle button group" id  = "fan_selector"> 
+                  
+                  
+                     <input type="radio" class="btn-check" name="btnradioFan" id="f_performance" autocomplete="off"  checked >
+                     <label class="d-flex btn btn-outline-secondary p-0 m-1" for="f_performance"  onclick="chartSwitch(true)"  > <div class="col-3 " style= "background-color: green;">  </div> <div class="col p-1 me-2"> Fan Performance</div> </label>
+                  
+
+                     <input type="radio" class="btn-check" name="btnradioFan" id="f_operation" autocomplete="off" >
+                     <label class=" d-flex   btn btn-outline-secondary p-0 m-1"  for="f_operation" onclick="chartSwitch(false)" > <div class="col-3 " style= "background-color: green;">  </div> <div class="col p-1 me-2"> Fan Operation</div> </label>
+
+               </div>
+            
+            </div>
+
+      
+      </div>
+
+   
+
+   </div>
+
+
+
+      <div class="row " style="height: calc(100% - 40px);">
+         <div class="col-9 border-end border-3 border-dark h-100">
+               {% include "widgets/fanRealCurve/graphic.html" %}
+         </div>
+
+         <div class="col-3">
+            <div class="row justify-content-center align-items-center">
+               <div class="col-12 col-md-10 col-xl-8">
+                  {#  Model #}
+                  <div class="list-group border border-3 border-warning p-3 mb-2">
+                     <div class="row">
+                        <p class="text-center fs-4 fw-bold m-0 ">Fan 1</p>
+                     </div>
+                  </div>
+                  {#  Model #}
+                  <div class="list-group border border-3 border-warning p-3 mb-2">
+                     <div class="row">
+                        <p class="text-start fs-5 m-0">JetStream AXT0800</p>
+                     </div>
+                  </div>
+                  {#  Blade angle #}
+                  <div class="list-group border border-3 border-warning p-3 mb-2">
+                     <div class="row">
+                        <p class="text-start fs-5 m-0">Density</p>
+                        <p class="text-start fs-6  ps-4 m-1">&#8226; 1.08 kg/m&#179;</p>
+                     </div>
+                  </div>
+
+               </div>
+            </div>
+         </div>
       </div>
    </div>
-</div>
+
 {% endblock %}
 
 
 {% block body_js %}
 {# Inline or other types of JS <script> tags here. #}
 {# Remember we've already got jQuery and Bootstrap bundle with Popper loaded. #}
+   <script src="{% static 'js/d3.v7.js' %}"></script>
+   <script src="{% static 'js/scatterplot.js' %}"></script>
+
+   <script type="text/javascript">
+      
+      var dataSection = {{ general| safe }};
+      
+      var sectionStatus = 'general'
+      var switchStatus = true
+
+
+
+
+      document.addEventListener("DOMContentLoaded", function() { createChartScatterplot(dataSection.FanPerformance); });
+
+      
+      // Cambiar vista
+      function changeChartType(type) {
+         window.location.href = "{% url 'fanreal:fanreal' %}?chart_type=" + type;
+      }
+      
+      function sectionSelector(section) {
+         window.location.href = "{% url 'fanreal:fanreal' %}?section=" + section;
+      }
+
+      function changeDataChart(data_input, section){
+
+      
+         sectionStatus = section;
+         dataSection = data_input;
+         chartSwitch(switchStatus)
+         
+      }
+
+
+      function chartSwitch(fanSelector){
+
+         switchStatus= fanSelector
+         if (switchStatus == true){
+            console.log(sectionStatus)
+            updateData(dataSection.FanPerformance);
+
+         }else{
+            console.log(sectionStatus)
+            updateData(dataSection.FanOperation);
+         }
+         
+
+      }
+
+
+
+      
+   </script> 
 {% endblock %}

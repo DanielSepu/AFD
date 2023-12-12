@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     # Put your new apps here!
     "applications.getdata",
     "applications.fandesign",
+    "applications.fanreal",
+    "applications.currentstatus",
 ]
 
 MIDDLEWARE = [
@@ -91,7 +93,15 @@ DATABASES = {
         "PASSWORD": env("POSTGRES_PASSWORD"),
         "HOST": env("POSTGRES_HOST"),
         "PORT": env("POSTGRES_PORT"),
-    }
+    },
+    "sensorDB" : {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": 'ventdb',
+        "USER": env("LOCAL_POSTGRES_USER"),
+        "PASSWORD": env("LOCAL_POSTGRES_PASSWORD"),
+        "HOST": env("LOCAL_POSTGRES_HOST"),
+        "PORT": env("LOCAL_POSTGRES_PORT"),
+    },
 }
 
 

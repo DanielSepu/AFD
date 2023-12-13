@@ -53,17 +53,17 @@ def currentstatus(request):
         data_view = DataCurrentStatusView()
 
         # Añadiendo medidas
-        data_view.add_measurement('general', 'FanPerformance',  df[["caudal", "presionTotal"]].to_dict(orient='records') )
-        data_view.add_measurement('general', 'FanOperation', df[["caudal", "presionTotal"]].to_dict(orient='records') )
+        data_view.add_measurement('general', 'FanPerformance',  df[["q1", "pt1"]].to_dict(orient='records') )
+        data_view.add_measurement('general', 'FanOperation', df[["q1", "pt1"]].to_dict(orient='records') )
 
-        data_view.add_measurement('total_pressure', 'FanPerformance', df[["caudal", "presionTotal"]].to_dict(orient='records'))
-        data_view.add_measurement('total_pressure', 'FanOperation',  df[["caudal", "presionTotal"]].to_dict(orient='records') )
+        data_view.add_measurement('total_pressure', 'FanPerformance', df[["q1", "pt1"]].to_dict(orient='records'))
+        data_view.add_measurement('total_pressure', 'FanOperation',  df[["q1", "pt1"]].to_dict(orient='records') )
 
-        data_view.add_measurement('static_pressure', 'FanPerformance',  df[["caudal", "presion"]].to_dict(orient='records'))
-        data_view.add_measurement('static_pressure', 'FanOperation',  df[["caudal", "presion"]].to_dict(orient='records'))
+        data_view.add_measurement('static_pressure', 'FanPerformance',  df[["q1", "pt1"]].to_dict(orient='records'))
+        data_view.add_measurement('static_pressure', 'FanOperation',  df[["q1", "pt1"]].to_dict(orient='records'))
 
-        data_view.add_measurement('power', 'FanPerformance', df[["caudal", "potencia"]].to_dict(orient='records'))
-        data_view.add_measurement('power', 'FanOperation',df[["caudal", "potencia"]].to_dict(orient='records'))
+        data_view.add_measurement('power', 'FanPerformance', df[["q1", "pt1"]].to_dict(orient='records'))
+        data_view.add_measurement('power', 'FanOperation',df[["q1", "pt1"]].to_dict(orient='records'))
         
         
         return render(request, 'currentStatus.html', data_view.to_dict())

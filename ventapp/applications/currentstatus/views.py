@@ -16,17 +16,18 @@ class DataCurrentStatusView:
          
         #  Inicializa las propiedades como diccionarios vacíos
 
-        self.general = {'FanPerformance': [], 'FanOperation': []}
-        self.total_pressure = {'FanPerformance': [], 'FanOperation': []}
-        self.static_pressure = {'FanPerformance': [], 'FanOperation': []}
-        self.power = {'FanPerformance': [], 'FanOperation': []}
+        self.general = {'FanPerformance': {'status':'' , 'data': []}, 'FanOperation': {'status':'' , 'data': []}}
+        self.total_pressure = {'FanPerformance': {'status':'' , 'data': []}, 'FanOperation': {'status':'' , 'data': []}}
+        self.static_pressure = {'FanPerformance': {'status':'' , 'data': []}, 'FanOperation': {'status':'' , 'data': []}}
+        self.power = {'FanPerformance': {'status':'' , 'data': []}, 'FanOperation': {'status':'' , 'data': []}}
     
-    def add_measurement(self, property_name, fan_type, measurement):
+    def add_measurement(self, property_name, fan_type, status, measurement):
 
         # Añade una medida a la propiedad correspondiente
         if property_name in ['general', 'total_pressure', 'static_pressure', 'power']:
             if fan_type in ['FanPerformance', 'FanOperation']:
-                getattr(self, property_name)[fan_type] = measurement
+                getattr(self, property_name)[fan_type]['data']= measurement
+                getattr(self, property_name)[fan_type]['status'] = status
             else:
                 print("Error: Fan type must be 'FanPerformance' or 'FanOperation'")
         else:
@@ -53,17 +54,17 @@ def currentstatus(request):
         data_view = DataCurrentStatusView()
 
         # Añadiendo medidas
-        data_view.add_measurement('general', 'FanPerformance',  df[["q1", "pt1"]].to_dict(orient='records') )
-        data_view.add_measurement('general', 'FanOperation', df[["q1", "pt1"]].to_dict(orient='records') )
+        data_view.add_measurement('general', 'FanPerformance','green',df[["q1", "pt1"]].to_dict(orient='records') )
+        data_view.add_measurement('general', 'FanOperation','yellow', df[["q1", "pt1"]].to_dict(orient='records') )
 
-        data_view.add_measurement('total_pressure', 'FanPerformance', df[["q1", "pt1"]].to_dict(orient='records'))
-        data_view.add_measurement('total_pressure', 'FanOperation',  df[["q1", "pt1"]].to_dict(orient='records') )
+        data_view.add_measurement('total_pressure', 'FanPerformance','red', df[["q1", "pt1"]].to_dict(orient='records'))
+        data_view.add_measurement('total_pressure', 'FanOperation', 'yellow',  df[["q1", "pt1"]].to_dict(orient='records') )
 
-        data_view.add_measurement('static_pressure', 'FanPerformance',  df[["q1", "pt1"]].to_dict(orient='records'))
-        data_view.add_measurement('static_pressure', 'FanOperation',  df[["q1", "pt1"]].to_dict(orient='records'))
+        data_view.add_measurement('static_pressure', 'FanPerformance','red',  df[["q1", "pt1"]].to_dict(orient='records'))
+        data_view.add_measurement('static_pressure', 'FanOperation','green',  df[["q1", "pt1"]].to_dict(orient='records'))
 
-        data_view.add_measurement('power', 'FanPerformance', df[["q1", "pt1"]].to_dict(orient='records'))
-        data_view.add_measurement('power', 'FanOperation',df[["q1", "pt1"]].to_dict(orient='records'))
+        data_view.add_measurement('power', 'FanPerformance','red', df[["q1", "pt1"]].to_dict(orient='records'))
+        data_view.add_measurement('power', 'FanOperation', 'yellow', df[["q1", "pt1"]].to_dict(orient='records'))
         
         
         return render(request, 'currentStatus.html', data_view.to_dict())

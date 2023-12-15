@@ -44,11 +44,11 @@
                   
                   
                      <input type="radio" class="btn-check" name="btnradioFan" id="f_performance" autocomplete="off"  checked >
-                     <label class="d-flex btn btn-outline-secondary p-0 m-1" for="f_performance"  onclick="chartSwitch(true)"  > <div class="col-3 " style= "background-color: green;">  </div> <div class="col p-1 me-2"> Fan Performance</div> </label>
+                     <label class="d-flex btn btn-outline-secondary p-0 m-1" for="f_performance"  onclick="chartSwitch(true)"  > <div class="col-3 " id = 'fp_status' style= "background-color: {{ general.FanPerformance.status }};">  </div> <div class="col p-1 me-2"> Fan Performance</div> </label>
                   
 
                      <input type="radio" class="btn-check" name="btnradioFan" id="f_operation" autocomplete="off" >
-                     <label class=" d-flex   btn btn-outline-secondary p-0 m-1"  for="f_operation" onclick="chartSwitch(false)" > <div class="col-3 " style= "background-color: green;">  </div> <div class="col p-1 me-2"> Fan Operation</div> </label>
+                     <label class=" d-flex   btn btn-outline-secondary p-0 m-1"  for="f_operation" onclick="chartSwitch(false)" > <div class="col-3 " id = 'fo_status'  style= "background-color: {{ general.FanOperation.status }};">  </div> <div class="col p-1 me-2"> Fan Operation</div> </label>
 
                </div>
             
@@ -116,7 +116,7 @@
 
 
 
-      document.addEventListener("DOMContentLoaded", function() { createChartScatterplot(dataSection.FanPerformance); });
+      document.addEventListener("DOMContentLoaded", function() { createChartScatterplot(dataSection.FanPerformance.data); });
 
       
       // Cambiar vista
@@ -133,7 +133,15 @@
       
          sectionStatus = section;
          dataSection = data_input;
-         chartSwitch(switchStatus)
+         chartSwitch(switchStatus);
+
+         var status = []
+
+         var fPStatus = document.getElementById('fp_status');
+         var fOStatus = document.getElementById('fo_status');
+
+         fPStatus.style.backgroundColor = data_input.FanPerformance.status;
+         fOStatus.style.backgroundColor = data_input.FanOperation.status;
          
       }
 
@@ -141,17 +149,19 @@
       function chartSwitch(fanSelector){
 
          switchStatus= fanSelector
+
          if (switchStatus == true){
             console.log(sectionStatus)
-            updateData(dataSection.FanPerformance);
+            updateData(dataSection.FanPerformance.data);
 
          }else{
             console.log(sectionStatus)
-            updateData(dataSection.FanOperation);
+            updateData(dataSection.FanOperation.data);
          }
          
-
       }
+
+
 
 
 

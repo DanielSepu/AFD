@@ -7,48 +7,59 @@ import requests as rq
 from django.conf import settings
 import os
 
+from modules.graphdata import *
+
 def fandesign(request):
    if request.method == 'GET':
       # Obtener el tipo de gráfico seleccionado desde la solicitud
       chart_type = request.GET.get('chart_type')
       # Lógica para diferentes tipos de gráficos
       if chart_type == 'total_pressure':
-         csv_file_path = os.path.join(settings.MEDIA_ROOT, 'AXT0800_pt.csv')
-         df = pd.read_csv(csv_file_path)
-         scatter_data = df[["caudal", "presionTotal"]]
-         print(scatter_data)
+         ### FAN DATA ###
+         df_fan = get_fan_data('pt')
+         ### SENSORs DATA ###  #Reemplazar con datos sensor BD
+         df_sensor1 = get_sensor_data()
+         ### VDF DATA ###
+         df_vdf = get_vdf_data()
 
-         #Reemplazar con datos sensor BD
-         csv_file_datos = os.path.join(settings.MEDIA_ROOT, 'datos.csv')
-         df2 = pd.read_csv(csv_file_datos)
-         caudal = df2["q1"]
-         presion_total = df2["pt1"]
-         # Calcular promedios
-         Q_medido = caudal.mean()
-         P_medido = presion_total.mean()
-         print(Q_medido)
-         print(P_medido)
+         Q_medido = df_sensor1["q1"].mean()
+         P_medido = df_sensor1["pt1"].mean()
+         densidad_sensor1 = df_sensor1["densidad1"].mean()
+         rpm_vdf = df_vdf["rpm"].mean()
 
       elif chart_type == 'static_pressure':
-         csv_file_path = os.path.join(settings.MEDIA_ROOT, 'datos.csv')
-         df = pd.read_csv(csv_file_path)
+         ### FAN DATA ###
+         df_fan = get_fan_data('pt')
+         ### SENSORs DATA ###  #Reemplazar con datos sensor BD
+         df_sensor1 = get_sensor_data()
+         ### VDF DATA ###
+         df_vdf = get_vdf_data()
 
-         scatter_data = df[["caudal", "presion"]]
-
+         Q_medido = df_sensor1["q1"].mean()
+         P_medido = df_sensor1["pe1"].mean()
+         densidad_sensor1 = df_sensor1["densidad1"].mean()
+         rpm_vdf = df_vdf["rpm"].mean()
 
       elif chart_type == 'power':
-         csv_file_path = os.path.join(settings.MEDIA_ROOT, 'AXT0800_pot.csv')
-         df = pd.read_csv(csv_file_path)
+         ### FAN DATA ###
+         df_fan = get_fan_data('pot')
+         ### SENSORs DATA ###  #Reemplazar con datos sensor BD
+         df_sensor1 = get_sensor_data()
+         ### VDF DATA ###
+         df_vdf = get_vdf_data()
 
-         scatter_data = df[["caudal", "potencia"]]
+         Q_medido = df_sensor1["q1"].mean()
+         P_medido = df_vdf["potencia"].mean()
+         densidad_sensor1 = df_sensor1["densidad1"].mean()
+         rpm_vdf = df_vdf["rpm"].mean()
       else:
          return render(request, 'fanDesign.html')
 
       # Convierte los datos a una lista de diccionarios
-      scatter_data_list = scatter_data.to_dict(orient='records')
+      scatter_data_fan_list = df_fan.to_dict(orient='records')
 
       # Pasa los datos a la plantilla
-      context = {'scatter_data': scatter_data_list, 'chart_type': chart_type, 'promedios':[Q_medido,P_medido]}
+      context = {'scatter_data': scatter_data_fan_list, 'chart_type': chart_type, 'promedios':[Q_medido,P_medido]}
       return render(request, 'fanDesign.html', context)
 
    # Si la solicitud no es un POST, simplemente renderiza la página sin datos

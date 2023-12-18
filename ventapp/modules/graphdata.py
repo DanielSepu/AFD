@@ -29,11 +29,23 @@ def get_vdf_data():
    csv_vdf_path = os.path.join(settings.MEDIA_ROOT, 'datosVDF.csv')
    df_vdf = pd.read_csv(csv_vdf_path)
    return df_vdf
-   
-# def get_averages(df):
-#    # calcular promedios en base a df
-#    # return promedios
 
+### Ajustes ###
+def rpm_adjust_caudal(df, rpm_fan, rpm_user):
+   # calcular promedios en base a df
+   df_adjust = pd.DataFrame()
+   df_adjust = df * (rpm_user/rpm_fan)
+   return df_adjust
+def rpm_adjust_pt(df, rpm_fan, rpm_user):
+   # calcular promedios en base a df
+   df_adjust = pd.DataFrame()
+   df_adjust = df * (rpm_user/rpm_fan)**2
+   return df_adjust
+def dens_adjust_pt(df, densidad_fan, densidad_sensor1):
+   # calcular promedios en base a df
+   df_adjust = pd.DataFrame()
+   df_adjust = df * (densidad_sensor1/densidad_fan)
+   return df_adjust
 
 # def build_context(chart_type):
 #    sensor_df = get_sensor_data()  

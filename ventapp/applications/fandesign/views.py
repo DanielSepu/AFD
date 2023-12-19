@@ -27,7 +27,15 @@ def fandesign(request):
          P_medido = df_sensor1["pt1"].mean()
          densidad_fan = df_fan["densidad"].mean()
          densidad_sensor1 = df_sensor1["densidad1"].mean()
+         rpm_fan = df_fan["rpm"].mean()
          rpm_vdf = df_vdf["rpm"].mean()
+      
+         df_adjust = pd.DataFrame()
+         df_adjust['q_rpm']=rpm_adjust_caudal(df_fan['caudal'],rpm_fan,rpm_vdf)
+         df_adjust['pt_rpm']=rpm_adjust_pt(df_fan['presionTotal'],rpm_fan,rpm_vdf)
+         df_adjust['pt_dens']=dens_adjust_pt(df_adjust['pt_rpm'],densidad_fan,densidad_sensor1)
+
+         df_graph = df_adjust.loc[:, ["q_rpm", "pt_dens"]]
 
       elif chart_type == 'static_pressure':
          ### FAN DATA ###
@@ -41,7 +49,15 @@ def fandesign(request):
          P_medido = df_sensor1["pe1"].mean()
          densidad_fan = df_fan["densidad"].mean()
          densidad_sensor1 = df_sensor1["densidad1"].mean()
+         rpm_fan = df_fan["rpm"].mean()
          rpm_vdf = df_vdf["rpm"].mean()
+      
+         df_adjust = pd.DataFrame()
+         df_adjust['q_rpm']=rpm_adjust_caudal(df_fan['caudal'],rpm_fan,rpm_vdf)
+         df_adjust['pt_rpm']=rpm_adjust_pt(df_fan['presionTotal'],rpm_fan,rpm_vdf)
+         df_adjust['pt_dens']=dens_adjust_pt(df_adjust['pt_rpm'],densidad_fan,densidad_sensor1)
+
+         df_graph = df_adjust.loc[:, ["q_rpm", "pt_dens"]]
 
       elif chart_type == 'power':
          ### FAN DATA ###
@@ -52,18 +68,22 @@ def fandesign(request):
          df_vdf = get_vdf_data()
 
          Q_medido = df_sensor1["q1"].mean()
-         P_medido = df_vdf["potencia"].mean()
+         P_medido = df_vdf["potencia"].mean()  
+
          densidad_fan = df_fan["densidad"].mean()
          densidad_sensor1 = df_sensor1["densidad1"].mean()
+         rpm_fan = df_fan["rpm"].mean()
          rpm_vdf = df_vdf["rpm"].mean()
+
+         df_adjust = pd.DataFrame()
+         df_adjust['q_rpm']=rpm_adjust_caudal(df_fan['caudal'],rpm_fan,rpm_vdf)
+         df_adjust['power_rpm']=rpm_adjust_power(df_fan['potencia'],rpm_fan,rpm_vdf)
+         df_adjust['power_dens']=dens_adjust_power(df_adjust['power_rpm'],densidad_fan,densidad_sensor1)
+            
+         df_graph = df_adjust.loc[:, ["q_rpm", "power_dens"]]
       else:
          return render(request, 'fanDesign.html')
       
-      df_adjust = pd.DataFrame()
-      df_adjust['q_rpm']=rpm_adjust_caudal(df_fan['caudal'],rpm_vdf,rpm_user)
-      df_adjust['pt_rpm']=rpm_adjust_pt(df_fan['presionTotal'],rpm_vdf,rpm_user)
-      df_adjust['pt_dens']=dens_adjust_pt(df_adjust['pt_rpm'],densidad_fan,densidad_sensor1)
-
 
       # Convierte los datos a una lista de diccionarios
       scatter_data_fan_list = df_fan.to_dict(orient='records')

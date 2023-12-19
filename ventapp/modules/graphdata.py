@@ -31,17 +31,27 @@ def get_vdf_data():
    return df_vdf
 
 ### Ajustes ###
-def rpm_adjust_caudal(df, rpm_fan, rpm_user):
+def rpm_adjust_caudal(df, rpm_fan, rpm_vdf):
    # calcular promedios en base a df
    df_adjust = pd.DataFrame()
-   df_adjust = df * (rpm_user/rpm_fan)
+   df_adjust = df * (rpm_vdf/rpm_fan)
    return df_adjust
-def rpm_adjust_pt(df, rpm_fan, rpm_user):
+def rpm_adjust_pt(df, rpm_fan, rpm_vdf):
    # calcular promedios en base a df
    df_adjust = pd.DataFrame()
-   df_adjust = df * (rpm_user/rpm_fan)**2
+   df_adjust = df * (rpm_vdf/rpm_fan)**2
+   return df_adjust
+def rpm_adjust_power(df, rpm_fan, rpm_vdf):
+   # calcular promedios en base a df
+   df_adjust = pd.DataFrame()
+   df_adjust = df * (rpm_vdf/rpm_fan)**3
    return df_adjust
 def dens_adjust_pt(df, densidad_fan, densidad_sensor1):
+   # calcular promedios en base a df
+   df_adjust = pd.DataFrame()
+   df_adjust = df * (densidad_sensor1/densidad_fan)
+   return df_adjust
+def dens_adjust_power(df, densidad_fan, densidad_sensor1):
    # calcular promedios en base a df
    df_adjust = pd.DataFrame()
    df_adjust = df * (densidad_sensor1/densidad_fan)

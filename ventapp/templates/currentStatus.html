@@ -28,10 +28,10 @@
 
 
                <input type="radio" class="btn-check" name="btnradioChart" id="t_preassure" autocomplete="off" >
-               <label class="btn btn-outline-secondary" for="t_preassure"  onclick="changeDataChart({{total_pressure |safe}},'t_preassure')" >Total Preassure</label>
+               <label class="btn btn-outline-secondary" for="t_preassure"  onclick="changeDataChart({{total_pressure |safe}},'t_preassure')" >Total Pressure</label>
 
                <input type="radio" class="btn-check" name="btnradioChart" id="s_pressure" autocomplete="off"  >
-               <label class="btn btn-outline-secondary" for="s_pressure"    onclick="changeDataChart({{static_pressure|safe}}, 's_pressure')" >Static Preassure</label>
+               <label class="btn btn-outline-secondary" for="s_pressure"    onclick="changeDataChart({{static_pressure|safe}}, 's_pressure')" >Static Pressure</label>
 
                <input type="radio" class="btn-check" name="btnradioChart" id="power" autocomplete="off" >
                <label class="btn btn-outline-secondary" for="power" onclick="changeDataChart({{power|safe}},'power')" >Power</label>
@@ -65,7 +65,22 @@
 
       <div class="row " style="height: calc(100% - 40px);">
          <div class="col-9 border-end border-3 border-dark h-100">
-               {% include "widgets/fanRealCurve/graphic.html" %}
+               {% comment %} {% include "widgets/fanRealCurve/graphic.html" %} {% endcomment %}
+               <div class="row">
+                  <div class="col-2 d-flex">
+                     <div class="col" style= "background-color: gray;"> Caudal Ventilador</div>
+                     <div class="col" id="q1"></div>
+                  </div>
+                  <div class="col-2 d-flex">
+                     <div class="col" style= "background-color: gray;"> Caudal Frente</div>
+                     <div class="col" id="qf"></div>
+                  </div>
+                  <div class="col-2 d-flex">
+                     <div class="col" style= "background-color: gray;"> Presión Ventilador</div>
+                     <div class="col" id="pt1"></div>
+                  </div>
+                  
+               </div> 
          </div>
 
          <div class="col-3">
@@ -114,9 +129,8 @@
       var switchStatus = true
 
 
-
-
-      document.addEventListener("DOMContentLoaded", function() { createChartScatterplot(dataSection.FanPerformance.data); });
+      {% comment %} document.addEventListener("DOMContentLoaded", function() { createChartScatterplot(dataSection.FanPerformance.data); }); {% endcomment %}
+      document.addEventListener("DOMContentLoaded", function() { getValues() });
 
       
       // Cambiar vista
@@ -161,10 +175,26 @@
          
       }
 
+      function getValues() {
+         fetch("/get_recent_data")
+            .then(response => response.json())
+            .then(data => {
+               // Información en data
+               console.log(data);
+               updateValues(data);
+         });
+      }
 
+      function updateValues(data) {
+         // Actualiza los divs con los nuevos valores  
+         $("#q1").text(data[0]);  
+         $("#qf").text(data[1]);
+         $("#pt1").text(data[2]);
+      }
 
+      setInterval( () => {
+         getValues();
+      }, 15000);
 
-
-      
    </script> 
 {% endblock %}

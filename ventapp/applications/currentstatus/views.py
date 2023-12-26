@@ -1,11 +1,17 @@
 import pdb
 from django.shortcuts import render
 import pandas as pd  # Importa pandas
-from django.http import HttpResponse
+from django.http import JsonResponse
 import requests as rq
 
 from django.conf import settings
 import os
+
+from yaml import serialize
+
+
+from applications.currentstatus.models import SensorsData
+from django.db.models import Max
 
 
 
@@ -73,4 +79,12 @@ def currentstatus(request):
     return render(request, 'currentStatus.html')
 
 
+def get_recent_data(request):
+    if request.method == 'GET':
+        latest_record = SensorsData.objects.using('sensorDB').aggregate(Max('id'))
+        max_id = latest_record['id__max']
 
+        # Consultar registro con ese id 
+        item = SensorsData.objects.using('sensorDB').get(id=max_id)
+        data=[item.q1, item.qf, item.pt1]
+        return JsonResponse(data, safe=False)

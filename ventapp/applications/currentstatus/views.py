@@ -10,7 +10,7 @@ import os
 from yaml import serialize
 
 
-from applications.currentstatus.models import SensorsData
+from applications.getdata.models import SensorsData
 from django.db.models import Max
 
 

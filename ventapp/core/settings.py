@@ -44,11 +44,16 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    #
+    "django_bootstrap5",
     # Put your new apps here!
     "applications.getdata",
     "applications.fandesign",
     "applications.fanreal",
     "applications.currentstatus",
+    "applications.settings",
+    "applications.newproject",
+    "applications.dbs",
 ]
 
 MIDDLEWARE = [

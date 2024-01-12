@@ -38,6 +38,9 @@ urlpatterns = [
     path('', include('applications.fandesign.urls')),
     path('', include('applications.fanreal.urls')),
     path('', include('applications.currentstatus.urls')),
+    path('', include('applications.settings.urls')),
+    path('', include('applications.newproject.urls')),
+    path('', include('applications.dbs.urls')),
 
 ]
 # fmt: on

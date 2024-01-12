@@ -8,6 +8,7 @@ from django.conf import settings
 import os
 
 from modules.graphdata import *
+from modules.queries import *
 
 def fandesign(request):
    if request.method == 'GET':
@@ -18,10 +19,12 @@ def fandesign(request):
       if chart_type == 'total_pressure':
          ### FAN DATA ###
          df_fan = get_fan_data('pt')
-         ### SENSORs DATA ###  #Reemplazar con datos sensor BD
-         df_sensor1 = get_sensor_data()
+         ### SENSORs DATA ###
+         # df_sensor1 = get_sensor_data() # desde CSVs
+         df_sensor1 = get_10min_sensor_data() # desde BD
          ### VDF DATA ###
-         df_vdf = get_vdf_data()
+         # df_vdf = get_vdf_data() # desde CSVs
+         df_vdf = get_10min_vdf_data()# desde BD
 
          Q_medido = df_sensor1["q1"].mean()
          P_medido = df_sensor1["pt1"].mean()

@@ -10,7 +10,7 @@ import os
 from yaml import serialize
 
 
-from applications.getdata.models import SensorsData, VdfData
+from applications.getdata.models import SensorsData
 from django.db.models import Max
 
 
@@ -81,13 +81,10 @@ def currentstatus(request):
 
 def get_recent_data(request):
     if request.method == 'GET':
-        latest_record_sensors = SensorsData.objects.using('sensorDB').aggregate(Max('id'))
-        max_id_sensors = latest_record_sensors['id__max']
-        latest_record_vdf = VdfData.objects.using('sensorDB').aggregate(Max('id'))
-        max_id_vdf = latest_record_vdf['id__max']
+        latest_record = SensorsData.objects.using('sensorDB').aggregate(Max('id'))
+        max_id = latest_record['id__max']
 
         # Consultar registro con ese id 
-        item_sensors = SensorsData.objects.using('sensorDB').get(id=max_id_sensors)
-        item_vdf = VdfData.objects.using('sensorDB').get(id=max_id_vdf)
-        data=[round(item_sensors.q1, 2), round(item_sensors.qf, 2), round(item_sensors.pt1, 2), round(item_vdf.powerc, 2)]
+        item = SensorsData.objects.using('sensorDB').get(id=max_id)
+        data=[item.q1, item.qf, item.pt1]
         return JsonResponse(data, safe=False)

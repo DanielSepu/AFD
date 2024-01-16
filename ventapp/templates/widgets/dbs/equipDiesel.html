@@ -1,3 +1,4 @@
+{% load django_bootstrap5 %}   
    <div class="row">
       <div class="col">
          <a href="?type=ventilador" class="btn btn-outline-secondary">+ Ventilador</a>
@@ -9,6 +10,22 @@
 
    <div class="row h-100">
       <div class="col m-4">
-         <div class="h-100" id="graphContainer"></div>
+         <div class="h-100" >
+            <h2>Nuevo Equipamiento Diesel</h2>
+            <form method="POST">
+               {% csrf_token %}
+               {% bootstrap_form form %}
+               <button class="btn btn-primary">Guardar</button>
+            </form>
+         </div>
       </div>
    </div>
+
+   <script>
+      const qr_calculado = document.getElementById('id_qr_calculado');
+      const potencia = document.getElementById('id_potencia');
+      qr_calculado.value = 0;
+      function Funcion(){
+         qr_calculado.value = (potencia.value*2.83)/(60*0.746);
+      }
+   </script>

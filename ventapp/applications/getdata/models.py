@@ -68,18 +68,18 @@ class CurvaDiseno(models.Model):
 
 class Ducto(models.Model):
    id = models.AutoField(primary_key=True)
-   tipo = models.TextField()
+   t_ducto = models.CharField()
    f_friccion = models.FloatField()
-   f_fuga = models.TextField()
-   tipo = models.TextField()
+   f_fuga = models.CharField()
+   t_acople = models.CharField()
    largo = models.FloatField()
    class Meta:
       db_table = "ducto"
 
 class EquipamientoDiesel(models.Model):
    id = models.AutoField(primary_key=True)
-   tipo = models.TextField()
-   modelo_diesel = models.TextField()
+   tipo = models.CharField()
+   modelo_diesel = models.CharField()
    potencia = models.FloatField() 
    qr_fabricante = models.FloatField()
    qr_calculado = models.FloatField()

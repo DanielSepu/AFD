@@ -7,7 +7,7 @@ import requests as rq
 from django.conf import settings
 
 from applications.getdata.models import *
-from .forms import VentiladorForm
+from .forms import *
 
 def dbs(request):
    if request.method == 'GET':
@@ -15,7 +15,20 @@ def dbs(request):
       print(db_type)
       if db_type == 'ventilador' or db_type is None:
          form = VentiladorForm() 
-      context = {'db_type': db_type, 'form': form}
+         context = {'db_type': db_type, 'form': form}
+      
+      if db_type == 'curva_diseno':
+         form = CurvaDisenoForm() 
+         context = {'db_type': db_type, 'form': form}
+      
+      if db_type == 'ducto':
+         form = DuctoForm() 
+         context = {'db_type': db_type, 'form': form}
+      
+      if db_type == 'equip_diesel':
+         form = EquipDieselForm() 
+         context = {'db_type': db_type, 'form': form}
+      
       return render(request, 'dbs.html', context)
 
 

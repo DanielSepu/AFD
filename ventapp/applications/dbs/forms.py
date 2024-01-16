@@ -1,5 +1,5 @@
 from django import forms
-from applications.getdata.models import Ventilador
+from applications.getdata.models import Ventilador, CurvaDiseno, Ducto, EquipamientoDiesel
 
 class VentiladorForm(forms.ModelForm):
    def clean_polos(self):
@@ -29,3 +29,42 @@ class VentiladorForm(forms.ModelForm):
          'amm':      'A',
          'rmm':      'R'}
       
+class CurvaDisenoForm(forms.ModelForm):
+   #Ventilador = forms.ModelMultipleChoiceField(queryset=Ventilador.objects.all())
+
+   class Meta:
+      model = CurvaDiseno
+      fields = ['ventilador', 'angulo', 'rpm', 'densidad']
+      labels = {
+         'ventilador':   'Ventilador',
+         'angulo':       'θ °',
+         'rpm':          'RPM',
+         'densidad':     'ρ (kg/m3)',}
+
+class DuctoForm(forms.ModelForm):
+
+   f_friccion = forms.FloatField(label='Factor de fricción (opcional)',required=False)
+   f_fuga = forms.CharField(label='Factor de fuga (opcional)',required=False)
+
+   class Meta:
+      model = Ducto
+      fields = ['t_ducto', 'f_friccion', 'f_fuga', 't_acople', 'largo']
+      labels = {
+         't_ducto':   'Tipo de ducto',
+         't_acople':  'Tipo de acople',
+         'largo':     'Largo ducto',
+      }
+      
+class EquipDieselForm(forms.ModelForm):
+
+   potencia = forms.FloatField(widget=forms.NumberInput(attrs={'onchange':'Funcion()'}),label='Potencia (HP)')
+   qr_fabricante = forms.FloatField(label='Requerimiento de caudal informado de por el fabricante (opcional)',required=False)
+   qr_calculado = forms.FloatField(widget=forms.NumberInput(attrs={'readonly':'readonly','placeholder':''}),label='Requerimiento de caudal (m3/s)',)
+   class Meta:
+      model = EquipamientoDiesel
+      fields = ['tipo','modelo_diesel','potencia','qr_fabricante','qr_calculado']
+      labels = {
+         'tipo':           'Tipo de equipamiento',
+         'modelo_diesel':  'Modelo',
+         'potencia':       'Potencia (HP)',
+      }

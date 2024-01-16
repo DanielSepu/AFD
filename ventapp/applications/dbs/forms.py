@@ -60,11 +60,14 @@ class EquipDieselForm(forms.ModelForm):
    potencia = forms.FloatField(widget=forms.NumberInput(attrs={'onchange':'Funcion()'}),label='Potencia (HP)')
    qr_fabricante = forms.FloatField(label='Requerimiento de caudal informado de por el fabricante (opcional)',required=False)
    qr_calculado = forms.FloatField(widget=forms.NumberInput(attrs={'readonly':'readonly','placeholder':''}),label='Requerimiento de caudal (m3/s)',)
+   tipo = forms.ChoiceField(
+      choices = [('Camión','Camión'),('Cargador Frontal','Cargador Frontal'),('LHD','LHD')],
+      widget = forms.Select
+   )
    class Meta:
       model = EquipamientoDiesel
       fields = ['tipo','modelo_diesel','potencia','qr_fabricante','qr_calculado']
       labels = {
          'tipo':           'Tipo de equipamiento',
          'modelo_diesel':  'Modelo',
-         'potencia':       'Potencia (HP)',
       }

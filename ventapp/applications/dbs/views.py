@@ -34,10 +34,37 @@ def dbs(request):
 
 
    if request.method == 'POST':
-      form = VentiladorForm(request.POST)
-      if form.is_valid():
+      db_type = request.GET.get('type')
+      #for key, value in request.POST.items():
+         #print('Key: %s' % (key) )
+         #print('Value %s' % (value))
+
+      if db_type == 'ventilador' or db_type is None:
+         form = VentiladorForm(request.POST) 
+         context = {'db_type': db_type, 'form': form}
+         if form.is_valid():
             ventilador = form.save()
             return redirect('ventilador_detail', pk=ventilador.pk)
+      
+      if db_type == 'curva_diseno':
+         form = CurvaDisenoForm(request.POST) 
+         context = {'db_type': db_type, 'form': form}
+         if form.is_valid():
+            print('si')
+      
+      if db_type == 'ducto':
+         form = DuctoForm(request.POST) 
+         context = {'db_type': db_type, 'form': form}
+         if form.is_valid():
+            print('si')
+      
+      if db_type == 'equip_diesel':
+         form = EquipDieselForm(request.POST) 
+         context = {'db_type': db_type, 'form': form}
+         if form.is_valid():
+            print('si')
+
+      return redirect('/dbs/?type=ventilador')
 
 
 # def newvent(request):

@@ -13,76 +13,41 @@
 {% block body_container_classes %}mx-0 w-100 mw-100{% endblock %}
 
 {% block body_content %}
-
-
-<div class="container-fluid h-100">
-
-   <div class="row mb-2"   >
-      <div class= "col">
-
-
-            <div class="btn-group" role="group" aria-label="Basic radio toggle button group" id  = "chart_type"> 
-
-               <input type="radio" class="btn-check" name="btnradioChart" id="general" autocomplete="off"   checked >
-               <label class="btn btn-outline-secondary" for="general"  onclick="changeDataChart({{general |safe}} ,  'general')" >General</label>
-
-
-               <input type="radio" class="btn-check" name="btnradioChart" id="t_preassure" autocomplete="off" >
-               <label class="btn btn-outline-secondary" for="t_preassure"  onclick="changeDataChart({{total_pressure |safe}},'t_preassure')" >Total Pressure</label>
-
-               <input type="radio" class="btn-check" name="btnradioChart" id="s_pressure" autocomplete="off"  >
-               <label class="btn btn-outline-secondary" for="s_pressure"    onclick="changeDataChart({{static_pressure|safe}}, 's_pressure')" >Static Pressure</label>
-
-               <input type="radio" class="btn-check" name="btnradioChart" id="power" autocomplete="off" >
-               <label class="btn btn-outline-secondary" for="power" onclick="changeDataChart({{power|safe}},'power')" >Power</label>
-
-            </div>
-      
-            <div class = "row-4 mt-2">
-            
-               <div class="btn-group" role="group" aria-label="Basic radio toggle button group" id  = "fan_selector"> 
-                  
-                  
-                     <input type="radio" class="btn-check" name="btnradioFan" id="f_performance" autocomplete="off"  checked >
-                     <label class="d-flex btn btn-outline-secondary p-0 m-1" for="f_performance"  onclick="chartSwitch(true)"  > <div class="col-3 " id = 'fp_status' style= "background-color: {{ general.FanPerformance.status }};">  </div> <div class="col p-1 me-2"> Fan Performance</div> </label>
-                  
-
-                     <input type="radio" class="btn-check" name="btnradioFan" id="f_operation" autocomplete="off" >
-                     <label class=" d-flex   btn btn-outline-secondary p-0 m-1"  for="f_operation" onclick="chartSwitch(false)" > <div class="col-3 " id = 'fo_status'  style= "background-color: {{ general.FanOperation.status }};">  </div> <div class="col p-1 me-2"> Fan Operation</div> </label>
-
-               </div>
-            
-            </div>
-
-      
-      </div>
-
-   
-
-   </div>
-
-
-
-      <div class="row " style="height: calc(100% - 40px);">
-         <div class="col-9 border-end border-3 border-dark h-100">
-               {% comment %} {% include "widgets/fanRealCurve/graphic.html" %} {% endcomment %}
-               <div class="row">
-                  <div class="col-2 d-flex">
-                     <div class="col" style= "background-color: gray;"> Caudal Ventilador</div>
-                     <div class="col" id="q1"></div>
-                  </div>
-                  <div class="col-2 d-flex">
-                     <div class="col" style= "background-color: gray;"> Caudal Frente</div>
-                     <div class="col" id="qf"></div>
-                  </div>
-                  <div class="col-2 d-flex">
-                     <div class="col" style= "background-color: gray;"> Presión Ventilador</div>
-                     <div class="col" id="pt1"></div>
-                  </div>
-                  
-               </div> 
+   <div class="container-fluid h-100">
+      <div class="row h-100" style="height: calc(100% - 40px);">
+         {# Columna Izquierda #}
+         <div class="col-9 border-end border-3 border-dark">
+            {% include "widgets/currentStatus/current_data.html" %}
          </div>
+         {% comment %} <div class="row mb-2">
+            <div class= "col">
+               <div class="btn-group" role="group" aria-label="Basic radio toggle button group" id  = "chart_type"> 
+                  <input type="radio" class="btn-check" name="btnradioChart" id="general" autocomplete="off"   checked >
+                  <label class="btn btn-outline-secondary" for="general"  onclick="changeDataChart({{general |safe}} ,  'general')" >General</label>
 
+                  <input type="radio" class="btn-check" name="btnradioChart" id="t_preassure" autocomplete="off" >
+                  <label class="btn btn-outline-secondary" for="t_preassure"  onclick="changeDataChart({{total_pressure |safe}},'t_preassure')" >Total Pressure</label>
+
+                  <input type="radio" class="btn-check" name="btnradioChart" id="s_pressure" autocomplete="off"  >
+                  <label class="btn btn-outline-secondary" for="s_pressure"    onclick="changeDataChart({{static_pressure|safe}}, 's_pressure')" >Static Pressure</label>
+
+                  <input type="radio" class="btn-check" name="btnradioChart" id="power" autocomplete="off" >
+                  <label class="btn btn-outline-secondary" for="power" onclick="changeDataChart({{power|safe}},'power')" >Power</label>
+               </div>
+         
+               <div class = "row-4 mt-2">
+                  <div class="btn-group" role="group" aria-label="Basic radio toggle button group" id  = "fan_selector"> 
+                        <input type="radio" class="btn-check" name="btnradioFan" id="f_performance" autocomplete="off"  checked >
+                        <label class="d-flex btn btn-outline-secondary p-0 m-1" for="f_performance"  onclick="chartSwitch(true)"  > <div class="col-3 " id = 'fp_status' style= "background-color: {{ general.FanPerformance.status }};">  </div> <div class="col p-1 me-2"> Fan Performance</div> </label>
+                     
+                        <input type="radio" class="btn-check" name="btnradioFan" id="f_operation" autocomplete="off" >
+                        <label class=" d-flex   btn btn-outline-secondary p-0 m-1"  for="f_operation" onclick="chartSwitch(false)" > <div class="col-3 " id = 'fo_status'  style= "background-color: {{ general.FanOperation.status }};">  </div> <div class="col p-1 me-2"> Fan Operation</div> </label>
+                  </div>
+               </div>
+            </div>
+         </div> {% endcomment %}
+         
+         {# Columna Derecha #}
          <div class="col-3">
             <div class="row justify-content-center align-items-center">
                <div class="col-12 col-md-10 col-xl-8">
@@ -105,7 +70,6 @@
                         <p class="text-start fs-6  ps-4 m-1">&#8226; 1.08 kg/m&#179;</p>
                      </div>
                   </div>
-
                </div>
             </div>
          </div>
@@ -190,6 +154,7 @@
          $("#q1").text(data[0]);  
          $("#qf").text(data[1]);
          $("#pt1").text(data[2]);
+         $("#power").text(data[3]);
       }
 
       setInterval( () => {

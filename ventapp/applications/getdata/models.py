@@ -22,7 +22,6 @@ class VdfData(models.Model):  # Asegúrate de heredar de models.Model
    class Meta:
       db_table = "vdf_data"
 
-
 class SensorsData(models.Model):  # Asegúrate de heredar de models.Model
    id = models.AutoField(primary_key=True) 
    ts = models.DateTimeField()
@@ -42,6 +41,16 @@ class SensorsData(models.Model):  # Asegúrate de heredar de models.Model
       db_table = "sensors_data"
 
 
+##################################################
+#Tablas estaticas
+      
+class Caracteristicas_Ventilador(models.Model):
+   id = models.AutoField(primary_key=True)
+   nombre = models.CharField()
+
+class Tipo_Equipamiento_Diesel(models.Model):
+   id = models.AutoField(primary_key=True)
+   nombre = models.CharField()
 
 
 ############################################
@@ -52,7 +61,7 @@ class Ventilador(models.Model):
    amm = models.FloatField()
    rmm = models.FloatField()
    polos = models.IntegerField()
-   accesorios = models.CharField()
+   accesorios = models.ManyToManyField(Caracteristicas_Ventilador)
    class Meta:
       db_table = "ventilador"
 
@@ -78,7 +87,7 @@ class Ducto(models.Model):
 
 class EquipamientoDiesel(models.Model):
    id = models.AutoField(primary_key=True)
-   tipo = models.CharField()
+   tipo = models.ManyToManyField(Tipo_Equipamiento_Diesel)
    modelo_diesel = models.CharField()
    potencia = models.FloatField() 
    qr_fabricante = models.FloatField()
@@ -87,7 +96,6 @@ class EquipamientoDiesel(models.Model):
       db_table = "equipamiento_diesel"
 
 ##################################################
-
 class Proyecto(models.Model):
    ventilador = models.ForeignKey(Ventilador, on_delete=models.CASCADE) 
    curva_diseno = models.ForeignKey(CurvaDiseno, on_delete=models.CASCADE)

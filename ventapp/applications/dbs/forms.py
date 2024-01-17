@@ -1,5 +1,21 @@
 from django import forms
-from applications.getdata.models import Ventilador, CurvaDiseno, Ducto, EquipamientoDiesel
+from applications.getdata.models import Ventilador, CurvaDiseno, Ducto, EquipamientoDiesel, Tipo_Equipamiento_Diesel, Caracteristicas_Ventilador
+
+##################### Extractores de nombres para los select, de otro modo se ven: "table object (1)"
+class CustomMMCF(forms.ModelMultipleChoiceField):
+   def label_from_instance(self, member):
+      return "%s" % member.nombre
+
+class CustomMCF(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+         return obj.modelo
+
+#####################
+
+class asd(forms.ModelForm):
+   class Meta:
+      model = Ventilador
+      fields = ['modelo', 'vmm', 'amm', 'rmm', 'polos', 'accesorios']
 
 class VentiladorForm(forms.ModelForm):
    def clean_polos(self):
@@ -10,15 +26,7 @@ class VentiladorForm(forms.ModelForm):
    
    modelo = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
    polos = forms.IntegerField(widget=forms.Select(choices=[(2,'2'),(4,'4'),(6,'6'),(6,'6'),(8,'8'),(10,'10'),(12,'12')]))
-   accesorios = forms.MultipleChoiceField(
-      choices = [
-                  ('rejilla_entrada','Rejilla Entrada'),('rejilla_salida','Rejilla Salida'),
-                  ('silenciador_nucleo_entrada','Silenciador con núcleo entrada'),
-                  ('silenciador_nucleo_salida','Silenciador con núcleo salida'),
-                  ('silenciador_entrada','Silenciador entrada'), ('silenciador_salida','Silenciador salida'),
-                  ('adaptador_ducto_ventilador','Adaptador ducto ventilador')],
-      widget = forms.CheckboxSelectMultiple
-   )
+   accesorios = CustomMMCF(queryset=Caracteristicas_Ventilador.objects.all(),widget=forms.CheckboxSelectMultiple,label='Accesorios')
 
    class Meta:
       model = Ventilador
@@ -30,13 +38,12 @@ class VentiladorForm(forms.ModelForm):
          'rmm':      'R'}
       
 class CurvaDisenoForm(forms.ModelForm):
-   #Ventilador = forms.ModelMultipleChoiceField(queryset=Ventilador.objects.all())
+   ventilador = CustomMCF(queryset=Ventilador.objects.all())
 
    class Meta:
       model = CurvaDiseno
       fields = ['ventilador', 'angulo', 'rpm', 'densidad']
       labels = {
-         'ventilador':   'Ventilador',
          'angulo':       'θ °',
          'rpm':          'RPM',
          'densidad':     'ρ (kg/m3)',}
@@ -58,16 +65,13 @@ class DuctoForm(forms.ModelForm):
 class EquipDieselForm(forms.ModelForm):
 
    potencia = forms.FloatField(widget=forms.NumberInput(attrs={'onchange':'Funcion()'}),label='Potencia (HP)')
-   qr_fabricante = forms.FloatField(label='Requerimiento de caudal informado de por el fabricante (opcional)',required=False)
+   qr_fabricante = forms.FloatField(widget=forms.NumberInput(attrs={'onchange':'Funcion2()'}),label='Requerimiento de caudal informado de por el fabricante (opcional)',required=False)
    qr_calculado = forms.FloatField(widget=forms.NumberInput(attrs={'readonly':'readonly','placeholder':''}),label='Requerimiento de caudal (m3/s)',)
-   tipo = forms.ChoiceField(
-      choices = [('Camión','Camión'),('Cargador Frontal','Cargador Frontal'),('LHD','LHD')],
-      widget = forms.Select
-   )
+   tipo = CustomMMCF(queryset=Tipo_Equipamiento_Diesel.objects.all(),widget=forms.CheckboxSelectMultiple,label='Tipo de equipamiento')
+   
    class Meta:
       model = EquipamientoDiesel
       fields = ['tipo','modelo_diesel','potencia','qr_fabricante','qr_calculado']
       labels = {
-         'tipo':           'Tipo de equipamiento',
          'modelo_diesel':  'Modelo',
       }

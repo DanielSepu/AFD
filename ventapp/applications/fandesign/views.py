@@ -14,7 +14,6 @@ def fandesign(request):
    if request.method == 'GET':
       # Obtener el tipo de gráfico seleccionado desde la solicitud
       chart_type = request.GET.get('chart_type')
-      rpm_user = 3000
       # Lógica para diferentes tipos de gráficos
       if chart_type == 'total_pressure':
          ### FAN DATA ###

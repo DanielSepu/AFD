@@ -21,7 +21,7 @@
         {% endcomment %}
 
         <li class="nav-item">
-            <a class="btn btn-outline-secondary" href="{% url 'getdata:getdata' %}" role="button">System Input</a>
+            {% comment %} <a class="btn btn-outline-secondary" href="{% url 'getdata:getdata' %}" role="button">System Input</a> {% endcomment %}
             <a class="btn btn-outline-secondary" href="{% url 'fandesign:fandesign' %}?chart_type=total_pressure" role="button">Fan design curve</a>
             {% comment %} <a class="btn btn-outline-secondary" href="{% url 'fanreal:fanreal' %}?section=current_Operation">Fan real curve</a> {% endcomment %}
             <a class="btn btn-outline-secondary" href="{% url 'currentstatus:currentstatus' %}" role="button">Current Status</a>

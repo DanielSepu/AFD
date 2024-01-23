@@ -1,23 +1,39 @@
 from django.shortcuts import render, redirect
 import pandas as pd  # Importa pandas
 import numpy as np
-from django.http import HttpResponse
+from django.http import JsonResponse
+from django.core import serializers
+import json
 import requests as rq
 
 from django.conf import settings
 
-from .models import *
-
+from applications.getdata.models import *
+from applications.dbs.forms import *
 
 def settings(request):
+   setting_type = request.GET.get('type')
+   print(setting_type)
+   print(request.method)
    if request.method == 'GET':
-      print('Get')
+      if setting_type == 'new_project' or setting_type is None:
+         form = ProyectoForm()
+         context = {'setting_type': setting_type, 'form': form}
       
-      setting_type = request.GET.get('type')
-      print("Typeeeeeeee:",setting_type)
-      context = {'setting_type': setting_type}
+      return render(request, 'settings.html', context)
+   
+   if request.method == 'POST':
+      if setting_type == 'new_project_2':
+         task=request.POST.get('task')
+         cd = CurvaDiseno.objects.filter(ventilador_id=task)
+         cdpk = json.loads(serializers.serialize('json', cd, fields=("id", "idu")))
 
-   return render(request, 'settings.html', context)
+         print(task)
+         v = Ventilador.objects.get(id=task)
+         vc = json.loads(serializers.serialize('json', v.accesorios.all()))
+         print(vc)
+         return JsonResponse({'cdpk':cdpk,'vc':vc})
+
 
 
 # def newvent(request):

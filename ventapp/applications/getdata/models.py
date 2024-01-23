@@ -52,10 +52,14 @@ class Tipo_Equipamiento_Diesel(models.Model):
    id = models.AutoField(primary_key=True)
    nombre = models.CharField()
 
+class Sistema_Partida(models.Model):
+   id = models.AutoField(primary_key=True)
+   nombre = models.CharField()
 
 ############################################
 class Ventilador(models.Model):
-   id = models.AutoField(primary_key=True) 
+   id = models.AutoField(primary_key=True)
+   idu = models.CharField(default='')
    modelo = models.CharField()
    vmm = models.FloatField()
    amm = models.FloatField()
@@ -67,6 +71,7 @@ class Ventilador(models.Model):
 
 class CurvaDiseno(models.Model):
    id = models.AutoField(primary_key=True)
+   idu = models.CharField(default='')
    ventilador = models.ForeignKey(Ventilador, on_delete=models.CASCADE)
    angulo = models.FloatField()
    rpm = models.FloatField()
@@ -77,6 +82,7 @@ class CurvaDiseno(models.Model):
 
 class Ducto(models.Model):
    id = models.AutoField(primary_key=True)
+   idu = models.CharField(default='')
    t_ducto = models.CharField()
    f_friccion = models.FloatField()
    f_fuga = models.CharField()
@@ -87,10 +93,11 @@ class Ducto(models.Model):
 
 class EquipamientoDiesel(models.Model):
    id = models.AutoField(primary_key=True)
+   idu = models.CharField(default='')
    tipo = models.ManyToManyField(Tipo_Equipamiento_Diesel)
    modelo_diesel = models.CharField()
    potencia = models.FloatField() 
-   qr_fabricante = models.FloatField()
+   qr_fabricante = models.FloatField(null=True)
    qr_calculado = models.FloatField()
    class Meta:
       db_table = "equipamiento_diesel"
@@ -107,6 +114,9 @@ class Proyecto(models.Model):
    caudal_requerido = models.FloatField()
    ancho_galeria = models.FloatField()
    alto_galeria = models.FloatField()
-   area_galeria = models.FloatField()  
+   area_galeria = models.FloatField()
+
+   s_partida = models.ManyToManyField(Sistema_Partida) 
+
    class Meta:
       db_table = "proyecto"

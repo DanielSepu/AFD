@@ -12,7 +12,7 @@
       <div class="col m-4">
          <div class="h-100" >
             <h2>Nueva Curva Diseño</h2>
-            <form method="POST">
+            <form method="POST" id="id_cd_p">
                {% csrf_token %}
                {% bootstrap_form form %}
                <div class="d-flex justify-content-between">
@@ -20,23 +20,45 @@
                   <label for="cau">Presion Total (pa)</label>
                   <label for="cau">Power (kW)</label>
                </div>
-               <div class="d-flex justify-content-between">
-                  <input type="number" class="span5">
-                  <input type="number" class="span5">
-                  <input type="number" class="span5">
-               </div>
-               <div class="d-flex justify-content-between">
-                  <input type="number" class="span5">
-                  <input type="number" class="span5">
-                  <input type="number" class="span5">
-               </div>
-               <div class="d-flex justify-content-between">
-                  <input type="number" class="span5">
-                  <input type="number" class="span5">
-                  <input type="number" class="span5">
-               </div>
+               <button id="btn_mas" type="button" class="btn btn-secondary" onclick="asd()">+</button>
+               <br>
                <button class="btn btn-primary">Guardar</button>
+               <input type="hidden" value="0" id="id_v" name="veces">
             </form>
          </div>
       </div>
    </div>
+
+
+<script>
+   var itr = 0;
+   const form = document.getElementById('id_cd_p');
+   const btn = document.getElementById('btn_mas');
+   const veces = document.getElementById('id_v');
+
+   /*for (itr; itr < 3; itr++) {*/
+      const div = document.createElement('div');
+      div.className = "d-flex justify-content-between";
+      div.innerHTML = `
+            <input type="number" step="any" class="span5"`+'name="caudal_'+itr+`">
+            <input type="number" step="any" class="span5"`+'name="presion_'+itr+`">
+            <input type="number" step="any" class="span5"`+'name="power_'+itr+`">
+      `;
+      form.insertBefore(div,btn);
+      veces.value = (itr+1).toString();
+   /*}*/
+
+   function asd(){
+      itr = itr+1
+      veces.value = (itr+1).toString();
+      const div = document.createElement('div');
+      div.className = "d-flex justify-content-between";
+      div.innerHTML = `
+            <input type="number" step="any" class="span5"`+'name="caudal_'+itr+`">
+            <input type="number" step="any" class="span5"`+'name="presion_'+itr+`">
+            <input type="number" step="any" class="span5"`+'name="power_'+itr+`">
+      `;
+      form.insertBefore(div,btn);
+   }
+   
+</script>

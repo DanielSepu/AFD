@@ -1,13 +1,49 @@
+{% load django_bootstrap5 %}   
    <div class="row">
       <div class="col">
          <a href="?type=current_project" class="btn btn-outline-secondary">Proyecto Actual</a>
          <a href="?type=new_project" class="btn btn-secondary ms-1">Nuevo Proyecto</a>
-         <a href="{% url 'dbs:dbs' %}" class="btn btn-outline-secondary ms-1">Añadir a Base de Datos</a>
+         <a href="{% url 'dbs:dbs' %}" class="btn btn-outline-secondary">Añadir a Base de Datos</a>
       </div>
    </div>
 
    <div class="row h-100">
       <div class="col m-4">
-         <div class="h-100" id="graphContainer" data-scatter-data="{{ scatter_data|safe }}"></div>
+         <form method="POST" id="id_cd_p">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            <button class="btn btn-primary">Guardar</button>
+         </form>
       </div>
    </div>
+
+   <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script> 
+  
+   <script type="text/javascript"> 
+      $(document).on('change','#id_ventilador',function(e){ 
+         e.preventDefault(); 
+         $.ajax({ 
+            type:'POST', 
+            url: "http://localhost/settings/?type=new_project_2", 
+            data: 
+            { 
+               task:$("#id_ventilador").val(), 
+               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val() 
+            }, 
+            success:function(response){
+               $("#id_curva_diseno").attr('disabled',true);
+               $("#id_curva_diseno").find('option').remove();
+               $.each(response.cdpk, function(i, obj) {
+                  $("#id_curva_diseno").append('<option value=' + obj.pk + '>' + obj.fields['idu'] + '</option>');
+               });
+               for (var i = 0; i < 7; i++ ) {
+                  $("#id_equipamientos_"+(i)).prop('checked', false );
+                  $("#id_equipamientos_"+(i)).attr('disabled',true);
+               }
+               $.each(response.vc, function(i, obj) {
+                  $("#id_equipamientos_"+(obj.pk-1)).prop('checked', true );
+               });
+            } 
+         }) 
+      });
+   </script> 

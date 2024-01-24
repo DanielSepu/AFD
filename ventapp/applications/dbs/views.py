@@ -80,7 +80,7 @@ def dbs(request):
          context = {'db_type': db_type, 'form': form}
          if form.is_valid():
             equipod = form.save()
-
+         
       return redirect('/dbs/?type=ventilador')
 
 

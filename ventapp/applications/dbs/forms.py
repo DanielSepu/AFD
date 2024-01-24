@@ -62,14 +62,14 @@ class DuctoForm(forms.ModelForm):
       
 class EquipDieselForm(forms.ModelForm):
    
-   class CustomEDN(forms.ModelMultipleChoiceField):
+   class CustomEDN(forms.ModelChoiceField):
       def label_from_instance(self, obj):
          return obj.nombre
 
-   potencia = forms.FloatField(widget=forms.NumberInput(attrs={'onchange':'Funcion()'}),label='Potencia (HP)')
+   potencia = forms.FloatField(widget=forms.NumberInput(attrs={'onchange':'Funcion()','value':'0'}),label='Potencia (HP)')
    qr_fabricante = forms.FloatField(widget=forms.NumberInput(attrs={'onchange':'Funcion2()'}),label='Requerimiento de caudal informado de por el fabricante (opcional)',required=False)
    qr_calculado = forms.FloatField(widget=forms.NumberInput(attrs={'readonly':'readonly','placeholder':''}),label='Requerimiento de caudal (m3/s)',)
-   tipo = CustomEDN(queryset=Tipo_Equipamiento_Diesel.objects.all(),widget=forms.Select,label='Tipo de equipamiento')
+   tipo = CustomEDN(queryset=Tipo_Equipamiento_Diesel.objects.all(),label='Tipo de equipamiento')
    
    class Meta:
       model = EquipamientoDiesel
@@ -88,16 +88,20 @@ class ProyectoForm(forms.ModelForm):
    class CustomPFI(forms.ModelChoiceField):
       def label_from_instance(self, obj):
          return obj.idu
+      
+   class CustomPMMCF(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+         return obj.modelo_diesel +' | '+ obj.idu
 
    ventilador = CustomPFV(queryset=Ventilador.objects.all(),widget=forms.Select,label='Ventilador')
-   curva_diseno = forms.MultipleChoiceField(label="Curva Diseño")#CustomPFI(queryset=CurvaDiseno.objects.all(),widget=forms.Select,label='Curva Diseño')
+   curva_diseno = forms.MultipleChoiceField(label="Curva Diseño",widget=forms.Select(attrs={'disabled':'disabled'}))#CustomPFI(queryset=CurvaDiseno.objects.all(),widget=forms.Select,label='Curva Diseño')
    ducto = CustomPFI(queryset=Ducto.objects.all(),widget=forms.Select,label='Ducto')
-   equipamientos = CustomMMCF(queryset=Caracteristicas_Ventilador.objects.all(),widget=forms.CheckboxSelectMultiple,label='Accesorios')
    s_partida = CustomMMCF(queryset=Sistema_Partida.objects.all(),widget=forms.Select,label='Sistema de partida')
+   equipamientos = CustomPMMCF(queryset=EquipamientoDiesel.objects.all(),label='Equipamientos')
 
    class Meta:
       model = Proyecto
-      fields = ['ventilador','curva_diseno','ducto','equipamientos','codos','caudal_requerido','ancho_galeria','alto_galeria','area_galeria','s_partida']
+      fields = ['ventilador','curva_diseno','ducto','equipamientos','caudal_requerido','codos','ancho_galeria','alto_galeria','area_galeria','s_partida']
       labels = {
          
       }

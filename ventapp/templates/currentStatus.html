@@ -18,6 +18,7 @@
          {# Columna Izquierda #}
          <div class="col-9 border-end border-3 border-dark">
             {% include "widgets/currentStatus/current_data.html" %}
+            {% include "widgets/currentStatus/vdf_frecuency.html" %}
          </div>
          {% comment %} <div class="row mb-2">
             <div class= "col">
@@ -155,11 +156,41 @@
          $("#qf").text(data[1]);
          $("#pt1").text(data[2]);
          $("#power").text(data[3]);
+         $("#fref").text(data[4]);
+      }
+
+      function editFrecuency(data) {
+         $("#fref").text(data[4]);
       }
 
       setInterval( () => {
          getValues();
       }, 15000);
 
-   </script> 
+   </script>
+   
+   <script>
+      const displayF = document.getElementById('fref');
+      const inputFDiv = document.getElementById('fref-input-div');
+      const container = document.getElementById('fref-container');
+      let editMode = false;
+      
+      document.getElementById('edit-btn').addEventListener('click', () => {
+        if(!editMode) {
+         displayF.style.display = 'none';
+         inputFDiv.style.display = 'block';
+         document.getElementById('edit-btn').innerText = 'Enviar';
+         editMode = true;
+        } else {
+         let newFref = document.getElementById('fref-input').value;
+          // Enviar newFref al servidor aqui
+         
+         inputFDiv.style.display = 'none';
+         displayF.style.display = 'block';
+         displayF.innerText = newFref;
+         document.getElementById('edit-btn').innerText = 'Editar';
+         editMode = false;
+        }
+      });
+      </script>
 {% endblock %}

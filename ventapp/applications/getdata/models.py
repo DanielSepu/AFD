@@ -41,6 +41,15 @@ class SensorsData(models.Model):  # Asegúrate de heredar de models.Model
       db_table = "sensors_data"
 
 
+class SetParams(models.Model):  # Asegúrate de heredar de models.Model
+   id = models.AutoField(primary_key=True) 
+   ts = models.DateTimeField()
+   fref = models.FloatField() 
+
+   class Meta:
+      db_table = "set_params"
+
+
 ##################################################
 #Tablas estaticas
       

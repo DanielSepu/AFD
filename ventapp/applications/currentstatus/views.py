@@ -89,5 +89,5 @@ def get_recent_data(request):
         # Consultar registro con ese id 
         item_sensors = SensorsData.objects.using('sensorDB').get(id=max_id_sensors)
         item_vdf = VdfData.objects.using('sensorDB').get(id=max_id_vdf)
-        data=[round(item_sensors.q1, 2), round(item_sensors.qf, 2), round(item_sensors.pt1, 2), round(item_vdf.powerc, 2)]
+        data=[round(item_sensors.q1, 2), round(item_sensors.qf, 2), round(item_sensors.pt1, 2), round(item_vdf.powerc, 2), round(item_vdf.fref, 2)]
         return JsonResponse(data, safe=False)

@@ -19,8 +19,8 @@
 
    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script> 
   
-   <script type="text/javascript"> 
-      $(document).on('change','#id_ventilador',function(e){ 
+   <script type="text/javascript">
+      $(document).on('change','#id_ventilador',function(e){
          e.preventDefault(); 
          $.ajax({ 
             type:'POST', 
@@ -31,7 +31,7 @@
                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val() 
             }, 
             success:function(response){
-               $("#id_curva_diseno").attr('disabled',true);
+               $("#id_curva_diseno").attr('disabled',false);
                $("#id_curva_diseno").find('option').remove();
                $.each(response.cdpk, function(i, obj) {
                   $("#id_curva_diseno").append('<option value=' + obj.pk + '>' + obj.fields['idu'] + '</option>');
@@ -40,10 +40,37 @@
                   $("#id_equipamientos_"+(i)).prop('checked', false );
                   $("#id_equipamientos_"+(i)).attr('disabled',true);
                }
-               $.each(response.vc, function(i, obj) {
-                  $("#id_equipamientos_"+(obj.pk-1)).prop('checked', true );
-               });
+               //$.each(response.vc, function(i, obj) {
+                  //$("#id_equipamientos_"+(obj.pk-1)).prop('checked', true );
+               //});
             } 
          }) 
       });
+      $(document).on('change','#id_ancho_galeria',function(e){
+         e.preventDefault();
+         const a = $('#id_ancho_galeria').val();
+         const b = $('#id_alto_galeria').val();
+         $('#id_area_galeria').val(a*b);
+      })
+      $(document).on('change','#id_alto_galeria',function(e){
+         e.preventDefault();
+         const a = $('#id_ancho_galeria').val();
+         const b = $('#id_alto_galeria').val();
+         $('#id_area_galeria').val(a*b);
+      })     
+      $(document).on('change','#id_equipamientos',function(e){
+         e.preventDefault();
+         $.ajax({ 
+            type:'POST', 
+            url: "http://localhost/settings/?type=new_project_3", 
+            data: 
+            { 
+               task:$("#id_equipamientos").val(), 
+               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val() 
+            }, 
+            success:function(response){
+               $('#id_caudal_requerido').val(response.sumatoria);
+            } 
+         }) 
+      })
    </script> 

@@ -27,12 +27,15 @@ def settings(request):
          task=request.POST.get('task')
          cd = CurvaDiseno.objects.filter(ventilador_id=task)
          cdpk = json.loads(serializers.serialize('json', cd, fields=("id", "idu")))
-
-         print(task)
-         v = Ventilador.objects.get(id=task)
-         vc = json.loads(serializers.serialize('json', v.accesorios.all()))
-         print(vc)
-         return JsonResponse({'cdpk':cdpk,'vc':vc})
+         return JsonResponse({'cdpk':cdpk})
+      
+      if setting_type == 'new_project_3':
+         task=request.POST.getlist('task[]')
+         sumatoria = 0
+         for i in task:
+            eq = EquipamientoDiesel.objects.get(id=i)
+            sumatoria += eq.qr_calculado
+         return JsonResponse({'sumatoria':sumatoria})
 
 
 

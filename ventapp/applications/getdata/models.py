@@ -103,7 +103,7 @@ class Ducto(models.Model):
 class EquipamientoDiesel(models.Model):
    id = models.AutoField(primary_key=True)
    idu = models.CharField(default='')
-   tipo = models.ManyToManyField(Tipo_Equipamiento_Diesel)
+   tipo = models.ForeignKey(Tipo_Equipamiento_Diesel,on_delete=models.CASCADE)
    modelo_diesel = models.CharField()
    potencia = models.FloatField() 
    qr_fabricante = models.FloatField(null=True)

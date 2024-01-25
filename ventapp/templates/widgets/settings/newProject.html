@@ -24,7 +24,7 @@
          e.preventDefault(); 
          $.ajax({ 
             type:'POST', 
-            url: "http://localhost/settings/?type=new_project_2", 
+            url: "{% url 'settings:settings' %}?type=new_project_2",
             data: 
             { 
                task:$("#id_ventilador").val(), 
@@ -36,13 +36,6 @@
                $.each(response.cdpk, function(i, obj) {
                   $("#id_curva_diseno").append('<option value=' + obj.pk + '>' + obj.fields['idu'] + '</option>');
                });
-               for (var i = 0; i < 7; i++ ) {
-                  $("#id_equipamientos_"+(i)).prop('checked', false );
-                  $("#id_equipamientos_"+(i)).attr('disabled',true);
-               }
-               //$.each(response.vc, function(i, obj) {
-                  //$("#id_equipamientos_"+(obj.pk-1)).prop('checked', true );
-               //});
             } 
          }) 
       });
@@ -50,19 +43,28 @@
          e.preventDefault();
          const a = $('#id_ancho_galeria').val();
          const b = $('#id_alto_galeria').val();
-         $('#id_area_galeria').val(a*b);
+         const c = $('#id_factor').val()/100;
+         $('#id_area_galeria').val((a*b)*c);
       })
       $(document).on('change','#id_alto_galeria',function(e){
          e.preventDefault();
          const a = $('#id_ancho_galeria').val();
          const b = $('#id_alto_galeria').val();
-         $('#id_area_galeria').val(a*b);
+         const c = $('#id_factor').val()/100;
+         $('#id_area_galeria').val((a*b)*c);
+      })     
+      $(document).on('change','#id_factor',function(e){
+         e.preventDefault();
+         const a = $('#id_ancho_galeria').val();
+         const b = $('#id_alto_galeria').val();
+         const c = $('#id_factor').val()/100;
+         $('#id_area_galeria').val((a*b)*c);
       })     
       $(document).on('change','#id_equipamientos',function(e){
          e.preventDefault();
          $.ajax({ 
             type:'POST', 
-            url: "http://localhost/settings/?type=new_project_3", 
+            url: "{% url 'settings:settings' %}?type=new_project_3", 
             data: 
             { 
                task:$("#id_equipamientos").val(), 

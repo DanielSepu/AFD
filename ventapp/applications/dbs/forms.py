@@ -25,13 +25,14 @@ class VentiladorForm(forms.ModelForm):
 
    class Meta:
       model = Ventilador
-      fields = ['idu', 'modelo', 'vmm', 'amm', 'rmm', 'polos', 'accesorios']
+      fields = ['idu', 'modelo', 'vmm', 'amm', 'rmm', 'hp','polos', 'accesorios']
       labels = {
          'idu': 'ID',
          'modelo':   'Modelo',
          'vmm':      'V',
          'amm':      'A',
-         'rmm':      'R'}
+         'rmm':      'R',
+         'hp': 'Potencia(HP)'}
       
 class CurvaDisenoForm(forms.ModelForm):
    ventilador = CustomMCF(queryset=Ventilador.objects.all())
@@ -88,20 +89,28 @@ class ProyectoForm(forms.ModelForm):
    class CustomPFI(forms.ModelChoiceField):
       def label_from_instance(self, obj):
          return obj.idu
-      
    class CustomPMMCF(forms.ModelMultipleChoiceField):
-    def label_from_instance(self, obj):
+      def label_from_instance(self, obj):
          return obj.modelo_diesel +' | '+ obj.idu
+   class CustomPSP(forms.ModelChoiceField):
+      def label_from_instance(self, obj):
+         return obj.nombre
 
    ventilador = CustomPFV(queryset=Ventilador.objects.all(),widget=forms.Select,label='Ventilador')
-   curva_diseno = forms.MultipleChoiceField(label="Curva Diseño",widget=forms.Select(attrs={'disabled':'disabled'}))#CustomPFI(queryset=CurvaDiseno.objects.all(),widget=forms.Select,label='Curva Diseño')
+   curva_diseno = CustomPFI(queryset=CurvaDiseno.objects.all(),widget=forms.Select(attrs={'disabled':'disabled'}),label='Curva Diseño')
    ducto = CustomPFI(queryset=Ducto.objects.all(),widget=forms.Select,label='Ducto')
-   s_partida = CustomMMCF(queryset=Sistema_Partida.objects.all(),widget=forms.Select,label='Sistema de partida')
+   s_partida = CustomPSP(queryset=Sistema_Partida.objects.all(),widget=forms.Select,label='Sistema de partida')
    equipamientos = CustomPMMCF(queryset=EquipamientoDiesel.objects.all(),label='Equipamientos')
+   caudal_requerido = forms.FloatField(label='Caudal requerido',widget=forms.NumberInput(attrs={'readonly':'readonly'}))
+   area_galeria = forms.FloatField(label='Area galería',widget=forms.NumberInput(attrs={'readonly':'readonly'}))
 
    class Meta:
       model = Proyecto
-      fields = ['ventilador','curva_diseno','ducto','equipamientos','caudal_requerido','codos','ancho_galeria','alto_galeria','area_galeria','s_partida']
+      fields = ['ventilador','curva_diseno','ducto','equipamientos','caudal_requerido','codos','ancho_galeria','alto_galeria','area_galeria','factor','s_partida']
       labels = {
-         
+         'ancho_galeria': 'Ancho galería',
+         'alto_galeria': 'Alto galería',
+         'factor': 'Factor corrección(%)'
       }
+
+   field_order = ['ventilador','curva_diseno','ducto','equipamientos','caudal_requerido','codos','ancho_galeria','alto_galeria','factor','area_galeria','s_partida']

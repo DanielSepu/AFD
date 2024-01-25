@@ -1,10 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 import pandas as pd  # Importa pandas
 import numpy as np
 from django.http import JsonResponse
 from django.core import serializers
 import json
-import requests as rq
+#import requests as rq
 
 from django.conf import settings
 
@@ -20,9 +20,34 @@ def settings(request):
          form = ProyectoForm()
          context = {'setting_type': setting_type, 'form': form}
       
-      return render(request, 'settings.html', context)
+         return render(request, 'settings.html', context)
+      
+      if setting_type == 'current_project':
+         up = Proyecto.objects.all().order_by('-id').first()
+         print(up)
+         form = ProyectoForm(instance=up)
+         context = {'setting_type': setting_type, 'form': form, 'id': up.id}
+         return render(request, 'settings.html', context)
+
    
    if request.method == 'POST':
+      if setting_type == 'new_project':
+         form = ProyectoForm(request.POST) 
+         context = {'setting_type': setting_type, 'form': form}
+         if form.is_valid():
+            proyecto = form.save()
+         
+         return redirect('settings')
+         #return render(request, 'settings.html', context)
+
+      if setting_type == 'current_project':
+         proy = Proyecto.objects.get(id=request.POST.get('id'))
+         form = ProyectoForm(request.POST,instance=proy)
+         if form.is_valid():
+            form.save()
+         
+         return redirect(reverse('settings:settings') + '?type=current_project')
+
       if setting_type == 'new_project_2':
          task=request.POST.get('task')
          cd = CurvaDiseno.objects.filter(ventilador_id=task)

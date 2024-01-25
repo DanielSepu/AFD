@@ -73,6 +73,7 @@ class Ventilador(models.Model):
    vmm = models.FloatField()
    amm = models.FloatField()
    rmm = models.FloatField()
+   hp = models.FloatField()
    polos = models.IntegerField()
    accesorios = models.ManyToManyField(Caracteristicas_Ventilador)
    class Meta:
@@ -124,8 +125,9 @@ class Proyecto(models.Model):
    ancho_galeria = models.FloatField()
    alto_galeria = models.FloatField()
    area_galeria = models.FloatField()
+   factor = models.FloatField()
 
-   s_partida = models.ManyToManyField(Sistema_Partida) 
+   s_partida = models.ForeignKey(Sistema_Partida, on_delete=models.CASCADE) 
 
    class Meta:
       db_table = "proyecto"

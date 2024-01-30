@@ -24,7 +24,6 @@ def settings(request):
       
       if setting_type == 'current_project':
          up = Proyecto.objects.all().order_by('-id').first()
-         print(up)
          form = ProyectoForm(instance=up)
          context = {'setting_type': setting_type, 'form': form, 'id': up.id}
          return render(request, 'settings.html', context)

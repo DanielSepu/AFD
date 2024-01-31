@@ -103,14 +103,14 @@ class ProyectoForm(forms.ModelForm):
    equipamientos = CustomPMMCF(queryset=EquipamientoDiesel.objects.all(),label='Equipamientos')
    caudal_requerido = forms.FloatField(label='Caudal requerido',widget=forms.NumberInput(attrs={'readonly':'readonly'}))
    area_galeria = forms.FloatField(label='Area galería',widget=forms.NumberInput(attrs={'readonly':'readonly'}))
+   factor = forms.FloatField(label='Factor corrección (%)',widget=forms.NumberInput(attrs={'min':'0','max':'100','step':'1'}))
 
    class Meta:
       model = Proyecto
       fields = ['ventilador','curva_diseno','ducto','equipamientos','caudal_requerido','codos','ancho_galeria','alto_galeria','area_galeria','factor','s_partida']
       labels = {
          'ancho_galeria': 'Ancho galería',
-         'alto_galeria': 'Alto galería',
-         'factor': 'Factor corrección(%)'
+         'alto_galeria': 'Alto galería'
       }
 
    field_order = ['ventilador','curva_diseno','ducto','equipamientos','caudal_requerido','codos','ancho_galeria','alto_galeria','factor','area_galeria','s_partida']

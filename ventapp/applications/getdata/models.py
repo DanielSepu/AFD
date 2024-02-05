@@ -127,6 +127,9 @@ class Proyecto(models.Model):
    area_galeria = models.FloatField()
    factor = models.FloatField()
 
+   potencia = models.FloatField()
+   dis_e_sens = models.FloatField()
+
    s_partida = models.ForeignKey(Sistema_Partida, on_delete=models.CASCADE) 
 
    class Meta:

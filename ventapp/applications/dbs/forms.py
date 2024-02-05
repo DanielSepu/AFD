@@ -107,10 +107,12 @@ class ProyectoForm(forms.ModelForm):
 
    class Meta:
       model = Proyecto
-      fields = ['ventilador','curva_diseno','ducto','equipamientos','caudal_requerido','codos','ancho_galeria','alto_galeria','area_galeria','factor','s_partida']
+      fields = ['ventilador','curva_diseno','ducto','equipamientos','caudal_requerido','codos','ancho_galeria','alto_galeria','area_galeria','factor','s_partida','potencia','dis_e_sens']
       labels = {
          'ancho_galeria': 'Ancho galería',
-         'alto_galeria': 'Alto galería'
+         'alto_galeria': 'Alto galería',
+         'potencia' : 'Potencia (W)',
+         'dis_e_sens': 'Distancia entre sensores (m)'
       }
 
-   field_order = ['ventilador','curva_diseno','ducto','equipamientos','caudal_requerido','codos','ancho_galeria','alto_galeria','factor','area_galeria','s_partida']
+   field_order = ['ventilador','curva_diseno','ducto','equipamientos','caudal_requerido','codos','ancho_galeria','alto_galeria','factor','area_galeria','potencia','dis_e_sens','s_partida']

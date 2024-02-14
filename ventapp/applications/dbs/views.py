@@ -1,3 +1,4 @@
+import pdb
 from django.shortcuts import render, redirect
 import pandas as pd  # Importa pandas
 import numpy as np
@@ -57,16 +58,30 @@ def dbs(request):
       if db_type == 'curva_diseno':
          form = CurvaDisenoForm(request.POST) 
          context = {'db_type': db_type, 'form': form}
+         
+         caudal = []
+         presion = []
+         power = []
+
          if form.is_valid():
-            cppL = []
+            #cppL = []
             for x in range(int(request.POST.get('veces'))):
-               cpp = {}
-               cpp['caudal_'+str(x)] = request.POST.get('caudal_'+str(x))
-               cpp['presion_'+str(x)] = request.POST.get('presion_'+str(x))
-               cpp['power_'+str(x)] = request.POST.get('power_'+str(x))
-               cppL.append(cpp)
+               
+               caudal.append( float(request.POST.get('caudal_'+str(x)) )) 
+               presion.append( float(request.POST.get('presion_'+str(x)) )) 
+               power.append( float(request.POST.get('power_'+str(x)) )) 
+               
+               #cppL.append(cpp)
+
+            json_data = { 
+               "presion": presion ,
+               "caudal" : caudal,
+               "potencia" : power
+            }
+
+
             curva = form.save(commit=False)
-            curva.datos_curva = cppL
+            curva.datos_curva = json_data
             curva.save()
       
       if db_type == 'ducto':

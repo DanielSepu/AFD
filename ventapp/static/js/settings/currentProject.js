@@ -11,7 +11,7 @@ $(document).on('change','#id_ventilador',function(e){
     }, 
     success:function(response){
         $("#id_curva_diseno").attr('disabled',false);
-        $("#id_curva_diseno").find('option').remove();
+        $("#id_curva_diseno").find('optio.  n').remove();
         $.each(response.cdpk, function(i, obj) {
             $("#id_curva_diseno").append('<option value=' + obj.pk + '>' + obj.fields['idu'] + '</option>');
         });
@@ -25,6 +25,7 @@ $(document).on('change','#id_ancho_galeria',function(e){
     const c = $('#id_factor').val()/100;
     $('#id_area_galeria').val((a*b)*c);
 })
+
 $(document).on('change','#id_alto_galeria',function(e){
     e.preventDefault();
     const a = $('#id_ancho_galeria').val();

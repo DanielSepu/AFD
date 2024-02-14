@@ -96,7 +96,7 @@ class ProyectoForm(forms.ModelForm):
       def label_from_instance(self, obj):
          return obj.nombre
 
-   ventilador = CustomPFV(queryset=Ventilador.objects.all(),widget=forms.Select,label='Ventilador')
+   ventilador = CustomPFV(queryset=Ventilador.objects.all(),widget=forms.Select, label='Ventilador')
    curva_diseno = CustomPFI(queryset=CurvaDiseno.objects.all(),widget=forms.Select(attrs={'disabled':'disabled'}),label='Curva Diseño')
    ducto = CustomPFI(queryset=Ducto.objects.all(),widget=forms.Select,label='Ducto')
    s_partida = CustomPSP(queryset=Sistema_Partida.objects.all(),widget=forms.Select,label='Sistema de partida')

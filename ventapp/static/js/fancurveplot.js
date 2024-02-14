@@ -63,6 +63,20 @@
          .attr("cy", y(promedios[1]))
          .attr("r", 8) 
          .attr("fill", "red");
+      
+
+             // se ha agregado la linea   
+          svg.append("path")
+         .datum(data)
+         .attr("fill", "none")
+         .attr("stroke", "black")
+         .attr("stroke-width", 1.5)
+         .attr("d", d3.line()
+         .curve(d3.curveBasis) // Just add that to have a curve instead of segments
+         .x(function(d) { return x(d[keys[0]]); })
+         .y(function(d) { return y(d[keys[1]]); })
+      )
+
 
          // Append the SVG element.
          //graphContainer.innerHTML = ""; // Limpiar el contenedor antes de agregar el nuevo gráfico

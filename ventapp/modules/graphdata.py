@@ -8,14 +8,15 @@ CHART_MAP = {
    "pot": ["caudal", "potencia", "densidad", "rpm"]
 }
 
-def get_fan_data(chart_type):
+def get_fan_data(proyect, chart_type):
    # leer csv fan
-   csv_fan_path = os.path.join(settings.MEDIA_ROOT, 'AXT0800_'+chart_type+'.csv')
-   df_fan = pd.read_csv(csv_fan_path)
-   df_fan["densidad"] = df_fan["densidad"].mean()  
-   df_fan["rpm"] = df_fan["rpm"].mean()
-   columns = CHART_MAP[chart_type]
-   df_fan = df_fan[columns]
+   #csv_fan_path = os.path.join(settings.MEDIA_ROOT, 'AXT0800_'+chart_type+'.csv')
+   #df_fan = pd.read_csv(csv_fan_path)
+   df_fan = pd.DataFrame(dict(proyect.curva_diseno.datos_curva))
+   #df_fan["rpm"] = df_fan["rpm"].mean()
+
+      
+
    return df_fan 
 
 def get_sensor_data():

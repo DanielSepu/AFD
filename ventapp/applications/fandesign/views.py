@@ -21,11 +21,20 @@ def fandesign(request):
 
       #identifica id de  último proyecto guardado
       #id_proyecto = Proyecto.objects.using('sensorDB').aggregate(Max('id'))['id__max']
-      proyect =  Proyecto.objects.all().order_by('id').first()
-      
+      proyect =  Proyecto.objects.all().order_by('id').last()
+
+      df_fan = get_fan_data(proyect, 'pt')
+      ind  = df_fan['presion'].idxmax()
+      r_max  = df_fan.loc[ind]['presion']/df_fan.loc[ind]['caudal']
+      ultima_medicion =  SensorsData.objects.all().order_by('id').last()  
+      r_actual = ultima_medicion.ps1/ ultima_medicion.q1**2
+      pr = int(r_max/r_actual *100)
+      peak_pressure =  int(ultima_medicion.ps1/df_fan.loc[ind]['presion'] *100 )
+
+      scatter_data_fan_list = []
+
       if chart_type == 'total_pressure':
-         ### FAN DATA ###
-         df_fan = get_fan_data(proyect, 'pt')
+      
          ### SENSORs DATA ###
          # df_sensor1 = get_sensor_data() # desde CSVs
          df_sensor1 = get_10min_sensor_data() # desde BD
@@ -45,10 +54,10 @@ def fandesign(request):
          df_adjust['pt_dens']=dens_adjust_pt(df_adjust['pt_rpm'],densidad_fan,densidad_sensor1)
 
          df_graph = df_adjust.loc[:, ["q_rpm", "pt_dens"]]
+         scatter_data_fan_list = df_fan[['caudal','presion']].to_dict(orient='records')
 
       elif chart_type == 'static_pressure':
-         ### FAN DATA ###
-         df_fan = get_fan_data(proyect,'pt')
+      
          ### SENSORs DATA ###  #Reemplazar con datos sensor BD
          df_sensor1 = get_sensor_data()
          ### VDF DATA ###
@@ -67,10 +76,10 @@ def fandesign(request):
          df_adjust['pt_dens']=dens_adjust_pt(df_adjust['pt_rpm'],densidad_fan,densidad_sensor1)
 
          df_graph = df_adjust.loc[:, ["q_rpm", "pt_dens"]]
+         scatter_data_fan_list = df_fan[['caudal','presion']].to_dict(orient='records')
 
       elif chart_type == 'power':
-         ### FAN DATA ###
-         df_fan = get_fan_data(proyect, 'pot')
+         
          ### SENSORs DATA ###  #Reemplazar con datos sensor BD
          df_sensor1 = get_sensor_data()
          ### VDF DATA ###
@@ -90,16 +99,18 @@ def fandesign(request):
          df_adjust['power_dens']=dens_adjust_power(df_adjust['power_rpm'],densidad_fan,densidad_sensor1)
             
          df_graph = df_adjust.loc[:, ["q_rpm", "power_dens"]]
+
+         scatter_data_fan_list = df_fan[['caudal','potencia']].to_dict(orient='records')
       else:
          return render(request, 'fanDesign.html')
       
 
       # Convierte los datos a una lista de diccionarios
-      scatter_data_fan_list = df_fan.to_dict(orient='records')
+      
 
-
+      
       # Pasa los datos a la plantilla
-      context = {'scatter_data': scatter_data_fan_list, 'chart_type': chart_type, 'promedios':[Q_medido,P_medido]}
+      context = {'scatter_data': scatter_data_fan_list, 'chart_type': chart_type, 'c':[Q_medido,P_medido], 'proyecto':proyect , 'peak_resistance':pr, 'peak_pressure':peak_pressure }
       return render(request, 'fanDesign.html', context)
 
    # Si la solicitud no es un POST, simplemente renderiza la página sin datos

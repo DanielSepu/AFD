@@ -15,9 +15,33 @@
 
 {% block body_content %}
 {# All your page content goes here! #}
-   <div class="container-fluid h-75">
-      <div class="row h-100">
-         <div class="col-8 border-end border-3 border-dark">
+   
+      <style>
+            .d3-graphic{
+               height: 20rem;
+            }
+
+            @media (max-width: 576px) {
+               .d3-graphic{
+               height: 15rem;
+               width: 25rem;
+            }
+
+         }
+         @media (min-width: 992px) {
+            .d3-graphic{
+               height: 60vh;
+            }
+
+      }
+            
+      </style>
+
+
+   <div class="container-fluid h-75 p-0">
+
+      <div class="d-sm-flex flex-sm-column d-lg-flex  flex-lg-row ">
+         <div class="col-lg-8 col-sm-12  ms-0 px-n2 mb-3">
             {% if chart_type == 'total_pressure' %}
                {% include "widgets/fanDesignCurve/totalPreassure.html" %}
             {% elif chart_type == 'static_pressure' %}
@@ -29,21 +53,21 @@
             {% endif %}
          </div>
 
-         <div class="col-3 h-100">
+         <div class="col-lg-3 col-sm-12 h-100">
             <div class="row justify-content-center align-items-center">
             <div class="row justify-content-center align-items-center">
                <div class="col">
                   {#  Model #}
                   <div class="list-group border border-3 border-warning p-3 mb-2">
                      <div class="row">
-                        <p class="text-center fs-4 fw-bold m-0  fw-bold ">JetStream AXT0800</p>
+                        <p class="text-center fs-4 fw-bold m-0  fw-bold ">{{proyecto.ventilador.modelo}}</p>
                      </div>
                   </div>
                   {#  Model #}
                   <div class="list-group border border-3 border-warning p-3 mb-2">
                      <div class="row">
                         <p class="text-start fs-5 m-0  fw-bold">Blade Angle</p>
-                        <p class="text-start fs-6  ps-4 m-1">  89 % </p>
+                        <p class="text-start fs-6  ps-4 m-1">  {{proyecto.curva_diseno.angulo}} ° </p>
                      </div>
                   </div>
                   {#  Blade angle #}
@@ -52,9 +76,11 @@
                         <p class="text-start fs-5 m-0  fw-bold">Accessories</p>
                         
                            <ul class =  "fs-6  ps-4 m-1">
-                              <li>Elemento 1</li>
-                              <li>Elemento 2</li>
-                              <li>Elemento 3</li>
+                              {% for accesorio in proyecto.equipamientos.all %}
+                                 <li>
+                                    {{accesorio.tipo.nombre}}
+                                 </li>
+                              {% endfor %}
                            </ul>            
                        
                         
@@ -64,25 +90,25 @@
                   <div class="list-group border border-3 border-warning p-3 mb-2">
                      <div class="row">
                         <p class="text-start fs-5 m-0 fw-bold">Design Density</p>
-                        <p class="text-start fs-6  ps-4 m-1">  89 % </p>
+                        <p class="text-start fs-6  ps-4 m-1"> {{proyecto.curva_diseno.densidad}} kg/m<sup>3</sup> </p>
                      </div>
                   </div>
                   <div class="list-group border border-3 border-warning p-3 mb-2">
                      <div class="row">
                         <p class="text-start fs-5 m-0 fw-bold">Motor Power</p>
-                        <p class="text-start fs-6  ps-4 m-1">  89 % </p>
+                        <p class="text-start fs-6  ps-4 m-1">  {{proyecto.curva_diseno.densidad}} </p>
                      </div>
                   </div>
                   <div class="list-group border border-3 border-warning p-3 mb-2">
                      <div class="row">
                         <p class="text-start fs-5 m-0 fw-bold">Peak Resistance</p>
-                        <p class="text-start fs-6  ps-4 m-1">  73 % </p>
+                        <p class="text-start fs-6  ps-4 m-1">  {{peak_resistance}}%</p>
                      </div>
                   </div>
                   <div class="list-group border border-3 border-warning p-3 mb-2">
                      <div class="row">
                         <p class="text-start fs-5 m-0 fw-bold">Peak Pressure</p>
-                        <p class="text-start fs-6  ps-4 m-1">  96 % </p>
+                        <p class="text-start fs-6  ps-4 m-1">  {{peak_pressure}}% </p>
                      </div>
                   </div>
 
@@ -95,8 +121,8 @@
         
             </div>
          </div>
-      </div>
-   </div>
+        
+      
 {% endblock %}
 
 {% block body_js %}
@@ -110,8 +136,8 @@
    <script type="text/javascript">
       
       const dataV = {{ scatter_data|safe }};
-      const promedios = {{ promedios }};
-      console.log(promedios);
+      const promedios = {{ c }};
+      console.log(dataV);
       // Call the function initially
       document.addEventListener("DOMContentLoaded",
          function() {

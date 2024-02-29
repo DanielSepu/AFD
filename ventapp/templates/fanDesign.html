@@ -137,16 +137,17 @@
       
       const dataV = {{ scatter_data|safe }};
       const promedios = {{ c }};
+      const curva_dis = {{VenCurvaDis}};
       console.log(dataV);
       // Call the function initially
       document.addEventListener("DOMContentLoaded",
          function() {
             if ("{{ chart_type }}" == "total_pressure"){
-               createFanChart(dataV, 'total_pressure', promedios);
+               createFanChart(dataV, 'total_pressure', promedios, curva_dis);
             } else if ("{{ chart_type }}" == "static_pressure"){
-               createFanChart(dataV, 'static_pressure', promedios);
+               createFanChart(dataV, 'static_pressure', promedios, curva_dis);
             } else if ("{{ chart_type }}" == "power"){
-               createFanChart(dataV, 'power', promedios);
+               createFanChart(dataV, 'power', promedios, curva_dis);
             }
          });
       // Call the function on window resize

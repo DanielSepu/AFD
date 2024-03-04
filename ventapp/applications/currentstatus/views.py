@@ -7,8 +7,6 @@ import requests as rq
 from django.conf import settings
 import os
 
-from yaml import serialize
-
 
 from applications.getdata.models import SensorsData, VdfData, Ventilador, SensorData, CurvaDiseno
 from django.db.models import Max

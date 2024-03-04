@@ -153,7 +153,7 @@ def fandesign(request):
       # Convierte los datos a una lista de diccionarios
       print(scatter_data_fan_list)
       # Pasa los datos a la plantilla
-      context = {'scatter_data': scatter_data_fan_list, 'VenCurvaDis':xy, 'chart_type': chart_type, 'c':[Q_medido,P_medido], 'proyecto':proyect , 'peak_resistance':pr, 'peak_pressure':peak_pressure }
+      context = {'scatter_data': scatter_data_fan_list, 'chart_type': chart_type, 'c':[Q_medido,P_medido], 'proyecto':proyect , 'peak_resistance':pr, 'peak_pressure':peak_pressure }
       return render(request, 'fanDesign.html', context)
 
    # Si la solicitud no es un POST, simplemente renderiza la página sin datos

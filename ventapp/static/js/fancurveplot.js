@@ -2,7 +2,7 @@
       const margin = { top: 20, right: 30, bottom: 40, left: 40 };
       //const containerHeight = graphContainer.clientHeight;
 
-      function  createFanChart(data, chart_type, promedios, curva_dis) {
+      function  createFanChart(data, chart_type, promedios) {
          // Get the dimensions of the container
          const containerWidth = graphContainer.clientWidth - margin.right;
          const containerHeight = graphContainer.clientHeight;

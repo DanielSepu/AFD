@@ -74,9 +74,9 @@ def fandesign(request):
             y = (-b-math.sqrt(d))/(2*a)
             
             xy.append({'caudal':x,'presion':y})
-         print(xy)
-         print('\n')
-         print(scatter_data_fan_list)
+         # print(xy)
+         # print('\n')
+         # print(scatter_data_fan_list)
          #eq = pd.DataFrame(dict(xy))
 
       elif chart_type == 'static_pressure':
@@ -126,7 +126,7 @@ def fandesign(request):
          
          xy = []
          n_df_fan = df_fan.reset_index()
-         print(n_df_fan)
+         # print(n_df_fan)
          import math
          for k,v in n_df_fan.iterrows():
             R = v['presion']/(v['caudal']**2) # Simbolos ** indican elevado a
@@ -151,7 +151,7 @@ def fandesign(request):
       
 
       # Convierte los datos a una lista de diccionarios
-      print(scatter_data_fan_list)
+      # print(scatter_data_fan_list)
       # Pasa los datos a la plantilla
       context = {'scatter_data': scatter_data_fan_list, 'chart_type': chart_type, 'c':[Q_medido,P_medido], 'proyecto':proyect , 'peak_resistance':pr, 'peak_pressure':peak_pressure }
       return render(request, 'fanDesign.html', context)

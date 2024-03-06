@@ -92,7 +92,19 @@ def get_recent_data(request):
         item_vdf = VdfData.objects.using('sensorDB').get(id=max_id_vdf)
         data = [round(item_sensors.q1, 2), round(item_sensors.qf, 2), round(item_sensors.pt1, 2), round(item_vdf.powerc, 2), round(item_vdf.fref, 2), round((item_vdf.freal/item_vdf.fref) * ( 100 ) , 2 ) , round((item_vdf.freal/item_vdf.fref) * ( 100 ), 2) , round(item_vdf.powerc, 2)]
 
+
+        return JsonResponse(data, safe=False)
     
 
 
-        return JsonResponse(data, safe=False)
+def update_frequency(request):
+   if request.method == 'GET':
+      newFref = request.GET.get('frecuency')
+      url = f"http://localhost:1880/update-frequency?frecuency={newFref}"
+      try:
+            #Enviar al endpoint del Node-Red
+            response = rq.get(url)
+      except rq.exceptions.RequestException as e:
+            print(f"Error updating frequency: {e}")
+
+   return JsonResponse('Frecuencia Ref Actualizada', safe=False)

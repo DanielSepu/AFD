@@ -153,6 +153,19 @@ def fandesign(request):
       # Convierte los datos a una lista de diccionarios
       # print(scatter_data_fan_list)
       # Pasa los datos a la plantilla
+
+      distancia_constante = Q_medido // 5
+      Q_curvaR=[0]
+      for i in range(1, 6):
+         Q_curvaR.append(i * distancia_constante)
+      Q_curvaR.append(Q_medido)
+
+      R=P_medido/Q_medido**2
+
+      P_curvaR = []
+      for Qi in Q_curvaR:
+         P_curvaR.append(R * Qi**2)
+
       context = {'scatter_data': scatter_data_fan_list, 'chart_type': chart_type, 'c':[Q_medido,P_medido], 'proyecto':proyect , 'peak_resistance':pr, 'peak_pressure':peak_pressure }
       return render(request, 'fanDesign.html', context)
 

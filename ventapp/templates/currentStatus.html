@@ -198,27 +198,18 @@
    </script>
    
    <script>
+      window.opener = null;
       const displayF = document.getElementById('fref');
       const inputFDiv = document.getElementById('fref-input-div');
       const container = document.getElementById('fref-container');
       let editMode = false;
       
       document.getElementById('edit-btn').addEventListener('click', () => {
-        if(!editMode) {
-         displayF.style.display = 'none';
-         inputFDiv.style.display = 'block';
-         document.getElementById('edit-btn').innerText = 'Enviar';
-         editMode = true;
-        } else {
-         let newFref = document.getElementById('fref-input').value;
-          // Enviar newFref al servidor aqui
-         
-         inputFDiv.style.display = 'none';
-         displayF.style.display = 'block';
-         displayF.innerText = newFref;
-         document.getElementById('edit-btn').innerText = 'Editar';
-         editMode = false;
-        }
+         // Enviar newFref al servidor aqui
+         var newFref = document.getElementById('fref-input').value;
+         fetch(`/update_frequency?frecuency=${newFref}`)
+         .then(response => response.json())
+         .then(data => console.log(data));
       });
       </script>
 {% endblock %}

@@ -56,28 +56,6 @@ def fandesign(request):
          df_graph = df_adjust.loc[:, ["q_rpm", "pt_dens"]]
          scatter_data_fan_list = df_fan[['caudal','presion']].to_dict(orient='records')
 
-         xy = []
-         n_df_fan = df_fan.reset_index()
-         import math
-         for k,v in n_df_fan.iterrows():
-            R = v['presion']/(v['caudal']**2) # Simbolos ** indican elevado a
-            H = -(v['caudal']+R)
-
-            # H = R * Q^2  >>  v['caudal']x^2 + Rx + H = 0
-            a = v['caudal']
-            b = R
-            c = H
-            
-            d = (b**2)+(-4*a*c)
-            
-            x = (-b+math.sqrt(d))/(2*a)
-            y = (-b-math.sqrt(d))/(2*a)
-            
-            xy.append({'caudal':x,'presion':y})
-         # print(xy)
-         # print('\n')
-         # print(scatter_data_fan_list)
-         #eq = pd.DataFrame(dict(xy))
 
       elif chart_type == 'static_pressure':
       
@@ -124,28 +102,6 @@ def fandesign(request):
          df_graph = df_adjust.loc[:, ["q_rpm", "power_dens"]]
          scatter_data_fan_list = df_fan[['caudal','potencia']].to_dict(orient='records')
          
-         xy = []
-         n_df_fan = df_fan.reset_index()
-         # print(n_df_fan)
-         import math
-         for k,v in n_df_fan.iterrows():
-            R = v['presion']/(v['caudal']**2) # Simbolos ** indican elevado a
-            H = -(v['caudal']+R)
-
-            # H = R * Q^2  >>  v['caudal']x^2 + Rx + H = 0
-            a = v['caudal']
-            b = R
-            c = H
-            
-            d = (b**2)+(-4*a*c)
-            
-            x = (-b+math.sqrt(d))/(2*a)
-            y = (-b-math.sqrt(d))/(2*a)
-            
-            xy.append({'caudal':x,'presion':y})
-            #print('x{0} | y{1}\n'.format(x,y))
-         #eq = pd.DataFrame(dict(xy))
-         #print(eq)
       else:
          return render(request, 'fanDesign.html')
       
@@ -153,20 +109,24 @@ def fandesign(request):
       # Convierte los datos a una lista de diccionarios
       # print(scatter_data_fan_list)
       # Pasa los datos a la plantilla
+      XY_segunda = []
 
       distancia_constante = Q_medido // 5
       Q_curvaR=[0]
       for i in range(1, 6):
          Q_curvaR.append(i * distancia_constante)
-      Q_curvaR.append(Q_medido)
+      Q_curvaR.append(Q_medido)# Representa X
 
       R=P_medido/Q_medido**2
 
       P_curvaR = []
       for Qi in Q_curvaR:
-         P_curvaR.append(R * Qi**2)
+         P_curvaR.append(R * Qi**2)# Representa Y
 
-      context = {'scatter_data': scatter_data_fan_list, 'chart_type': chart_type, 'c':[Q_medido,P_medido], 'proyecto':proyect , 'peak_resistance':pr, 'peak_pressure':peak_pressure }
+      for i in range(0, 6):
+         XY_segunda.append({'caudal':Q_curvaR[i],'presion':P_curvaR[i]})
+
+      context = {'scatter_data': scatter_data_fan_list, 'scatter_data2':XY_segunda, 'chart_type': chart_type, 'c':[Q_medido,P_medido], 'proyecto':proyect , 'peak_resistance':pr, 'peak_pressure':peak_pressure }
       return render(request, 'fanDesign.html', context)
 
    # Si la solicitud no es un POST, simplemente renderiza la página sin datos

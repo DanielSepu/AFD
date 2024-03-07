@@ -2,21 +2,21 @@
       const margin = { top: 20, right: 30, bottom: 40, left: 40 };
       //const containerHeight = graphContainer.clientHeight;
 
-      function  createFanChart(data, chart_type, promedios) {
+      function  createFanChart(data, chart_type, promedios, data2) {
          // Get the dimensions of the container
          const containerWidth = graphContainer.clientWidth - margin.right;
          const containerHeight = graphContainer.clientHeight;
          //const containerHeight = 500;
          const keys = Object.keys(data[0]);
          // Declare the x (horizontal position) scale for "Q1".
-         const x = d3.scaleLinear()
-         .domain([0, d3.max(data, function(d) { return d[keys[0]]; })])
-         .range([margin.left*2, containerWidth - margin.right]);
+            const x = d3.scaleLinear()
+            .domain([0, d3.max(data, function(d) { return d[keys[0]]; })])
+            .range([margin.left*2, containerWidth - margin.right]);
 
          // Declare the y (vertical position) scale for "Pt1".
-         const y = d3.scaleLinear()
-         .domain([0, d3.max(data, function(d) { return d[keys[1]]; })])
-         .range([containerHeight - margin.bottom, margin.top]);
+            const y = d3.scaleLinear()
+            .domain([0, d3.max(data, function(d) { return d[keys[1]]; })])
+            .range([containerHeight - margin.bottom, margin.top]);
 
          // Create the SVG container.
          const svg = d3.create("svg")
@@ -49,13 +49,13 @@
             .text(keys[1]);
 
          // Add the scatter plot points.
-         svg.selectAll("circle")
-         .data(data)
-         .enter().append("circle")
-         .attr("cx", function(d) { return x(d[keys[0]]); })
-         .attr("cy", function(d) { return y(d[keys[1]]); })
-         .attr("r", 5); // Tamaño de los puntos
-
+            svg.selectAll("circle")
+            .data(data)
+            .enter().append("circle")
+            .attr("cx", function(d) { return x(d[keys[0]]); })
+            .attr("cy", function(d) { return y(d[keys[1]]); })
+            .attr("r", 5); // Tamaño de los puntos
+            
          // Agregar punto de promedio  
          // Valores de ejemplo 
          svg.append("circle")
@@ -65,17 +65,28 @@
          .attr("fill", "red");
       
 
-             // se ha agregado la linea   
-          svg.append("path")
-         .datum(data)
-         .attr("fill", "none")
-         .attr("stroke", "black")
-         .attr("stroke-width", 1.5)
-         .attr("d", d3.line()
-         .curve(d3.curveBasis) // Just add that to have a curve instead of segments
-         .x(function(d) { return x(d[keys[0]]); })
-         .y(function(d) { return y(d[keys[1]]); })
-      )
+         // se ha agregado la linea   
+            svg.append("path")
+               .datum(data)
+               .attr("fill", "none")
+               .attr("stroke", "black")
+               .attr("stroke-width", 1.5)
+               .attr("d", d3.line()
+               .curve(d3.curveBasis) // Just add that to have a curve instead of segments
+               .x(function(d) { return x(d[keys[0]]); })
+               .y(function(d) { return y(d[keys[1]]); })
+            )
+            
+            svg.append("path")
+               .datum(data2)
+               .attr("fill", "none")
+               .attr("stroke", "black")
+               .attr("stroke-width", 1.5)
+               .attr("d", d3.line()
+               .curve(d3.curveBasis) // Just add that to have a curve instead of segments
+               .x(function(d) { return x(d[keys[0]]); })
+               .y(function(d) { return y(d[keys[1]]); })
+            )
 
 
          // Append the SVG element.

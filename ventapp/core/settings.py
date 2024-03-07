@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     #
     "django_bootstrap5",
-    'channels',
     # Put your new apps here!
     "applications.getdata",
     "applications.fandesign",
@@ -57,16 +56,6 @@ INSTALLED_APPS = [
     "applications.dbs",
 ]
 
-# Configuración de Channels
-ASGI_APPLICATION = 'ventapp.asgi.application'  # Reemplaza 'ventapp' con el nombre de tu proyecto
-CHANNEL_LAYERS = {
-   'default': {
-      'BACKEND': 'channels_redis.core.RedisChannelLayer',
-      'CONFIG': {
-         "hosts": [('127.0.0.1', 6379)],
-      },
-   },
-}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

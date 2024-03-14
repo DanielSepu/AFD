@@ -56,6 +56,11 @@ def fandesign(request):
          df_graph = df_adjust.loc[:, ["q_rpm", "pt_dens"]]
          scatter_data_fan_list = df_fan[['caudal','presion']].to_dict(orient='records')
 
+         for k,v in enumerate(scatter_data_fan_list):
+            v['CAUDAL(m3/s)'] = v['caudal']
+            v['PRESION(Pa)'] = v['presion']
+            del v['caudal']
+            del v['presion']
 
       elif chart_type == 'static_pressure':
       
@@ -78,6 +83,12 @@ def fandesign(request):
 
          df_graph = df_adjust.loc[:, ["q_rpm", "pt_dens"]]
          scatter_data_fan_list = df_fan[['caudal','presion']].to_dict(orient='records')
+
+         for k,v in enumerate(scatter_data_fan_list):
+            v['CAUDAL(m3/s)'] = v['caudal']
+            v['PRESION(Pa)'] = v['presion']
+            del v['caudal']
+            del v['presion']
 
       elif chart_type == 'power':
          
@@ -102,6 +113,12 @@ def fandesign(request):
          df_graph = df_adjust.loc[:, ["q_rpm", "power_dens"]]
          scatter_data_fan_list = df_fan[['caudal','potencia']].to_dict(orient='records')
          
+         for k,v in enumerate(scatter_data_fan_list):
+            v['CAUDAL(m3/s)'] = v['caudal']
+            v['POTENCIA(kW)'] = v['potencia']
+            del v['caudal']
+            del v['potencia']
+
       else:
          return render(request, 'fanDesign.html')
       

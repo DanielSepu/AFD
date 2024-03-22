@@ -15,7 +15,7 @@
    <div class="container-fluid h-100">
       <div class="row h-100" style="height: calc(100% - 40px);">
          {# Columna Izquierda #}
-         <div class="col-9 border-end border-3 border-dark">
+         <div class="col-sm-12 col-md-9 ">
             {% include "widgets/currentStatus/current_data.html" %}
             {% include "widgets/currentStatus/vdf_frecuency.html" %}
          </div>
@@ -48,11 +48,11 @@
          </div> {% endcomment %}
          
          {# Columna Derecha #}
-         <div class="col-3">
+         <div class="col-sm-12 col-md-3 ">
             <div class="row justify-content-center align-items-center">
                <div class="col-12 col-md-10 col-xl-8">
                   {#  Model #}
-                  <div class="list-group border border-3 border-warning p-3 mb-2">
+                  <div class="list-group border border-lg-3 border-warning p-3 mb-2">
                      <div class="row">
                         <p class="text-center fs-4 fw-bold m-0 ">JetStream AXT0800</p>
                      </div>

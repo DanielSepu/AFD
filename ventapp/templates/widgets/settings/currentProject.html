@@ -1,4 +1,28 @@
 {% load django_bootstrap5 %}  
+   <style>
+      div.parent{
+      display: flex;
+      justify-content: space-between;
+      }
+      div.list{
+      margin-top: 100px;
+      height: 100px;
+      width: 200px;
+      overflow-y: auto;
+      border: 1px solid;
+      }
+
+      label{
+      display: block;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      }
+      input{
+      position: relative;
+      top: 2px;
+      }
+   </style>
    <div class="row">
       <div class="col">
          <a href="?type=current_project" class="btn btn-secondary">Proyecto Actual</a>
@@ -12,6 +36,18 @@
          <form method="POST">
             {% csrf_token %}
             {% bootstrap_form form %}
+            <label for="#l_ep">Equipamientos</label>
+            <div id="l_ep" class="parent">
+               <div class="list">
+               {% for eqp in equipamientos %}
+                  {% if eqp in up_eqp %}
+                  <label><input name="eq_{{ eqp.id }}" type="checkbox" checked>{{ eqp.modelo_diesel }} | {{ eqp.id }}</label>
+                  {% else %}
+                  <label><input name="eq_{{ eqp.id }}" type="checkbox">{{ eqp.modelo_diesel }} | {{ eqp.id }}</label>
+                  {% endif %}
+               {% endfor %}
+               </div>
+            </div>
             <input type="hidden" name="id" value="{{id}}">
             <button class="btn btn-primary">Guardar</button>
          </form>

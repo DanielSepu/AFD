@@ -18,14 +18,15 @@ def settings(request):
    if request.method == 'GET':
       if setting_type == 'new_project' or setting_type is None:
          form = ProyectoForm()
-         context = {'setting_type': setting_type, 'form': form}
+         context = {'setting_type': setting_type, 'form': form, 'equipamientos': EquipamientoDiesel.objects.all()}
       
          return render(request, 'settings.html', context)
       
       if setting_type == 'current_project':
          up = Proyecto.objects.all().order_by('-id').first()
+         up_eqp = up.equipamientos.all()
          form = ProyectoForm(instance=up)
-         context = {'setting_type': setting_type, 'form': form, 'id': up.id}
+         context = {'setting_type': setting_type, 'form': form, 'id': up.id, 'up_eqp': up_eqp, 'equipamientos': EquipamientoDiesel.objects.all()}
          return render(request, 'settings.html', context)
 
    
@@ -33,17 +34,28 @@ def settings(request):
       if setting_type == 'new_project':
          form = ProyectoForm(request.POST) 
          context = {'setting_type': setting_type, 'form': form}
+
          if form.is_valid():
             proyecto = form.save()
+            proy = Proyecto.objects.get(id=proyecto.id)
+            for k,v in enumerate(EquipamientoDiesel.objects.all()): #For para guardar foreing key desde checklist que fue creado a mano por style
+               if request.POST.get('eq_'+str(v.id)):
+                  proy.equipamientos.add(v)
+            proy.save()
          
          return redirect('settings')
-         #return render(request, 'settings.html', context)
 
       if setting_type == 'current_project':
          proy = Proyecto.objects.get(id=request.POST.get('id'))
          form = ProyectoForm(request.POST,instance=proy)
+
          if form.is_valid():
             form.save()
+            proy.equipamientos.clear()
+            for k,v in enumerate(EquipamientoDiesel.objects.all()): #Mismo For para foreing keys desde checklist con style no manejado por django
+               if request.POST.get('eq_'+str(v.id)):
+                  proy.equipamientos.add(v)
+            proy.save()
          
          return redirect(reverse('settings:settings') + '?type=current_project')
 

@@ -100,14 +100,14 @@ class ProyectoForm(forms.ModelForm):
    curva_diseno = CustomPFI(queryset=CurvaDiseno.objects.all(),widget=forms.Select(attrs={'disabled':'disabled'}),label='Curva Diseño')
    ducto = CustomPFI(queryset=Ducto.objects.all(),widget=forms.Select,label='Ducto')
    s_partida = CustomPSP(queryset=Sistema_Partida.objects.all(),widget=forms.Select,label='Sistema de partida')
-   equipamientos = CustomPMMCF(queryset=EquipamientoDiesel.objects.all(),label='Equipamientos')
+   #equipamientos = CustomPMMCF(queryset=EquipamientoDiesel.objects.all(),label='Equipamientos')
    caudal_requerido = forms.FloatField(label='Caudal requerido',widget=forms.NumberInput(attrs={'readonly':'readonly'}))
    area_galeria = forms.FloatField(label='Area galería',widget=forms.NumberInput(attrs={'readonly':'readonly'}))
    factor = forms.FloatField(label='Factor corrección (%)',widget=forms.NumberInput(attrs={'min':'0','max':'100','step':'1'}))
 
    class Meta:
       model = Proyecto
-      fields = ['ventilador','curva_diseno','ducto','equipamientos','caudal_requerido','codos','ancho_galeria','alto_galeria','area_galeria','factor','s_partida','potencia','dis_e_sens']
+      fields = ['ventilador','curva_diseno','ducto','caudal_requerido','codos','ancho_galeria','alto_galeria','area_galeria','factor','s_partida','potencia','dis_e_sens']
       labels = {
          'ancho_galeria': 'Ancho galería',
          'alto_galeria': 'Alto galería',
@@ -115,4 +115,4 @@ class ProyectoForm(forms.ModelForm):
          'dis_e_sens': 'Distancia entre sensores (m)'
       }
 
-   field_order = ['ventilador','curva_diseno','ducto','equipamientos','caudal_requerido','codos','ancho_galeria','alto_galeria','factor','area_galeria','potencia','dis_e_sens','s_partida']
+   field_order = ['ventilador','curva_diseno','ducto','caudal_requerido','codos','ancho_galeria','alto_galeria','factor','area_galeria','potencia','dis_e_sens','s_partida']

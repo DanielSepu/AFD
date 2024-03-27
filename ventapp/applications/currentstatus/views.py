@@ -108,3 +108,57 @@ def update_frequency(request):
             print(f"Error updating frequency: {e}")
 
    return JsonResponse('Frecuencia Ref Actualizada', safe=False)
+
+
+def Excel(request):
+    import datetime
+    from django.utils import timezone
+    import openpyxl
+    from django.http import HttpResponse
+
+    now = timezone.now() - datetime.timedelta(days=1) #Obtencion de Timezone menos 24horas
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="Datas.xlsx"'
+
+    workbook = openpyxl.Workbook()
+    worksheet = workbook.active
+    worksheet.title = 'VDF'
+
+    # Write header row
+    header = ['Frecuencia referencia', 'Frecuencia Real', 'VF', 'IF', 'power','powerc','rpm']
+    for col_num, column_title in enumerate(header, 1):
+        cell = worksheet.cell(row=1, column=col_num)
+        cell.value = column_title
+
+    # Write data rows
+    queryset = VdfData.objects.filter(ts__lte=now).values_list('fref', 'freal', 'vf','oc','power','powerc','rpm')
+    for row_num, row in enumerate(queryset, 1):
+        for col_num, cell_value in enumerate(row, 1):
+            cell = worksheet.cell(row=row_num+1, column=col_num)
+            cell.value = cell_value
+
+    ############
+            
+    workbook.create_sheet('Sensores')
+    workbook.active = workbook['Sensores']
+    worksheet = workbook.active
+    
+    # Write header row
+    header = ['pt2', 'ps2', 'densidad2','q2','pt1','ps1','densidad1','q1','lc','qf','k']
+    for col_num, column_title in enumerate(header, 1):
+        cell = worksheet.cell(row=1, column=col_num)
+        cell.value = column_title
+
+    # Write data rows
+    queryset = SensorsData.objects.filter(ts__lte=now).values_list('pt2', 'ps2', 'densidad2','q2','pt1','ps1','densidad1','q1','lc','qf','k')
+    for row_num, row in enumerate(queryset, 1):
+        for col_num, cell_value in enumerate(row, 1):
+            cell = worksheet.cell(row=row_num+1, column=col_num)
+            cell.value = cell_value
+
+    
+
+    workbook.save(response)
+
+    return response

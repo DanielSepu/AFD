@@ -119,7 +119,7 @@ def Excel(request):
     now = timezone.now() - datetime.timedelta(days=1) #Obtencion de Timezone menos 24horas
 
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename="Datas.xlsx"'
+    response['Content-Disposition'] = 'attachment; filename="Datos.xlsx"'
 
     workbook = openpyxl.Workbook()
     worksheet = workbook.active

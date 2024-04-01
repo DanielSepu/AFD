@@ -132,7 +132,7 @@ def Excel(request):
         cell.value = column_title
 
     # Write data rows
-    queryset = VdfData.objects.filter(ts__lte=now).values_list('fref', 'freal', 'vf','oc','power','powerc','rpm')
+    queryset = VdfData.objects.filter(ts__gte=now).values_list('fref', 'freal', 'vf','oc','power','powerc','rpm')
     for row_num, row in enumerate(queryset, 1):
         for col_num, cell_value in enumerate(row, 1):
             cell = worksheet.cell(row=row_num+1, column=col_num)
@@ -151,7 +151,7 @@ def Excel(request):
         cell.value = column_title
 
     # Write data rows
-    queryset = SensorsData.objects.filter(ts__lte=now).values_list('pt2', 'ps2', 'densidad2','q2','pt1','ps1','densidad1','q1','lc','qf','k')
+    queryset = SensorsData.objects.filter(ts__gte=now).values_list('pt2', 'ps2', 'densidad2','q2','pt1','ps1','densidad1','q1','lc','qf','k')
     for row_num, row in enumerate(queryset, 1):
         for col_num, cell_value in enumerate(row, 1):
             cell = worksheet.cell(row=row_num+1, column=col_num)

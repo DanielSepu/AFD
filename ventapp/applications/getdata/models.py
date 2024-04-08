@@ -36,6 +36,9 @@ class SensorsData(models.Model):  # Asegúrate de heredar de models.Model
    lc = models.FloatField()
    qf = models.FloatField()
    k = models.FloatField()
+   tbs = models.FloatField()
+   hr = models.FloatField()
+   tgbh = models.FloatField()
    
    class Meta:
       db_table = "sensors_data"

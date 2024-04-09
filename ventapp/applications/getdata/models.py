@@ -38,6 +38,7 @@ class SensorsData(models.Model):  # Asegúrate de heredar de models.Model
    k = models.FloatField()
    tbs = models.FloatField()
    hr = models.FloatField()
+   tbh = models.FloatField()
    tgbh = models.FloatField()
    
    class Meta:

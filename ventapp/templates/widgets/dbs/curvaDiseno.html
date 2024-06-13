@@ -24,20 +24,17 @@
                         <label for="cau">Caudal (m3/s)</label>
                         
                      </div>
-
-                     <div class="col-4 m-1 ps-2" >
-                        <label for="cau" >Power (kW)</label>
-                     </div>
-
                      <div class="col-sm-4 ps-2" >
                         <label for="cau">Presion Total (pa)</label>
                      </div>
                      
-               
+                     <div class="col-4 m-1 ps-2" >
+                        <label for="cau" >Power (kW)</label>
+                     </div>
 
                </div>
 
-               <button id="btn_mas" type="button" class="btn btn-secondary m-1" onclick="asd()">+</button>
+               <button id="btn_mas" type="button" class="btn btn-secondary m-1" onclick="NFila()">+</button>
                <br>
               <div class="col-12 position-relative">
                <button class="position-absolute top-0 end-0 btn btn-primary mt-1 ">Guardar</button>
@@ -82,7 +79,7 @@
       veces.value = (itr+1).toString();
    /*}*/
 
-   function asd(){
+   function NFila(){
       itr = itr+1
       veces.value = (itr+1).toString();
       const div = document.createElement('div');

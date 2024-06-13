@@ -48,7 +48,7 @@ class CurvaDisenoForm(forms.ModelForm):
 
 class DuctoForm(forms.ModelForm):
 
-   f_friccion = forms.FloatField(label='Factor de fricción (opcional)',required=False)
+   f_friccion = forms.FloatField(label='Factor de fricción(K) (opcional)',required=False)
    f_fuga = forms.CharField(label='Factor de fuga (opcional)',required=False)
 
    class Meta:
@@ -58,7 +58,7 @@ class DuctoForm(forms.ModelForm):
          'idu': 'ID',
          't_ducto':   'Tipo de ducto',
          't_acople':  'Tipo de acople',
-         'largo':     'Largo ducto',
+         'largo':     'Largo ducto(m)',
       }
       
 class EquipDieselForm(forms.ModelForm):

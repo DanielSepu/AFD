@@ -48,8 +48,8 @@ class CurvaDisenoForm(forms.ModelForm):
 
 class DuctoForm(forms.ModelForm):
 
-   f_friccion = forms.FloatField(label='Factor de fricción(K) (opcional)',required=False)
-   f_fuga = forms.CharField(label='Factor de fuga (opcional)',required=False)
+   f_friccion = forms.FloatField(label='Factor de fricción(K) (opcional)',required=False,initial=0)
+   f_fuga = forms.FloatField(label='Factor de fuga(L) (opcional)',required=False,initial=0)
 
    class Meta:
       model = Ducto

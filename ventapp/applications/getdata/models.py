@@ -99,7 +99,7 @@ class Ducto(models.Model):
    idu = models.CharField(default='')
    t_ducto = models.CharField()
    f_friccion = models.FloatField()
-   f_fuga = models.CharField()
+   f_fuga = models.FloatField()
    t_acople = models.CharField()
    largo = models.FloatField()
    class Meta:

@@ -1,5 +1,5 @@
 > [!NOTE]
->features
+> features
 > 1. se corrigio error en la seccion de agregar a base de datos. seccion ventilador, se pueden agregar nuevos accesorios
 > 2. correccion de gestion cuando no hay proyectos activos
 > 3. se agrego el campo id que no permite actualizar el proyecto actual

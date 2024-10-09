@@ -1,0 +1,64 @@
+{% load django_bootstrap5 %}  
+   <style>
+      div.parent{
+      display: flex;
+      justify-content: space-between;
+      }
+      div.list{
+      margin-top: 100px;
+      height: 100px;
+      width: 200px;
+      overflow-y: auto;
+      border: 1px solid;
+      }
+
+      label{
+      display: block;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      }
+      input{
+      position: relative;
+      top: 2px;
+      }
+   </style>
+   <div class="row">
+      <div class="col">
+         <a href="?type=current_project" class="btn btn-secondary mt-2 ">Proyecto Actual</a>
+         <a href="?type=new_project" class="btn btn-outline-secondary mt-2  ms-1">Nuevo Proyecto</a>
+         <a href="{% url 'dbs:dbs' %}" class="btn btn-outline-secondary mt-2  ms-1">Añadir a Base de Datos</a>
+      </div>
+   </div>
+
+   <div class="row h-100">
+      <div class="col m-4">
+         {% if exist %}
+         <form method="POST">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            <label for="#l_ep">Equipamientos</label>
+            <div id="l_ep" class="parent">
+               <div class="list">
+               {% for eqp in equipamientos %}
+                  {% if eqp in up_eqp %}
+                  <label><input name="eq_{{ eqp.id }}" type="checkbox" checked>{{ eqp.modelo_diesel }} | {{ eqp.id }}</label>
+                  {% else %}
+                  <label><input name="eq_{{ eqp.id }}" type="checkbox">{{ eqp.modelo_diesel }} | {{ eqp.id }}</label>
+                  {% endif %}
+               {% endfor %}
+               </div>
+            </div>
+            <input type="hidden" name="id" value="{{id}}">
+            <button class="btn btn-primary">Guardar</button>
+         </form>
+            {% else %}
+            <div class="alert alert-danger">Aun no haz creado un proyecto. Ve a la seccion nuevo proyecto y crea uno para poder editarlo en esta seccion</div>
+         {% endif %}
+         
+      </div>
+   </div>
+
+   <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script> 
+  
+   <script type="text/javascript" src="../../../static\js\settings\currentProject.js"></script> 

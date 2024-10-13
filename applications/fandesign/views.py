@@ -24,13 +24,19 @@ def fandesign(request):
       proyect =  Proyecto.objects.all().order_by('id').last()
 
       df_fan = get_fan_data(proyect, 'pt')
+      print(f"df_fan: {df_fan}")
       ind  = df_fan['presion'].idxmax()
+      print(f" ind: {ind}")
       r_max  = df_fan.loc[ind]['presion']/df_fan.loc[ind]['caudal']
+      print(df_fan.loc[ind]['presion']/df_fan.loc[ind]['caudal'])
       ultima_medicion =  SensorsData.objects.all().order_by('id').last()  
+      print(f"ultima medicion: {ultima_medicion}")
       r_actual = ultima_medicion.ps1/ ultima_medicion.q1**2
+      print(f"ultima medicion: {ultima_medicion.ps1/ ultima_medicion.q1**2} ")
       pr = int(r_max/r_actual *100)
+      print(f"pr: {pr} ")
       peak_pressure =  int(ultima_medicion.ps1/df_fan.loc[ind]['presion'] *100 )
-
+      print(f"peak_pressure: {peak_pressure} ")
       scatter_data_fan_list = []
 
       if chart_type == 'total_pressure':
@@ -144,6 +150,7 @@ def fandesign(request):
          XY_segunda.append({'caudal':Q_curvaR[i],'presion':P_curvaR[i]})
 
       context = {'scatter_data': scatter_data_fan_list, 'scatter_data2':XY_segunda, 'chart_type': chart_type, 'c':[Q_medido,P_medido], 'proyecto':proyect , 'peak_resistance':pr, 'peak_pressure':peak_pressure }
+      print(f"context: {context}")
       return render(request, 'fanDesign.html', context)
 
    # Si la solicitud no es un POST, simplemente renderiza la página sin datos

@@ -1,48 +1,23 @@
-{% load django_bootstrap5 %}   
-   <style>
-      div.parent{
-      display: flex;
-      justify-content: space-between;
-      }
-      div.list{
-      margin-top: 100px;
-      height: 100px;
-      width: 200px;
-      overflow-y: auto;
-      border: 1px solid;
-      }
+{% extends "settings.html" %}
+{% block body_content %}
+   
 
-      label{
-      display: block;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      }
-      input{
-      position: relative;
-      top: 2px;
-      }
-   </style>
-   <div class="row">
-      <div class="col">
-         <a href="?type=current_project" class="btn btn-outline-secondary mt-2 ">Proyecto Actual</a>
-         <a href="?type=new_project" class="btn btn-secondary mt-2 ms-1">Nuevo Proyecto</a>
-         <a href="{% url 'dbs:dbs' %}" class="btn btn-outline-secondary mt-2">Añadir a Base de Datos</a>
-      </div>
-   </div>
-
-   <div class="row h-100">
-      <div class="col m-4">
-         <form method="POST" id="id_cd_p">
+   <!-- Centrar el form en la pantalla -->
+   <div class="row h-100 justify-content-center align-items-center">
+      <div class="col-6 col-md-4">
+         <form method="POST" class="card p-4" id="id_cd_p">
             {% csrf_token %}
-            {% bootstrap_form form %}
-            
-            <label for="#l_ep">Equipamientos</label>
-            <div id="l_ep" class="parent">
-               <div class="list">
-               {% for eqp in equipamientos %}
-                  <label><input name="eq_{{ eqp.id }}" type="checkbox">{{ eqp.modelo_diesel }} | {{ eqp.id }}</label>
-               {% endfor %}
+            {{ form }}
+            <hr>
+            <label for="#l_ep" class="form-label">Equipamientos</label>
+            <div id="l_ep" class="parent mb-3">
+               <div class="list list-group" style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc; border-radius: 0.25rem;">
+                  {% for eqp in equipamientos %}
+                     <label class="list-group-item">
+                        <input name="eq_{{ eqp.id }}" type="checkbox" class="form-check-input me-2">
+                        {{ eqp.modelo_diesel }} | {{ eqp.id }}
+                     </label>
+                  {% endfor %}
                </div>
             </div>
             <button class="btn btn-primary">Guardar</button>
@@ -51,5 +26,6 @@
    </div>
 
    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script> 
-   
-   <script type="text/javascript" src="../../../static\js\settings\newProject.js"></script> 
+
+   <script type="text/javascript" src="../../../static/js/settings/newProject.js"></script> 
+{% endblock body_content %}

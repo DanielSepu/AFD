@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "applications.settings",
     "applications.newproject",
     "applications.dbs",
+    "applications.home",
 ]
 
 

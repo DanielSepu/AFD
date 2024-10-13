@@ -19,8 +19,7 @@ def settings(request):
       if setting_type == 'new_project' or setting_type is None:
          form = ProyectoForm()
          context = {'setting_type': setting_type, 'form': form, 'equipamientos': EquipamientoDiesel.objects.all()}
-      
-         return render(request, 'settings.html', context)
+         return render(request, 'widgets/settings/newProject.html', context)
       
       if setting_type == 'current_project':
          up = Proyecto.objects.all().order_by('-id').first()
@@ -28,7 +27,7 @@ def settings(request):
          if up is not None:
             up_eqp = up.equipamientos.all()
             form = ProyectoForm(instance=up)
-            context = {'setting_type': setting_type, 'form': form, 'id': up.id, 'up_eqp': up_eqp, 'equipamientos': EquipamientoDiesel.objects.all()}
+            context = {'exist': True, 'setting_type': setting_type, 'form': form, 'id': up.id, 'up_eqp': up_eqp, 'equipamientos': EquipamientoDiesel.objects.all()}
          else:
             # Manejo de cuando no hay proyectos
             up_eqp = None
@@ -36,7 +35,7 @@ def settings(request):
 
             context = {'exist':False,'setting_type': setting_type, 'form': form, 'up_eqp': up_eqp, 'equipamientos': EquipamientoDiesel.objects.all(), 'message': 'No hay proyectos disponibles.'}
          
-         return render(request, 'settings.html', context)
+         return render(request, 'widgets/settings/currentProject.html', context)
 
    
    if request.method == 'POST':

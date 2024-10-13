@@ -30,7 +30,7 @@ urlpatterns = [
     # NOTE: change the URL for Admin, for added security.
     # See #2 here: https://opensource.com/article/18/1/10-tips-making-django-admin-more-secure
     path("admin/", admin.site.urls),
-    path("", TemplateView.as_view(template_name="homepage.html"), name="homepage"),
+    path("", include('applications.home.urls')),
 
     path("sysInput", TemplateView.as_view(template_name="system.html"), name="system"),
 

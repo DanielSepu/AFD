@@ -6,6 +6,7 @@ from django.http import HttpResponse
 import requests as rq
 
 from django.conf import settings
+from django.contrib import messages
 
 from applications.getdata.models import *
 from .forms import *
@@ -21,18 +22,22 @@ def dbs(request):
       if db_type == 'ventilador' or db_type is None:
          form = VentiladorForm() 
          context = {'db_type': db_type, 'form': form}
+         return render(request, 'widgets/dbs/ventilador.html', context)
       
       if db_type == 'curva_diseno':
          form = CurvaDisenoForm() 
          context = {'db_type': db_type, 'form': form}
+         return render(request, 'widgets/dbs/curvaDiseno.html', context)
       
       if db_type == 'ducto':
          form = DuctoForm() 
          context = {'db_type': db_type, 'form': form}
+         return render(request, 'widgets/dbs/ducto.html', context)
       
       if db_type == 'equip_diesel':
          form = EquipDieselForm() 
          context = {'db_type': db_type, 'form': form}
+         return render(request, 'widgets/dbs/equipDiesel.html', context)
       
       return render(request, 'dbs.html', context)
 
@@ -54,6 +59,7 @@ def dbs(request):
          if form.is_valid():
             ventilador = form.save()
             #return redirect('ventilador_detail', pk=ventilador.pk)
+            messages.success(request,"Se ha guardado el nuevo ventilador")
          else:
             print(f"guardar el ventilador no es valido")
             print(form.errors)
@@ -86,18 +92,27 @@ def dbs(request):
             curva = form.save(commit=False)
             curva.datos_curva = json_data
             curva.save()
+         else:
+            print(f"guardar la curva de diseño no es valido")
+            print(form.errors)
       
       if db_type == 'ducto':
          form = DuctoForm(request.POST) 
          context = {'db_type': db_type, 'form': form}
          if form.is_valid():
             ducto = form.save()
+         else:
+            print(f"guardar el ducto no es valido")
+            print(form.errors)
       
       if db_type == 'equip_diesel':
          form = EquipDieselForm(request.POST) 
          context = {'db_type': db_type, 'form': form}
          if form.is_valid():
             equipod = form.save()
+         else:
+            print(f"guardar el equipo diesel no es valido")
+            print(form.errors)
          
       return redirect('/dbs/?type=ventilador')
 

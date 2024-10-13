@@ -1,105 +1,76 @@
-{% load django_bootstrap5 %}
-   <div class="row">
-      <div class="col">
-         <a href="?type=ventilador" class="btn btn-outline-secondary mt-2">+ Ventilador</a>
-         <a href="?type=curva_diseno" class="btn btn-secondary mt-2 ms-1">+ Curva Diseño</a>
-         <a href="?type=ducto" class="btn btn-outline-secondary mt-2 ms-1">+ Ducto</a>
-         <a href="?type=equip_diesel" class="btn btn-outline-secondary mt-2 ms-1">+ Equipamiento Diesel</a>
-      </div>
-   </div>
+{% extends "dbs.html" %}
+{% block body_content %}
+<div class="row h-100 justify-content-center align-items-center">
+   <div class="col-6">
+      <div class="card p-4">
+         <h2 class="text-center">Nueva Curva Diseño</h2>
+         <form method="POST" id="id_cd_p">
+            {% csrf_token %}
+            {{ form }}
 
-   <div class="row h-100">
-      <div class="col m-4">
-         <div class="h-100" >
-            <h2>Nueva Curva Diseño</h2>
-            <form method="POST" id="id_cd_p">
-               {% csrf_token %}
-               {% bootstrap_form form %}
-
-               <div class="row-sm-10 d-flex justify-content-between">
-
-               
-                     <div class="col-4 m-1 ps-2" >
-
-                        <label for="cau">Caudal (m3/s)</label>
-                        
-                     </div>
-                     <div class="col-sm-4 ps-2" >
-                        <label for="cau">Presion Total (pa)</label>
-                     </div>
-                     
-                     <div class="col-4 m-1 ps-2" >
-                        <label for="cau" >Power (kW)</label>
-                     </div>
-
+            <div class="row mb-3 d-flex justify-content-between">
+               <div class="col-4 m-1 ps-2">
+                  <label for="cau">Caudal (m³/s)</label>
                </div>
+               <div class="col-4 m-1 ps-2">
+                  <label for="cau">Presión Total (Pa)</label>
+               </div>
+               <div class="col-4 m-1 ps-2">
+                  <label for="cau">Power (kW)</label>
+               </div>
+            </div>
 
-               <button id="btn_mas" type="button" class="btn btn-secondary m-1" onclick="NFila()">+</button>
-               <br>
-              <div class="col-12 position-relative">
-               <button class="position-absolute top-0 end-0 btn btn-primary mt-1 ">Guardar</button>
+            <button id="btn_mas" type="button" class="btn btn-secondary m-1" onclick="NFila()">+</button>
+            <br>
+            <hr>
+            <div class="d-flex justify-content-end">
+               <button class="btn btn-primary mt-1">Guardar</button>
                <input type="hidden" value="0" id="id_v" name="veces">
             </div>
-            </form>
-         </div>
+         </form>
       </div>
    </div>
-
+</div>
 
 <script>
-   var itr = 0;
-   const form = document.getElementById('id_cd_p');
-   const btn = document.getElementById('btn_mas');
-   const veces = document.getElementById('id_v');
+var itr = 0;
+const form = document.getElementById('id_cd_p');
+const btn = document.getElementById('btn_mas');
+const veces = document.getElementById('id_v');
 
-   /*for (itr; itr < 3; itr++) {*/
-      const div = document.createElement('div');
-      div.className = "d-flex justify-content-between";
-      div.innerHTML = `
+const div = document.createElement('div');
+div.className = "d-flex justify-content-between";
+div.innerHTML = `
+   <div class="col-4 m-1">
+      <input class="form-control" type="number" step="any" name="caudal_${itr}">
+   </div>
+   <div class="col-4 m-1">
+      <input class="form-control" type="number" step="any" name="presion_${itr}">
+   </div>
+   <div class="col-4 m-1">
+      <input class="form-control" type="number" step="any" name="power_${itr}">
+   </div>
+`;
+form.insertBefore(div, btn);
+veces.value = (itr + 1).toString();
 
-               <div class="col-4 m-1">
-
-                  <input class="form-control" type="number" step="any" class="span5"`+'name="caudal_'+itr+`">
-
-               </div>
-
-               <div class="col-4 m-1">
-                  <input class="form-control" type="number" step="any" class="span5"`+'name="presion_'+itr+`">
-               </div>
-
-               <div class="col-4 m-1">
-                  <input class="form-control" type="number" step="any" class="span5"`+'name="power_'+itr+`">
-              </div>
-         
-
-
-
-      `;
-      form.insertBefore(div,btn);
-      veces.value = (itr+1).toString();
-   /*}*/
-
-   function NFila(){
-      itr = itr+1
-      veces.value = (itr+1).toString();
-      const div = document.createElement('div');
-      div.className = "d-flex justify-content-between";
-      div.innerHTML = `
+function NFila() {
+   itr++;
+   veces.value = (itr + 1).toString();
+   const div = document.createElement('div');
+   div.className = "d-flex justify-content-between";
+   div.innerHTML = `
       <div class="col-4 m-1">
-
-            <input class="form-control" type="number" step="any" class="span5"`+'name="caudal_'+itr+`">
-
+         <input class="form-control" type="number" step="any" name="caudal_${itr}">
       </div>
-
       <div class="col-4 m-1">
-         <input class="form-control" type="number" step="any" class="span5"`+'name="presion_'+itr+`">
+         <input class="form-control" type="number" step="any" name="presion_${itr}">
       </div>
-
       <div class="col-4 m-1">
-         <input class="form-control" type="number" step="any" class="span5"`+'name="power_'+itr+`">
+         <input class="form-control" type="number" step="any" name="power_${itr}">
       </div>
-      `;
-      form.insertBefore(div,btn);
-   }
-   
+   `;
+   form.insertBefore(div, btn);
+}
 </script>
+{% endblock body_content %}

@@ -7,63 +7,16 @@
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="btn {% if request.resolver_match.url_name == 'fandesign' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-1" href="{% url 'fandesign:fandesign' %}?chart_type=total_pressure" role="button">Fan design curve</a>
 
-        {% comment %} 
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'admin:index' %}">
-            <i class="fas fa-user-cog"></i>
-            Admin
-          </a>
-        </li> 
-        {% endcomment %}
+          <a class="btn {% if request.resolver_match.url_name == 'currentstatus' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-1" href="{% url 'currentstatus:currentstatus' %}" role="button">Current Status</a>
 
-        <li class="nav-item">
-            {% comment %} <a class="btn btn-outline-secondary" href="{% url 'getdata:getdata' %}" role="button">System Input</a> {% endcomment %}
-            <a class="btn btn-outline-secondary mt-1" href="{% url 'fandesign:fandesign' %}?chart_type=total_pressure" role="button">Fan design curve</a>
-            {% comment %} <a class="btn btn-outline-secondary mt-1" href="{% url 'fanreal:fanreal' %}?section=current_Operation">Fan real curve</a> {% endcomment %}
-            <a class="btn btn-outline-secondary mt-1" href="{% url 'currentstatus:currentstatus' %}" role="button">Current Status</a>
-            <a class="btn btn-outline-secondary mt-1" href="{% url 'settings:settings' %}?type=current_project" role="button">Settings</a>
-            {% comment %} <a class="btn btn-outline-secondary mt-1" href="{% url 'newproject:newproject' %}" role="button">New Project</a> {% endcomment %}
-
+          <a class="btn {% if request.resolver_match.url_name == 'settings' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-1" href="{% url 'settings:settings' %}?type=current_project" role="button">Settings</a>
         </li>
-        {% comment %}
-        {# Basic topbar nav elements, as copied from Bootstrap documentation #}
-        {# (left here to use as reference) #}
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
-        </li>
-        <li class="nav-item dropdown {# or `dropup` #}">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Dropdown
-          </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="#">Action</a>
-            <a class="dropdown-item" href="#">Another action</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">Something else here</a>
-          </div>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-        </li>
-        {% endcomment %}
       </ul>
-      {% comment %}
-      {# topbar search form as copied from Bootstrap documentation. Left here for reference. #}
-      <form class="form-inline my-2 my-lg-0">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-primary my-2 my-sm-0" type="submit">
-          <i class="fas fa-search"></i>
-        </button>
-      </form>
-      {% endcomment %}
     </div>
   </div>
 </nav>
-

@@ -15,8 +15,6 @@ def  get_fan_data(proyect, chart_type):
    print(proyect)
    if proyect != None:
       df_fan = pd.DataFrame(dict(proyect.curva_diseno.datos_curva))
-   else:
-      df_fan = pd.DataFrame()
    #df_fan["rpm"] = df_fan["rpm"].mean()
 
    return df_fan 

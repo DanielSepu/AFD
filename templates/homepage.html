@@ -1,21 +1,92 @@
 {% extends "base.html" %}
 
 {% block head_title %}Home{% endblock %}
-
+{% block body_container_classes %}mx-0 w-100 mw-100{% endblock %}
 {% block body_content %}
-  {% comment %}
-    Ready to get started? Remove this comment and the `include` below, then add your own content.
+<div class="row">
+  <h1 class="display-4 text-primary mb-4">
+    <i class="fas fa-fan"></i> Bienvenido a la plataforma AFD!
+  </h1>
+</div>
 
-    Feel free to keep the `welcome_wagon.html` template as a reference, though!
+<div class="row">
+  <div class="col-6">
+   {% include "widgets/home/projectDescription.html" %}
+  </div>
 
-    NOTE navbar and footer content are handled by their own widgets
-    and `include`d in `base.html`.
-  {% endcomment %}
+  <div class="col-6 text-center">
+    <img src="{{ Project.ventilador.img_ventilador.url }}" alt="Imagen del ventilador" class="img-fluid rounded" style="max-width: 100%;">
+  </div>
+</div>
 
-  {% include "widgets/welcome_wagon.html" %}
+{% if Projects %}
+<div class="row mt-4">
+  <div class="col">
+    <h3>Otros proyectos</h3>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Ventilador</th>
+            <th>Curva diseño</th>
+            <th>Ducto</th>
+            <th>Equipamientos</th>
+            <th>Codos</th>
+            <th>Caudal</th>
+            <th>Sistema de partida</th>
+            <th>Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for project in Projects %}
+          <tr>
+            <td>{{ project.ventilador }}</td>
+            <td><a href="">Curva diseño</a></td>
+            <td>{{ project.ducto }}</td>
+            <td>
+              <ul>
+                {% for equip in project.equipamientos.all %}
+                <li><a href="">{{ equip }}</a></li>
+                {% endfor %}
+              </ul>
+            </td>
+            <td>{{ project.codo }}</td>
+            <td>{{ project.caudal }}</td>
+            <td>{{ project.sistema_partida }}</td>
+            <td>
+              <a href="">
+                <i class="fas fa-edit"></i>
+              </a>
+              <a href="">
+                <i class="fas fa-trash-alt"></i>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endif %}
 
-{% endblock %}
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const fieldsets = document.querySelectorAll(".toggle-fieldset");
+    
+    fieldsets.forEach(function(fieldset) {
+      const legend = fieldset.querySelector("legend");
+      const content = fieldset.querySelector("table, p");
 
-{% block body_js %}
-  {# Add your JavaScript content here, where it will be included at the end of the <body> tag. #}
+      // Initially hide the fieldset content
+      content.style.display = "none";
+
+      // Toggle visibility when the legend is clicked
+      legend.addEventListener("click", function() {
+        content.style.display = content.style.display === "none" ? "block" : "none";
+      });
+    });
+  });
+</script>
+
 {% endblock %}

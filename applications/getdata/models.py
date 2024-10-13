@@ -61,10 +61,14 @@ class SetParams(models.Model):  # Asegúrate de heredar de models.Model
 class Caracteristicas_Ventilador(models.Model):
    id = models.AutoField(primary_key=True)
    nombre = models.CharField()
+   perdida_choque = models.IntegerField()
 
 class Tipo_Equipamiento_Diesel(models.Model):
    id = models.AutoField(primary_key=True)
    nombre = models.CharField()
+
+   def __str__(self) -> str:
+      return self.nombre
 
 class Sistema_Partida(models.Model):
    id = models.AutoField(primary_key=True)
@@ -80,9 +84,13 @@ class Ventilador(models.Model):
    rmm = models.FloatField()
    hp = models.FloatField()
    polos = models.IntegerField()
+   img_ventilador = models.ImageField(upload_to='ventilador/', default='ventilador/vent-def.jpg')
    accesorios = models.ManyToManyField(Caracteristicas_Ventilador)
    class Meta:
       db_table = "ventilador"
+
+   def __str__(self) -> str:
+      return f"{self.modelo}"
 
 class CurvaDiseno(models.Model):
    id = models.AutoField(primary_key=True)
@@ -106,6 +114,10 @@ class Ducto(models.Model):
    class Meta:
       db_table = "ducto"
 
+   def __str__(self) -> str:
+      return f"{self.t_ducto} - {self.f_friccion} - {self.f_fuga}"
+
+
 class EquipamientoDiesel(models.Model):
    id = models.AutoField(primary_key=True)
    idu = models.CharField(default='')
@@ -116,6 +128,9 @@ class EquipamientoDiesel(models.Model):
    qr_calculado = models.FloatField()
    class Meta:
       db_table = "equipamiento_diesel"
+
+   def __str__(self) -> str:
+      return f"{self.tipo} - {self.modelo_diesel} - {self.potencia}"
 
 ##################################################
 class Proyecto(models.Model):
@@ -129,6 +144,7 @@ class Proyecto(models.Model):
    alto_galeria = models.FloatField()
    area_galeria = models.FloatField()
    factor = models.FloatField()
+   
 
    potencia = models.FloatField()
    dis_e_sens = models.FloatField()

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block body_content %}
+  <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card p-4" style="width: 100%; max-width: 600px;">
+        <h4>Editar {{db_type}}</h4>
+        <form action="" method="post">
+            {% csrf_token %}
+            {{ form }}
+            <div class="text-end mt-3">
+                <a class="btn btn-secondary" href="/">Cancelar</a>
+              <input type="submit" class="btn btn-outline-success" value="Guardar cambios">
+            </div>
+        </form>
+    </div>
+  </div>
+{% endblock body_content %}

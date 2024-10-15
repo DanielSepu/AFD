@@ -7,6 +7,7 @@ import requests as rq
 
 from django.conf import settings
 from django.contrib import messages
+from django.views.generic import UpdateView, CreateView
 
 from applications.getdata.models import *
 from .forms import *
@@ -116,44 +117,67 @@ def dbs(request):
          
       return redirect('/dbs/?type=ventilador')
 
-
-# def newvent(request):
-#    if request.method == 'POST':
-#       form = VentiladorForm(request.POST) # Bound form
-#       if form.is_valid():
-#             modelo = form.cleaned_data['modelo']
-#             vmm = form.cleaned_data['vmm'] 
-#             amm = form.cleaned_data['amm'] 
-#             rmm = form.cleaned_data['rmm'] 
-#             polos = form.cleaned_data['polos'] 
-#             accesorios = form.cleaned_data['accesorios'] 
-#             ventilador = Ventilador.objects.create(
-#                modelo=modelo,
-#                vmm=vmm,
-#                amm=amm,
-#                rmm=rmm,
-#                polos=polos,
-#                accesorios=accesorios
-#             )
-#       print("POST")
-#       print(ventilador)
-#       request.session['proyecto'] = Proyecto()
-
-#    else:
-#       form = VentiladorForm()
-
-#    context = {'form': form}
-#    return render(request, 'ventilador_form.html', context)
+class CaracteristicasVentiladorView(CreateView):
+   model = Caracteristicas_Ventilador 
+   form_class = Caracteristicas_VentiladorForm
+   template_name = 'widgets/dbs/createCaracteristicaVentilador.html'
+   success_url = '/'
 
 
-# def save_project(request):
-#    if request.method == 'POST':
-#       proyecto = request.session.get('proyecto') 
-#       # Relacionar modelos        
-#       proyecto.ventilador = Ventilador.objects.last()
-#       proyecto.galeria = DimensionGaleria.objects.last()
-#       # etc
-#       proyecto.save()
-#       # Redirigir a detail
-#       print(proyecto)
-#       return redirect('proyecto_detail', proyecto.id)
+class CurvaDisenoEditView(UpdateView):
+   model = CurvaDiseno
+   form_class = CurvaDisenoForm 
+   template_name = 'widgets/dbs/edit.html' 
+   success_url = '/'
+
+   def get_context_data(self, **kwargs):
+      context = super().get_context_data(**kwargs)
+      context['db_type'] = 'Curva de diseño'
+      return context
+
+
+class DuctoEditView(UpdateView):
+   model = Ducto
+   form_class = DuctoForm 
+   template_name = 'widgets/dbs/edit.html' 
+   success_url = '/'
+
+   def get_context_data(self, **kwargs):
+      context = super().get_context_data(**kwargs)
+      context['db_type'] = 'Ducto'
+      return context
+   
+class SistemaPartidaEditView(UpdateView):
+   model = Sistema_Partida
+   form_class = SistemaPartidaForm 
+   template_name = 'widgets/dbs/edit.html' 
+   success_url = '/'
+
+   def get_context_data(self, **kwargs):
+      context = super().get_context_data(**kwargs)
+      context['db_type'] = 'Sistema de partida'
+      return context
+   
+class VentiladorEditView(UpdateView):
+   model = Ventilador
+   form_class = VentiladorForm 
+   template_name = 'widgets/dbs/edit.html' 
+   success_url = '/'
+
+   def get_context_data(self, **kwargs):
+      context = super().get_context_data(**kwargs)
+      context['db_type'] = 'Ventilador'
+      return context
+   
+class EquipamientoEditView(UpdateView):
+   model = EquipamientoDiesel
+   form_class = EquipDieselForm 
+   template_name = 'widgets/dbs/edit.html' 
+   success_url = '/'
+
+   def get_context_data(self, **kwargs):
+      context = super().get_context_data(**kwargs)
+      context['db_type'] = 'Equipamiento diesel'
+      return context
+   
+

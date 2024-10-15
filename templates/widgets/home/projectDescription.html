@@ -11,134 +11,155 @@
     <div class="card-body">
       {% if Project %}
       <div class="row">
-        <div class="col ">
+        <div class="col">
           <div class="row">
             <div class="col-md-6">
               <h5>Codos</h5>
               <p>{{Project.codos}}</p>
               <h5>Ancho de la galería</h5>
-              <p>{{Project.ancho_galeria}}</p>
+              <p>{{Project.ancho_galeria}} (m)</p>
               <h5>Área de la galería</h5>
-              <p>{{Project.area_galeria}}</p>
+              <p>{{Project.area_galeria}} (m)</p>
               <h5>Distancia entre sensores</h5>
-              <p>{{Project.dis_e_sens}}</p>
+              <p>{{Project.dis_e_sens}} (m)</p>
             </div>
             <div class="col-md-6">
               <h5>Caudal requerido</h5>
-              <p>{{Project.caudal_requerido}}</p>
+              <p>{{Project.caudal_requerido}} (m³/s)</p>
               <h5>Alto de galería</h5>
-              <p>{{Project.alto_galeria}}</p>
-              <h5>Factor</h5>
-              <p>{{Project.factor}}</p>
-              <h5>Potencia</h5>
-              <p>{{Project.potencia}}</p>
+              <p>{{Project.alto_galeria}} (m)</p>
+              <h5>Ancho de galería</h5>
+              <p>{{Project.ancho_galeria}} (m)</p>
+              <h5>Factor de corrección</h5>
+              <p>{{Project.factor}} (%)</p>
             </div>
           </div>
-
-          <fieldset class="toggle-fieldset border border-success rounded p-2 cursor-pointer" style="cursor: pointer;">
-            <legend>Ventilador</legend>
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Modelo</th>
-                  <th>Vmm</th>
-                  <th>Amm</th>
-                  <th>Rmm</th>
-                  <th>HP</th>
-                  <th>Polos</th>
-                  <th>Accesorios</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>{{Project.ventilador.modelo}}</td>
-                  <td>{{Project.ventilador.vmm}}</td>
-                  <td>{{Project.ventilador.amm}}</td>
-                  <td>{{Project.ventilador.rmm}}</td>
-                  <td>{{Project.ventilador.hp}}</td>
-                  <td>{{Project.ventilador.polos}}</td>
-                  <td>{{Project.ventilador.accesorios}}</td>
-                </tr>
-              </tbody>
-            </table>
-          </fieldset>
-
-          <fieldset class="toggle-fieldset border border-success rounded p-2 cursor-pointer" style="cursor: pointer;">
-            <legend>Curva diseño</legend>
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Ventilador</th>
-                  <th>Ángulo</th>
-                  <th>RPM</th>
-                  <th>Densidad</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>{{Project.curva_diseno.ventilador}}</td>
-                  <td>{{Project.curva_diseno.angulo}}</td>
-                  <td>{{Project.curva_diseno.rpm}}</td>
-                  <td>{{Project.curva_diseno.densidad}}</td>
-                </tr>
-              </tbody>
-            </table>
-          </fieldset>
-
-          <fieldset class="toggle-fieldset border border-success rounded p-2 cursor-pointer" style="cursor: pointer;">
-            <legend>Ducto</legend>
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Tipo de ducto</th>
-                  <th>Factor de fricción</th>
-                  <th>Factor de fuga</th>
-                  <th>Tipo de acople</th>
-                  <th>Largo</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>{{Project.ducto.t_ducto}}</td>
-                  <td>{{Project.ducto.f_friccion}}</td>
-                  <td>{{Project.ducto.f_fuga}}</td>
-                  <td>{{Project.ducto.t_acople}}</td>
-                  <td>{{Project.ducto.largo}}</td>
-                </tr>
-              </tbody>
-            </table>
-          </fieldset>
-
-          <fieldset class="toggle-fieldset border border-success rounded p-2 cursor-pointer" style="cursor: pointer;">
-            <legend>Equipamientos</legend>
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Tipo</th>
-                  <th>Modelo diésel</th>
-                  <th>Potencia</th>
-                  <th>Caudal informado</th>
-                  <th>Requerimiento de caudal</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for eqp in Project.equipamientos.all %}
-                <tr>
-                  <td>{{eqp.tipo}}</td>
-                  <td>{{eqp.modelo_diesel}}</td>
-                  <td>{{eqp.potencia}}</td>
-                  <td>{{eqp.qr_fabricante}}</td>
-                  <td>{{eqp.qr_calculado}}</td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </fieldset>
-
-          <fieldset class="border border-success rounded p-2 cursor-pointer" style="cursor: pointer;">
-            <legend>Sistema de partida</legend>
-            <p><h5>Nombre de la partida:</h5> {{Project.s_partida.nombre}}</p>
-          </fieldset>
+    
+          <div class="row">
+            <fieldset class="toggle-fieldset border border-success rounded p-2 cursor-pointer">
+              <legend>Ventilador</legend>
+              <div class="table-responsive">
+                <table class="table w-100">
+                  <thead>
+                    <tr>
+                      <th>Modelo</th>
+                      <th>Vmm</th>
+                      <th>Amm</th>
+                      <th>Rmm</th>
+                      <th>HP</th>
+                      <th>Polos</th>
+                      <th>Accesorios</th>
+                      <th>Opciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{{Project.ventilador.modelo}}</td>
+                      <td>{{Project.ventilador.vmm}}</td>
+                      <td>{{Project.ventilador.amm}}</td>
+                      <td>{{Project.ventilador.rmm}}</td>
+                      <td>{{Project.ventilador.hp}}</td>
+                      <td>{{Project.ventilador.polos}}</td>
+                      <td>{{Project.ventilador.accesorios}}</td>
+                      <td><a href="{% url 'dbs:edit-ventilador' Project.ventilador.id %}" class="btn btn-success">Editar</a></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </fieldset>
+    
+            <fieldset class="toggle-fieldset border border-success rounded p-2 cursor-pointer">
+              <legend>Curva diseño</legend>
+              <div class="table-responsive">
+                <table class="table w-100">
+                  <thead>
+                    <tr>
+                      <th>Ventilador</th>
+                      <th>Ángulo</th>
+                      <th>RPM</th>
+                      <th>Densidad</th>
+                      <th>Opciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{{Project.curva_diseno.ventilador}}</td>
+                      <td>{{Project.curva_diseno.angulo}}</td>
+                      <td>{{Project.curva_diseno.rpm}}</td>
+                      <td>{{Project.curva_diseno.densidad}}</td>
+                      <td><a href="{% url 'dbs:edit-curva-diseno' Project.curva_diseno.id %}" class="btn btn-success">Editar</a></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </fieldset>
+    
+            <fieldset class="toggle-fieldset border border-success rounded p-2 cursor-pointer">
+              <legend>Ducto</legend>
+              <div class="table-responsive">
+                <table class="table w-100">
+                  <thead>
+                    <tr>
+                      <th>Tipo de ducto</th>
+                      <th>Factor de fricción</th>
+                      <th>Factor de fuga</th>
+                      <th>Tipo de acople</th>
+                      <th>Largo</th>
+                      <th>Opciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{{Project.ducto.t_ducto}}</td>
+                      <td>{{Project.ducto.f_friccion}}</td>
+                      <td>{{Project.ducto.f_fuga}}</td>
+                      <td>{{Project.ducto.t_acople}}</td>
+                      <td>{{Project.ducto.largo}}</td>
+                      <td><a href="{% url 'dbs:edit-ducto' Project.ducto.id %}" class="btn btn-success">Editar</a></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </fieldset>
+    
+            <fieldset class="toggle-fieldset border border-success rounded p-2 cursor-pointer">
+              <legend>Equipamientos</legend>
+              <div class="table-responsive">
+                <table class="table w-100">
+                  <thead>
+                    <tr>
+                      <th>Tipo</th>
+                      <th>Modelo diésel</th>
+                      <th>Potencia</th>
+                      <th>Caudal informado</th>
+                      <th>Requerimiento de caudal</th>
+                      <th>Opciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for eqp in Project.equipamientos.all %}
+                    <tr>
+                      <td>{{eqp.tipo}}</td>
+                      <td>{{eqp.modelo_diesel}}</td>
+                      <td>{{eqp.potencia}}</td>
+                      <td>{{eqp.qr_fabricante}}</td>
+                      <td>{{eqp.qr_calculado}}</td>
+                      <td><a href="" class="btn btn-success">Editar</a></td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </fieldset>
+    
+            <fieldset class="border border-success rounded p-2 cursor-pointer">
+              <legend>Sistema de partida</legend>
+              <p>
+                <h5>Nombre de la partida: <a href="{% url 'dbs:edit-sistema-partida' Project.s_partida.id %}" class="btn btn-success">Editar</a></h5>
+                {{Project.s_partida.nombre}}
+              </p>
+            </fieldset>
+          </div>
         </div>
       </div>
       {% else %}
@@ -147,4 +168,5 @@
       </a>
       {% endif %}
     </div>
+    
   </div>

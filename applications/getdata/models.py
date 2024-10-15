@@ -61,7 +61,10 @@ class SetParams(models.Model):  # Asegúrate de heredar de models.Model
 class Caracteristicas_Ventilador(models.Model):
    id = models.AutoField(primary_key=True)
    nombre = models.CharField()
-   perdida_choque = models.IntegerField()
+   factor_choque = models.IntegerField()
+
+   def __str__(self) -> str:
+      return f"{self.nombre} - {self.factor_choque}"
 
 class Tipo_Equipamiento_Diesel(models.Model):
    id = models.AutoField(primary_key=True)
@@ -73,6 +76,9 @@ class Tipo_Equipamiento_Diesel(models.Model):
 class Sistema_Partida(models.Model):
    id = models.AutoField(primary_key=True)
    nombre = models.CharField()
+
+   def __str__(self) -> str:
+      return self.nombre
 
 ############################################
 class Ventilador(models.Model):
@@ -102,6 +108,9 @@ class CurvaDiseno(models.Model):
    datos_curva = models.JSONField()
    class Meta:
       db_table = "curva_diseno"
+
+   def __str__(self) -> str:
+      return f"{self.ventilador} - {self.angulo} - {self.rpm}"
 
 class Ducto(models.Model):
    id = models.AutoField(primary_key=True)
@@ -144,11 +153,8 @@ class Proyecto(models.Model):
    alto_galeria = models.FloatField()
    area_galeria = models.FloatField()
    factor = models.FloatField()
-   
-
    potencia = models.FloatField()
    dis_e_sens = models.FloatField()
-
    s_partida = models.ForeignKey(Sistema_Partida, on_delete=models.CASCADE) 
 
    class Meta:

@@ -46,7 +46,7 @@ def fandesign(request):
          df_sensor1 = get_10min_sensor_data() # desde BD
          ### VDF DATA ###
          # df_vdf = get_vdf_data() # desde CSVs
-         df_vdf = get_10min_vdf_data()# desde BD
+         df_vdf = get_10min_vdf_data() # desde BD
          Q_medido = df_sensor1["q1"].mean()
          P_medido = df_sensor1["pt1"].mean()
          densidad_fan = float(proyect.curva_diseno.densidad) 

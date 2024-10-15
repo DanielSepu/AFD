@@ -23,25 +23,25 @@
             <div class= "col">
                <div class="btn-group" role="group" aria-label="Basic radio toggle button group" id  = "chart_type"> 
                   <input type="radio" class="btn-check" name="btnradioChart" id="general" autocomplete="off"   checked >
-                  <label class="btn btn-outline-secondary" for="general"  onclick="changeDataChart({{general |safe}} ,  'general')" >General</label>
+                  <label class="btn btn-outline-secondary" for="general"  onclick="changeDataChart({{data.general |safe}} ,  'general')" >General</label>
 
                   <input type="radio" class="btn-check" name="btnradioChart" id="t_preassure" autocomplete="off" >
-                  <label class="btn btn-outline-secondary" for="t_preassure"  onclick="changeDataChart({{total_pressure |safe}},'t_preassure')" >Total Pressure</label>
+                  <label class="btn btn-outline-secondary" for="t_preassure"  onclick="changeDataChart({{data.total_pressure |safe}},'t_preassure')" >Total Pressure</label>
 
                   <input type="radio" class="btn-check" name="btnradioChart" id="s_pressure" autocomplete="off"  >
-                  <label class="btn btn-outline-secondary" for="s_pressure"    onclick="changeDataChart({{static_pressure|safe}}, 's_pressure')" >Static Pressure</label>
+                  <label class="btn btn-outline-secondary" for="s_pressure"    onclick="changeDataChart({{data.static_pressure|safe}}, 's_pressure')" >Static Pressure</label>
 
                   <input type="radio" class="btn-check" name="btnradioChart" id="power" autocomplete="off" >
-                  <label class="btn btn-outline-secondary" for="power" onclick="changeDataChart({{power|safe}},'power')" >Power</label>
+                  <label class="btn btn-outline-secondary" for="power" onclick="changeDataChart({{data.power|safe}},'power')" >Power</label>
                </div>
          
                <div class = "row-4 mt-2">
                   <div class="btn-group" role="group" aria-label="Basic radio toggle button group" id  = "fan_selector"> 
                         <input type="radio" class="btn-check" name="btnradioFan" id="f_performance" autocomplete="off"  checked >
-                        <label class="d-flex btn btn-outline-secondary p-0 m-1" for="f_performance"  onclick="chartSwitch(true)"  > <div class="col-3 " id = 'fp_status' style= "background-color: {{ general.FanPerformance.status }};">  </div> <div class="col p-1 me-2"> Fan Performance</div> </label>
+                        <label class="d-flex btn btn-outline-secondary p-0 m-1" for="f_performance"  onclick="chartSwitch(true)"  > <div class="col-3 " id = 'fp_status' style= "background-color: {{ data.general.FanPerformance.status }};">  </div> <div class="col p-1 me-2"> Fan Performance</div> </label>
                      
                         <input type="radio" class="btn-check" name="btnradioFan" id="f_operation" autocomplete="off" >
-                        <label class=" d-flex   btn btn-outline-secondary p-0 m-1"  for="f_operation" onclick="chartSwitch(false)" > <div class="col-3 " id = 'fo_status'  style= "background-color: {{ general.FanOperation.status }};">  </div> <div class="col p-1 me-2"> Fan Operation</div> </label>
+                        <label class=" d-flex   btn btn-outline-secondary p-0 m-1"  for="f_operation" onclick="chartSwitch(false)" > <div class="col-3 " id = 'fo_status'  style= "background-color: {{ data.general.FanOperation.status }};">  </div> <div class="col p-1 me-2"> Fan Operation</div> </label>
                   </div>
                </div>
             </div>
@@ -54,7 +54,7 @@
                   {#  Model #}
                   <div class="list-group border border-lg-3 border-warning p-3 mb-2">
                      <div class="row">
-                        <p class="text-center fs-4 fw-bold m-0 ">JetStream AXT0800</p>
+                        <p class="text-center fs-4 fw-bold m-0 ">{{project.ventilador}}</p>
                      </div>
                   </div>
                   {#  Model #}
@@ -66,8 +66,7 @@
                   {#  Blade angle #}
                   <div class="list-group border border-3 border-warning p-3 mb-2">
                      <div class="row">
-                        
-                        <p class="text-start fs-6  ps-4 m-1">  89 % </p>
+                        <p class="text-start fs-6  ps-4 m-1">  {{project.factor}} % </p>
                      </div>
                   </div>
                   <div class="list-group border border-3 border-warning p-3 mb-2">
@@ -77,6 +76,7 @@
                   </div>
                   <div class="list-group border border-3 border-warning p-3 mb-2">
                      <div class="row">
+                        {# TODO ESTE VALOR DEBE SER ACTUALIZADO #}
                         <p class="text-start fs-5 m-0">79 %</p>
                      </div>
                   </div>
@@ -90,7 +90,7 @@
                   
                   <div class="list-group border border-3 border-warning p-3 mb-2">
                      <div class="row">
-                        <p class="text-start fs-5 m-0">13 kW</p>
+                        <p class="text-start fs-5 m-0">{{project.potencia}} kW</p>
                      </div>
                   </div>
 
@@ -111,7 +111,7 @@
 
    <script type="text/javascript">
       
-      var dataSection = {{ general| safe }};
+      var dataSection = {{ data.general| safe }};
       
       var sectionStatus = 'general'
       var switchStatus = true
@@ -150,7 +150,7 @@
 
       function chartSwitch(fanSelector){
 
-         switchStatus= fanSelector
+         switchStatus= fanSelector;
 
          if (switchStatus == true){
             console.log(sectionStatus)
@@ -166,23 +166,25 @@
       function getValues() {
          fetch("/get_recent_data")
             .then(response => response.json())
-            .then(data => {
+            .then(context => {
                // Información en data
-               console.log(data);
-               updateValues(data);
+               console.log(context);
+               updateValues(context.data, context);
          });
       }
 
-      function updateValues(data) {
+      function updateValues(data, context) {
          // Actualiza los divs con los nuevos valores  
          $("#q1").text(data[0]);  
          $("#qf").text(data[1]);
          $("#pt1").text(data[2]);
          $("#power").text(data[3]);
          $("#fref").text(data[4]);
-         $("#fref").text(data[4]);
-         $("#fref").text(data[4]);
-         $("#fref").text(data[4]);
+         $("#pe").text(context.presion_estatica);
+         $("#pd").text(context.presion_dinamica);
+         $("#pch").text(context.perdida_de_choque);
+         $("#pf").text(context.perdidas_friccionales);
+
          
       }
 

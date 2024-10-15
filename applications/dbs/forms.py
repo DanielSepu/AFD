@@ -62,16 +62,15 @@ class VentiladorForm(forms.ModelForm):
     )
     class Meta:
         model = Ventilador
-        fields = ['idu', 'modelo', 'vmm', 'amm', 'rmm', 'hp', 'polos', 'img_ventilador', 'accesorios']
+        fields = ['modelo', 'vmm', 'amm', 'rmm', 'hp', 'polos', 'img_ventilador', 'accesorios']
         labels = {
-            'idu': 'ID',
             'modelo': 'Modelo',
             'vmm': 'V',
             'amm': 'A',
             'rmm': 'R',
             'hp': 'Potencia (HP)'
         }
-        field_order = ['idu', 'modelo', 'vmm', 'amm', 'rmm','hp','img_ventilador', 'accesorios']
+        field_order = ['modelo', 'vmm', 'amm', 'rmm','hp','img_ventilador', 'accesorios']
 
       
 class CurvaDisenoForm(forms.ModelForm):
@@ -122,14 +121,14 @@ class DuctoForm(forms.ModelForm):
     )
     
     f_friccion = forms.FloatField(
-        label='Factor de fricción(K) (opcional)',
+        label='Factor de fricción (Kg/m²) (opcional)',
         required=False,
         initial=0,
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el factor de fricción'})
     )
     
     f_fuga = forms.FloatField(
-        label='Factor de fuga(L) (opcional)',
+        label='Factor de fuga (ml²/m²) (opcional)',
         required=False,
         initial=0,
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el factor de fuga'})
@@ -164,7 +163,7 @@ class DuctoForm(forms.ModelForm):
             'idu': 'ID',
             't_ducto':   'Tipo de ducto',
             't_acople':  'Tipo de acople',
-            'largo':     'Largo ducto(m)',
+            'largo':     'Largo ducto (m)',
          }
       
 class EquipDieselForm(forms.ModelForm):
@@ -187,9 +186,9 @@ class EquipDieselForm(forms.ModelForm):
         widget=forms.NumberInput(attrs={
             'onchange': 'Funcion2()',
             'class': 'form-control',  # Clase Bootstrap para estilo
-            'placeholder': 'Ingrese requerimiento de caudal (opcional)'
+            'placeholder': 'Ingrese requerimiento de caudal m³/s (opcional)'
         }),
-        label='Requerimiento de caudal informado por el fabricante (opcional)',
+        label='Requerimiento de caudal informado por el fabricante m³/s (opcional)',
         required=False
     )
     
@@ -265,22 +264,22 @@ class ProyectoForm(forms.ModelForm):
     )
 
     caudal_requerido = forms.FloatField(
-        label='Caudal requerido',
+        label='Caudal requerido (M³/s)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el caudal requerido'})
     )
     
     ancho_galeria = forms.FloatField(
-        label='Ancho galería',
+        label='Ancho galería (M)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el ancho de la galería'})
     )
     
     alto_galeria = forms.FloatField(
-        label='Alto galería',
+        label='Alto galería (M)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el alto de la galería'})
     )
 
     area_galeria = forms.FloatField(
-        label='Área galería',
+        label='Área galería (M²)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el área de la galería'})
     )
     factor = forms.FloatField(
@@ -289,7 +288,7 @@ class ProyectoForm(forms.ModelForm):
     )
 
     potencia = forms.FloatField(
-        label='Potencia (W)',
+        label='Potencia (KW)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese la potencia'})
     )
 
@@ -300,12 +299,34 @@ class ProyectoForm(forms.ModelForm):
 
     class Meta:
         model = Proyecto
-        fields = ['id', 'ventilador', 'curva_diseno', 'ducto', 'caudal_requerido', 'codos', 'ancho_galeria', 'alto_galeria', 'area_galeria', 'factor', 's_partida', 'potencia', 'dis_e_sens']
+        fields = ['id', 'ventilador', 's_partida', 'potencia','curva_diseno', 'ducto', 'caudal_requerido', 'codos', 'ancho_galeria', 'alto_galeria', 'area_galeria', 'factor', 'dis_e_sens']
         labels = {
             'ancho_galeria': 'Ancho galería',
             'alto_galeria': 'Alto galería',
-            'potencia': 'Potencia (W)',
+            'potencia': 'Potencia (kW)',
             'dis_e_sens': 'Distancia entre sensores (m)',
         }
 
-    field_order = ['id', 'ventilador', 'curva_diseno', 'ducto', 'caudal_requerido', 'codos', 'ancho_galeria', 'alto_galeria', 'factor', 'area_galeria', 'potencia', 'dis_e_sens', 's_partida']
+    field_order = ['id', 'ventilador', 'potencia', 's_partida', 'curva_diseno', 'ducto', 'caudal_requerido', 'codos', 'ancho_galeria', 'alto_galeria', 'factor', 'area_galeria', 'dis_e_sens', 's_partida']
+
+class SistemaPartidaForm(forms.ModelForm):
+    nombre = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el nombre del sistema de partida'})
+    )
+    class Meta:
+        model = Sistema_Partida
+        fields = ['nombre']
+
+class Caracteristicas_VentiladorForm(forms.ModelForm):
+    nombre = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el nombre de la caracteristica'})
+    )
+    factor_choque = forms.IntegerField(
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Factor de choque'}),
+        label='Factor de choque'
+    )
+    class Meta:
+        model = Caracteristicas_Ventilador
+        verbose_name = 'Caracteristicas_ventilador'
+        verbose_name_plural = 'Caracteristicas_ventiladors'
+        fields = ['nombre', 'factor_choque']

@@ -10,11 +10,11 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
-          <a class="btn {% if request.resolver_match.url_name == 'fandesign' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-1" href="{% url 'fandesign:fandesign' %}?chart_type=total_pressure" role="button">Fan design curve</a>
+          <a class="btn {% if request.resolver_match.url_name == 'fandesign' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-1" href="{% url 'fandesign:fandesign' %}?chart_type=total_pressure" role="button">Curva de diseño del ventilador</a>
 
-          <a class="btn {% if request.resolver_match.url_name == 'currentstatus' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-1" href="{% url 'currentstatus:currentstatus' %}" role="button">Current Status</a>
+          <a class="btn {% if request.resolver_match.url_name == 'currentstatus' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-1" href="{% url 'currentstatus:currentstatus' %}" role="button">Estado actual</a>
 
-          <a class="btn {% if request.resolver_match.url_name == 'settings' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-1" href="{% url 'settings:settings' %}?type=current_project" role="button">Settings</a>
+          <a class="btn {% if request.resolver_match.url_name == 'settings' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-1" href="{% url 'settings:settings' %}?type=current_project" role="button">Configuraciones</a>
         </li>
       </ul>
     </div>

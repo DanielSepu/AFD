@@ -41,3 +41,13 @@ code {
 @media print {
   .footer { display: none!important; }
 }
+
+/* cursores */
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-not-allowed {
+  cursor: not-allowed;
+}

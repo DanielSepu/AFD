@@ -1,4 +1,5 @@
 import pdb
+from django.forms import BaseModelForm
 from django.shortcuts import render, redirect
 import pandas as pd  # Importa pandas
 import numpy as np
@@ -31,7 +32,7 @@ def dbs(request):
          return render(request, 'widgets/dbs/curvaDiseno.html', context)
       
       if db_type == 'ducto':
-         form = DuctoForm() 
+         form = DuctoForm(ocultar=False)
          context = {'db_type': db_type, 'form': form}
          return render(request, 'widgets/dbs/ducto.html', context)
       
@@ -132,15 +133,21 @@ class CurvaDisenoEditView(UpdateView):
 
    def get_context_data(self, **kwargs):
       context = super().get_context_data(**kwargs)
-      context['db_type'] = 'Curva de diseño'
+      context['db_type'] = 'Curva caracteristica ventilador'
       return context
 
 
 class DuctoEditView(UpdateView):
    model = Ducto
-   form_class = DuctoForm 
+   form_class = DuctoForm
    template_name = 'widgets/dbs/edit.html' 
    success_url = '/'
+
+   def form_valid(self, form) :
+      print(self.request.POST)
+      return super().form_valid(form)
+
+   
 
    def get_context_data(self, **kwargs):
       context = super().get_context_data(**kwargs)

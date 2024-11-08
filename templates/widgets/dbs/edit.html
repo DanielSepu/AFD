@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block body_content %}
   <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
     <div class="card p-4" style="width: 100%; max-width: 600px;">
         <h4>Editar {{db_type}}</h4>
-        <form action="" method="post">
+        <form action="" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form }}
             <div class="text-end mt-3">
@@ -15,3 +15,6 @@
     </div>
   </div>
 {% endblock body_content %}
+{% block body_js %}
+   <script src="{% static 'js/dbs/ducto.js' %}"></script>
+{% endblock body_js %}

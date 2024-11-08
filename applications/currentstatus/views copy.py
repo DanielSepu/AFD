@@ -60,7 +60,7 @@ def currentstatus(request):
         data_view = DataCurrentStatusView()
 
         # Añadiendo medidas
-        data_view.add_measurement('general', 'FanPerformance','green',df[["q1", "pt1"]].to_dict(orient='records') )
+        data_view.add_measurement('general', 'FanPerformance','green',df[["q1", "pt1"]].to_dict(orient='records'))
         data_view.add_measurement('general', 'FanOperation','yellow', df[["q1", "pt1"]].to_dict(orient='records') )
 
         data_view.add_measurement('total_pressure', 'FanPerformance','red', df[["q1", "pt1"]].to_dict(orient='records'))
@@ -83,8 +83,9 @@ def get_recent_data(request):
     if request.method == 'GET':
         latest_record = SensorsData.objects.using('sensorDB').aggregate(Max('id'))
         max_id = latest_record['id__max']
-
+        
         # Consultar registro con ese id 
         item = SensorsData.objects.using('sensorDB').get(id=max_id)
         data=[item.q1, item.qf, item.pt1]
         return JsonResponse(data, safe=False)
+        

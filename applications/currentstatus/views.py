@@ -11,6 +11,7 @@ from django.utils.timezone import localtime
 import os
 
 
+from applications.currentstatus.tools import calculate_perdida_choque_codos
 from applications.getdata.models import Proyecto, SensorsData, VdfData, Ventilador, SensorData, CurvaDiseno
 from django.db.models import Max
 
@@ -87,7 +88,9 @@ def currentstatus(request):
 
 
 def get_recent_data(request):
+    '''
 
+    '''
     if request.method == 'GET':
         insert_sensor_data()
         latest_record_sensors = SensorsData.objects.using('sensorDB').aggregate(Max('id'))
@@ -98,13 +101,10 @@ def get_recent_data(request):
         # calcular la perdida por choque
         project = Proyecto.objects.all().last() 
         caracteristicas = project.ventilador.accesorios.all()
-        suma_factores_de_choque = 0
-        for caracteristica in caracteristicas:
-            suma_factores_de_choque += caracteristica.factor_choque
+
+
         
-        # 
-
-
+        
 
         # Consultar registro con ese id 
         item_sensors = SensorsData.objects.using('sensorDB').get(id=max_id_sensors)
@@ -113,15 +113,48 @@ def get_recent_data(request):
         # calcular la densidad:
         mid_densidad = item_sensors.densidad1/2
         caudal_del_ventilador = item_sensors.q1
-        area_ventilador = project.area_galeria
-        
-        presion_dinamica = round(mid_densidad * pow((caudal_del_ventilador/area_ventilador),2), 2)
+        print(f"1--> {project.ventilador.amm} --- {pow((project.ventilador.amm/1000)/2,2)}")
+        area_ventilador = round(pow((project.ventilador.amm/1000)/2,2)*3.14159, 2)
+        print(f"...> {caudal_del_ventilador} --- {area_ventilador}")
+        print(f"---> {caudal_del_ventilador/area_ventilador}")
 
-        presion_total = round(item_sensors.pt1, 2)
+        presion_dinamica = round(mid_densidad * pow((caudal_del_ventilador/area_ventilador),2), 0)
 
-        presion_estatica = round(presion_total - presion_dinamica, 2)
+        # TODO 
+        '''
+           La perdida de choque de accesorios es la presion de choque de accesorios por la presion dinamica
+        '''
+        sumatoria_choque_accesorios = 0
+        for caracteristica in caracteristicas:
+            sumatoria_choque_accesorios += caracteristica.factor_choque
 
-        perdidas_friccionales = round(presion_estatica - suma_factores_de_choque, 2)
+        # calcular perdida por choque de los codos
+        total_codos = project.codos
+        perdidas_choque_codos = calculate_perdida_choque_codos(
+                    total_codos=total_codos, 
+                    mid_densidad=mid_densidad, 
+                    Q1=caudal_del_ventilador,
+                    project=project, 
+                    Qf = item_sensors.qf
+                    )
+
+        perdida_choque_accesorios = sumatoria_choque_accesorios * presion_dinamica
+
+        # TODO
+        down = 3.14159 * pow((project.ventilador.vmm/2000),2)
+
+        perdida_choque_entrada = 0.06 * mid_densidad * pow((caudal_del_ventilador/down),2) 
+
+        perdida_choque_salida = 1 * mid_densidad * pow((item_sensors.qf/project.ducto.area),2) 
+
+        # sumatoria de datos --> confirmar si la sumatoria de las perdidas de choque es esta variable
+        perdida_choque_sistema = round(perdida_choque_accesorios + perdidas_choque_codos + perdida_choque_entrada +perdida_choque_salida,2)
+
+        presion_total = round(item_sensors.pt1, 0)
+
+        presion_estatica_ventilador = round(presion_total - presion_dinamica, 0)
+
+        perdidas_friccionales = round(presion_estatica_ventilador - perdida_choque_sistema, 2)
 
         # calculando el rendimiento del ventilador 
         #a -> resistencia
@@ -129,12 +162,12 @@ def get_recent_data(request):
         caudal_al_cuadrado = pow(item_sensors.q1,2)
         resistencia = presion_total/caudal_al_cuadrado
 
+
         # b -> distancia
         presion_total_al_cuadrado =  pow(presion_total, 2)
         distancia = sqrt(caudal_al_cuadrado + presion_total_al_cuadrado)
         
-
-
+        # c -> ajuste cubico a la curva del ventilador ajustada 
 
         data = [
             round(item_sensors.q1, 2), 
@@ -148,9 +181,9 @@ def get_recent_data(request):
             ]
         context = {}
         context["data"] = data
-        context["presion_estatica"] = presion_estatica
+        context["presion_estatica"] = presion_estatica_ventilador
         context["presion_dinamica"] = presion_dinamica
-        context["perdida_de_choque"] = suma_factores_de_choque
+        context["perdida_de_choque"] = perdida_choque_sistema
         context["perdidas_friccionales"] = perdidas_friccionales
 
         return JsonResponse(context, safe=False)

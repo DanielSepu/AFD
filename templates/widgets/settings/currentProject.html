@@ -1,5 +1,5 @@
 {% extends "settings.html" %}
-
+{% load static %}
 {% block body_content %}
 
 <div class="row h-100 justify-content-center align-items-center">
@@ -15,13 +15,13 @@
                <div class="list-group">
                   {% for eqp in equipamientos %}
                      {% if eqp in up_eqp %}
-                     <label class="list-group-item">
-                        <input name="eq_{{ eqp.id }}" type="checkbox" checked class="form-check-input me-2">{{ eqp.modelo_diesel }} | {{ eqp.id }}
-                     </label>
+                        <label class="list-group-item">
+                           <input name="eq_{{ eqp.id }}" data-value="{{eqp.potencia}}" type="checkbox" checked class="form-check-input me-2">{{ eqp.id }} | {{ eqp.modelo_diesel }}  
+                        </label>
                      {% else %}
-                     <label class="list-group-item">
-                        <input name="eq_{{ eqp.id }}" type="checkbox" class="form-check-input me-2">{{ eqp.modelo_diesel }} | {{ eqp.id }}
-                     </label>
+                        <label class="list-group-item">
+                           <input name="eq_{{ eqp.id }}" data-value="{{eqp.potencia}}"  type="checkbox" class="form-check-input me-2">{{ eqp.id }} |  {{ eqp.modelo_diesel }} 
+                        </label>
                      {% endif %}
                   {% endfor %}
                </div>
@@ -36,3 +36,6 @@
    </div>
 </div>
 {% endblock body_content %}
+{% block body_js %}
+   <script src="{% static 'js/settings/project.js' %}"></script>
+{% endblock body_js %}

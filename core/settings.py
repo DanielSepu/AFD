@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "applications.newproject",
     "applications.dbs",
     "applications.home",
+    "rest_framework"
 ]
 
 

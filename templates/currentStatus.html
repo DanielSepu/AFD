@@ -26,23 +26,24 @@
                   <label class="btn btn-outline-secondary" for="general"  onclick="changeDataChart({{data.general |safe}} ,  'general')" >General</label>
 
                   <input type="radio" class="btn-check" name="btnradioChart" id="t_preassure" autocomplete="off" >
-                  <label class="btn btn-outline-secondary" for="t_preassure"  onclick="changeDataChart({{data.total_pressure |safe}},'t_preassure')" >Total Pressure</label>
+                  <label class="btn btn-outline-secondary" for="t_preassure"  onclick="changeDataChart({{data.total_pressure |safe}},'t_preassure')" >Presión total</label>
 
                   <input type="radio" class="btn-check" name="btnradioChart" id="s_pressure" autocomplete="off"  >
-                  <label class="btn btn-outline-secondary" for="s_pressure"    onclick="changeDataChart({{data.static_pressure|safe}}, 's_pressure')" >Static Pressure</label>
+                  <label class="btn btn-outline-secondary" for="s_pressure"    onclick="changeDataChart({{data.static_pressure|safe}}, 's_pressure')" >Presión estática</label>
 
                   <input type="radio" class="btn-check" name="btnradioChart" id="power" autocomplete="off" >
-                  <label class="btn btn-outline-secondary" for="power" onclick="changeDataChart({{data.power|safe}},'power')" >Power</label>
+                  <label class="btn btn-outline-secondary" for="power" onclick="changeDataChart({{data.power|safe}},'power')" >Potencia</label>
                </div>
-         
+
                <div class = "row-4 mt-2">
                   <div class="btn-group" role="group" aria-label="Basic radio toggle button group" id  = "fan_selector"> 
                         <input type="radio" class="btn-check" name="btnradioFan" id="f_performance" autocomplete="off"  checked >
                         <label class="d-flex btn btn-outline-secondary p-0 m-1" for="f_performance"  onclick="chartSwitch(true)"  > <div class="col-3 " id = 'fp_status' style= "background-color: {{ data.general.FanPerformance.status }};">  </div> <div class="col p-1 me-2"> Fan Performance</div> </label>
-                     
+
                         <input type="radio" class="btn-check" name="btnradioFan" id="f_operation" autocomplete="off" >
                         <label class=" d-flex   btn btn-outline-secondary p-0 m-1"  for="f_operation" onclick="chartSwitch(false)" > <div class="col-3 " id = 'fo_status'  style= "background-color: {{ data.general.FanOperation.status }};">  </div> <div class="col p-1 me-2"> Fan Operation</div> </label>
                   </div>
+
                </div>
             </div>
          </div> {% endcomment %}

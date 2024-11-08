@@ -1,0 +1,110 @@
+
+<style>
+  td {
+    text-align: center;
+  }
+</style>
+<div class="row align-items-center my-4">
+
+  <!-- Velocidad del aire -->
+  <div class="col-md-5">
+    <table class="table table-bordered">
+      <thead>
+        <tr class="bg-secondary text-white text-center">
+          <th colspan="6">Velocidad del aire</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <!-- Número "2" como parte de la tabla -->
+          <td rowspan="8" class="align-middle text-center" style="width: 100px;">
+            <h1 class="display-1 fw-bold m-0">2</h1>
+          </td>
+          <td colspan="4" class="text-center fw-bold bg-light">Velocidad mínima</td>
+          <td colspan="1" rowspan="8" id="v2_formula">
+            formula
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" class="text-center">Estado</td>
+          <td colspan="1" id="v2_vel_aire_min" class="text-center"></td>
+         
+        </tr>
+        <tr>
+          <td colspan="1" lass="text-center">V min</td>
+          <td colspan="1" id="" class="text-center">Vel. Aire</td>
+          <td colspan="1" id="v2_vel_aire_min" class="text-center"></td>
+        </tr>
+        <tr>
+          <td colspan="1" id="v2_q_ventilador_min" class="text-center">0.25</td>
+          <td colspan="1" class="text-center">Q Ventilador</td>
+          <td colspan="1" id="v2_q_frente" class="text-center"></td>
+        </tr>
+        <tr>
+          <td colspan="4" class="text-center fw-bold bg-light">Velocidad máxima</td>
+        </tr>
+        <tr>
+          <td colspan="2" class="text-center">Estado</td>
+          <td id="v2_estado_max" class="text-center"></td>
+          
+        </tr>
+        <tr>
+          <td colspan="1" id="" class="text-center">V max</td>
+          <td colspan="1" class="text-center">Maximo</td>
+          <td colspan="1" id="" class="text-center"></td>
+        </tr>
+        <tr>
+          
+          <td colspan="1" id="v2_q_frente" class="text-center">2.5</td>
+          <td colspan="1" lass="text-center">Q Frente</td>
+          <td colspan="1" id="v2_q_frente" class="text-center"></td>
+          
+        </tr>
+        
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Requerimientos de Velocidad -->
+  <div class="col-md-3">
+    <table class="table table-bordered">
+      <thead class="thead-light bg-secondary text-white text-center">
+        <tr>
+          <th colspan="2">Requerimientos de Velocidad del Aire</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td id="">Q1</td>
+          <td id="v2_Q1" class="text-center"></td>
+        </tr>
+        <tr>
+          <td>Área de la galería [m²]</td>
+          <td id="v2_area_galeria" class="text-center"></td>
+        </tr>
+        <tr>
+          <td>Velocidad del aire [m/s]</td>
+          <td id="v2_vel_aire" class="text-center"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Semáforo -->
+  <div class="col-md-3">
+    <table class="table table-bordered">
+      <thead class="bg-secondary text-white text-center">
+        <tr>
+          <th>Semáforo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td id="v2_semaforo" class="text-center"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+

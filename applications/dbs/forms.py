@@ -52,7 +52,7 @@ class VentiladorForm(forms.ModelForm):
     )
     
     hp = forms.FloatField(
-        label='Potencia (HP)',
+        label='Potencia motor (kW)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese Potencia'})
     )
     accesorios = CustomMMCF(
@@ -76,7 +76,7 @@ class VentiladorForm(forms.ModelForm):
 class CurvaDisenoForm(forms.ModelForm):
     idu = forms.IntegerField(
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'ID'}),
-        label='ID'
+        label='ID/Nombre'
     )
     ventilador = CustomMCF(
         queryset=Ventilador.objects.all(),
@@ -102,23 +102,29 @@ class CurvaDisenoForm(forms.ModelForm):
         model = CurvaDiseno
         fields = ['idu', 'ventilador', 'angulo', 'rpm', 'densidad']
         labels = {
-            'idu': 'ID',
+            'idu': '/Nombre',
             'angulo': 'θ °',
             'rpm': 'RPM',
-            'densidad': 'ρ (kg/m3)',
+            'densidad': 'ρ (kg/m³)',
         }
 
 
 class DuctoForm(forms.ModelForm):
+    DUCTO_CHOICES = [
+        ('circular', 'Circular'),
+        ('ovalado', 'Ovalado'),
+    ]
     idu = forms.CharField(
-        label='ID',
+        label='ID/Nombre',
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el ID'})
     )
     
-    t_ducto = forms.CharField(
+    t_ducto = forms.ChoiceField(
         label='Tipo de ducto',
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el tipo de ducto'})
+        choices=DUCTO_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'Ingrese el tipo de ducto'})
     )
+
     
     f_friccion = forms.FloatField(
         label='Factor de fricción (Kg/m²) (opcional)',
@@ -128,12 +134,23 @@ class DuctoForm(forms.ModelForm):
     )
     
     f_fuga = forms.FloatField(
-        label='Factor de fuga (ml²/m²) (opcional)',
+        label='Factor de fuga (mm²/m²) (opcional)',
         required=False,
         initial=0,
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el factor de fuga'})
     )
+    diametro = forms.FloatField(
+        label='Diámetro (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el diámetro'}),
+    )
     
+    area = forms.FloatField(
+        label='Área (m²)',
+        required=False,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el área'}),
+    )
+
     t_acople = forms.CharField(
         label='Tipo de acople',
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el tipo de acople'})
@@ -146,25 +163,26 @@ class DuctoForm(forms.ModelForm):
 
     class Meta:
         model = Ducto
-        fields = ['idu', 't_ducto', 'f_friccion', 'f_fuga', 't_acople', 'largo']
+        fields = ['idu', 't_ducto','diametro','area', 'f_friccion', 'f_fuga', 't_acople', 'largo']
+        
         labels = {
-            'idu': 'ID',
+            'idu': 'ID/Nombre',
             't_ducto': 'Tipo de ducto',
             'f_friccion': 'Factor de fricción(K) (opcional)',
             'f_fuga': 'Factor de fuga(L) (opcional)',
             't_acople': 'Tipo de acople',
             'largo': 'Largo (m)'
         }
+    def __init__(self, *args, **kwargs):
+        ocultar = kwargs.pop('ocultar',True)
+        super().__init__(*args, **kwargs)
+        if ocultar:
+            self.fields['diametro'].widget = forms.HiddenInput()
+            self.fields['area'].widget = forms.HiddenInput()
 
-    class Meta:
-         model = Ducto
-         fields = ['idu', 't_ducto','f_friccion', 'f_fuga', 't_acople', 'largo']
-         labels = {
-            'idu': 'ID',
-            't_ducto':   'Tipo de ducto',
-            't_acople':  'Tipo de acople',
-            'largo':     'Largo ducto (m)',
-         }
+    
+    
+
       
 class EquipDieselForm(forms.ModelForm):
 
@@ -211,13 +229,23 @@ class EquipDieselForm(forms.ModelForm):
          model = EquipamientoDiesel
          fields = ['idu','tipo','modelo_diesel','potencia','qr_fabricante','qr_calculado']
          labels = {
-            'idu': 'ID',
+            'idu': 'ID/Nombre',
             'modelo_diesel':  'Modelo',
             #'tipo': 'Tipo Equio'
          }
 
 class ProyectoForm(forms.ModelForm):
-
+    n_carga_choices = (
+      ('liviana','Liviana'),
+      ('moderada','Moderada'),
+      ('pesada','Pesada')
+   )
+    t_trabajo_choices = (
+      ('trabajo continuo','Trabajo continuo'),
+      ('75-25','75% trabajo - 25%'),
+      ('50-50','50% trabajo - 50%'),
+      ('25-75','25% trabajo - 75%'),
+   )
     class CustomPFV(forms.ModelChoiceField):
         def label_from_instance(self, obj):
             return obj.modelo + ' | ' + obj.idu
@@ -264,22 +292,27 @@ class ProyectoForm(forms.ModelForm):
     )
 
     caudal_requerido = forms.FloatField(
-        label='Caudal requerido (M³/s)',
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el caudal requerido'})
+        label='Caudal requerido (m³/s)',
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control ', 
+            'placeholder': 'Ingrese el caudal requerido',
+            'readonly': 'readonly',
+            'value': 0
+            })
     )
     
     ancho_galeria = forms.FloatField(
-        label='Ancho galería (M)',
+        label='Ancho galería (m)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el ancho de la galería'})
     )
     
     alto_galeria = forms.FloatField(
-        label='Alto galería (M)',
+        label='Alto galería (m)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el alto de la galería'})
     )
 
     area_galeria = forms.FloatField(
-        label='Área galería (M²)',
+        label='Área galería (m²)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el área de la galería'})
     )
     factor = forms.FloatField(
@@ -288,7 +321,7 @@ class ProyectoForm(forms.ModelForm):
     )
 
     potencia = forms.FloatField(
-        label='Potencia (KW)',
+        label='Potencia (kw)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese la potencia'})
     )
 
@@ -296,15 +329,31 @@ class ProyectoForm(forms.ModelForm):
         label='Distancia entre sensores (m)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese la distancia entre sensores'})
     )
+    lf = forms.FloatField(
+        label='Longitud de ducto desde el sensor 2 hasta la frente (m)',
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'longitud de ducto desde el sensor 2 hasta la frente (m)'})
+    )
+    nivel_carga = forms.ChoiceField(
+        label='Nivel de carga',
+        choices=n_carga_choices,
+        widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'Ingrese el nivel de carga'})
+    )
+    tipo_trabajo = forms.ChoiceField(
+        label='Tipo de trabajo',
+        choices=t_trabajo_choices,
+        widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'Ingrese el tipo de trabajo'})
+    )
+
 
     class Meta:
         model = Proyecto
-        fields = ['id', 'ventilador', 's_partida', 'potencia','curva_diseno', 'ducto', 'caudal_requerido', 'codos', 'ancho_galeria', 'alto_galeria', 'area_galeria', 'factor', 'dis_e_sens']
+        fields = ['id', 'ventilador', 's_partida', 'potencia','curva_diseno','nivel_carga', 'tipo_trabajo', 'ducto', 'lf','caudal_requerido', 'codos', 'ancho_galeria', 'alto_galeria', 'area_galeria', 'factor', 'dis_e_sens']
         labels = {
             'ancho_galeria': 'Ancho galería',
             'alto_galeria': 'Alto galería',
-            'potencia': 'Potencia (kW)',
+            'potencia': 'Potencia (kw)',
             'dis_e_sens': 'Distancia entre sensores (m)',
+            'lf': 'longitud de ducto desde el sensor 2 hasta la frente (m)'
         }
 
     field_order = ['id', 'ventilador', 'potencia', 's_partida', 'curva_diseno', 'ducto', 'caudal_requerido', 'codos', 'ancho_galeria', 'alto_galeria', 'factor', 'area_galeria', 'dis_e_sens', 's_partida']

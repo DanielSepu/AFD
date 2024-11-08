@@ -23,7 +23,9 @@
       if(qr_fabricante.value == ""){
          Funcion()
       }else{
-         qr_calculado.value = qr_fabricante.value;
+         if ($(qr_calculado).val() > qr_fabricante.value) {
+            qr_calculado.value = qr_fabricante.value;
+         }
       };
    }
 </script>

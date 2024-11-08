@@ -1,4 +1,5 @@
 {% extends "settings.html" %}
+{% load static %}
 {% block body_content %}
    
 
@@ -14,8 +15,8 @@
                <div class="list list-group" style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc; border-radius: 0.25rem;">
                   {% for eqp in equipamientos %}
                      <label class="list-group-item">
-                        <input name="eq_{{ eqp.id }}" type="checkbox" class="form-check-input me-2">
-                        {{ eqp.modelo_diesel }} | {{ eqp.id }}
+                        <input name="eq_{{ eqp.id }}" data-value="{{eqp.potencia}}" type="checkbox" class="form-check-input me-2">
+                          {{ eqp.id }} | {{ eqp.modelo_diesel }}
                      </label>
                   {% endfor %}
                </div>
@@ -27,5 +28,10 @@
 
    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script> 
 
-   <script type="text/javascript" src="../../../static/js/settings/newProject.js"></script> 
+   <script type="text/javascript" src="../../../static/js/settings/project.js"></script> 
 {% endblock body_content %}
+
+{% block body_js %}
+   <script src="{% static 'js/settings/project.js' %}"></script>
+{% endblock body_js %}
+

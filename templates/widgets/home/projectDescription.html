@@ -19,7 +19,7 @@
               <h5>Ancho de la galería</h5>
               <p>{{Project.ancho_galeria}} (m)</p>
               <h5>Área de la galería</h5>
-              <p>{{Project.area_galeria}} (m)</p>
+              <p>{{Project.area_galeria}} (m²)</p>
               <h5>Distancia entre sensores</h5>
               <p>{{Project.dis_e_sens}} (m)</p>
             </div>
@@ -36,17 +36,17 @@
           </div>
     
           <div class="row">
-            <fieldset class="toggle-fieldset border border-success rounded p-2 cursor-pointer">
+            <fieldset class="cursor-pointer toggle-fieldset border border-success rounded p-2 ">
               <legend>Ventilador</legend>
               <div class="table-responsive">
                 <table class="table w-100">
                   <thead>
                     <tr>
                       <th>Modelo</th>
-                      <th>Vmm</th>
-                      <th>Amm</th>
-                      <th>Rmm</th>
-                      <th>HP</th>
+                      <th>V (mm)</th>
+                      <th>A (mm)</th>
+                      <th>R (mm)</th>
+                      <th>Potencia motor (kw)</th>
                       <th>Polos</th>
                       <th>Accesorios</th>
                       <th>Opciones</th>
@@ -152,7 +152,7 @@
               </div>
             </fieldset>
     
-            <fieldset class="border border-success rounded p-2 cursor-pointer">
+            <fieldset class="border border-success rounded p-2">
               <legend>Sistema de partida</legend>
               <p>
                 <h5>Nombre de la partida: <a href="{% url 'dbs:edit-sistema-partida' Project.s_partida.id %}" class="btn btn-success">Editar</a></h5>

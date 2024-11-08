@@ -23,27 +23,41 @@ class VdfData(models.Model):  # Asegúrate de heredar de models.Model
    class Meta:
       db_table = "vdf_data"
 
-class SensorsData(models.Model):  # Asegúrate de heredar de models.Model
+class SensorsData(models.Model):  
+   # los comentarios con (-->) indica que es el nombre antes de ser renombrado
    id = models.AutoField(primary_key=True) 
    ts = models.DateTimeField()
    pt2 = models.FloatField() 
    ps2 = models.FloatField() 
-   densidad2 = models.FloatField()
-   q2 = models.FloatField()
-   pt1 = models.FloatField()
+   densidad2 = models.FloatField() #  Presión barométrica ventilador(P2) --> densidad2
+   q2 = models.FloatField() # humedad relativa en la frente(hrf) --> (q2)
+   
+   pt1 = models.FloatField() 
    ps1 = models.FloatField()
-   densidad1 = models.FloatField()
+   densidad1 = models.FloatField() # P1 --> densidad1 
    q1 = models.FloatField()
-   lc = models.FloatField()
+   lc = models.FloatField() # temperatura seca de la frente (tbs2) --> lc
    qf = models.FloatField()
    k = models.FloatField()
-   tbs = models.FloatField()
-   hr = models.FloatField()
-   tbh = models.FloatField()
+   tbs = models.FloatField() # temperatura bulbo seco
+   hr = models.FloatField() # humedad relativa
+   tbh = models.FloatField() # temperatura bulmo humedo
    tgbh = models.FloatField()
    
    class Meta:
       db_table = "sensors_data"
+
+class Evento(models.Model):
+   id = models.AutoField(primary_key=True)
+   semaforo = models.IntegerField() # estado calculado
+   sensor_ahora = models.ForeignKey(SensorsData, on_delete=models.DO_NOTHING, related_name="sensor_ahora" )
+   sensor_hace30m = models.ForeignKey(SensorsData, on_delete=models.DO_NOTHING, related_name="sensor_hace30m" )
+
+   class Meta:
+      db_table = "evento"
+   
+
+
 
 
 class SetParams(models.Model):  # Asegúrate de heredar de models.Model
@@ -90,7 +104,7 @@ class Ventilador(models.Model):
    rmm = models.FloatField()
    hp = models.FloatField()
    polos = models.IntegerField()
-   img_ventilador = models.ImageField(upload_to='ventilador/', default='ventilador/vent-def.jpg')
+   img_ventilador = models.ImageField(upload_to='ventilador/', default='ventilador/vent-def.png')
    accesorios = models.ManyToManyField(Caracteristicas_Ventilador)
    class Meta:
       db_table = "ventilador"
@@ -113,9 +127,15 @@ class CurvaDiseno(models.Model):
       return f"{self.ventilador} - {self.angulo} - {self.rpm}"
 
 class Ducto(models.Model):
+   DUCTO_CHOICES = (
+      ('circular','Circular'),
+      ('ovalado','Ovalado'),
+   )
    id = models.AutoField(primary_key=True)
    idu = models.CharField(default='')
-   t_ducto = models.CharField()
+   t_ducto = models.CharField(max_length=10, choices=DUCTO_CHOICES)
+   diametro = models.IntegerField(null=True, blank=True)
+   area = models.FloatField(null=True, blank=True)
    f_friccion = models.FloatField()
    f_fuga = models.FloatField()
    t_acople = models.CharField()
@@ -143,6 +163,17 @@ class EquipamientoDiesel(models.Model):
 
 ##################################################
 class Proyecto(models.Model):
+   n_carga_choices = (
+      ('liviana','Liviana'),
+      ('moderada','Moderada'),
+      ('pesada','Pesada')
+   )
+   t_trabajo_choices = (
+      ('trabajo continuo','Trabajo continuo'),
+      ('75-25','75% trabajo - 25%'),
+      ('50-50','50% trabajo - 50%'),
+      ('25-75','25% trabajo - 75%'),
+   )
    ventilador = models.ForeignKey(Ventilador, on_delete=models.CASCADE) 
    curva_diseno = models.ForeignKey(CurvaDiseno, on_delete=models.CASCADE)
    ducto = models.ForeignKey(Ducto, on_delete=models.CASCADE)
@@ -152,9 +183,12 @@ class Proyecto(models.Model):
    ancho_galeria = models.FloatField()
    alto_galeria = models.FloatField()
    area_galeria = models.FloatField()
+   nivel_carga  = models.CharField(max_length=12, choices=n_carga_choices)
+   tipo_trabajo = models.CharField(max_length=16, choices=t_trabajo_choices)
    factor = models.FloatField()
    potencia = models.FloatField()
    dis_e_sens = models.FloatField()
+   lf = models.FloatField() # longitud de ducto desde el sensor 2 hasta la frente en metros
    s_partida = models.ForeignKey(Sistema_Partida, on_delete=models.CASCADE) 
 
    class Meta:

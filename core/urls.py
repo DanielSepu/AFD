@@ -31,9 +31,7 @@ urlpatterns = [
     # See #2 here: https://opensource.com/article/18/1/10-tips-making-django-admin-more-secure
     path("admin/", admin.site.urls),
     path("", include('applications.home.urls')),
-
     path("sysInput", TemplateView.as_view(template_name="system.html"), name="system"),
-
     path('', include('applications.getdata.urls')),
     path('', include('applications.fandesign.urls')),
     path('', include('applications.fanreal.urls')),
@@ -41,9 +39,11 @@ urlpatterns = [
     path('', include('applications.settings.urls')),
     path('', include('applications.newproject.urls')),
     path('', include('applications.dbs.urls')),
-
+    path('api-auth/', include('rest_framework.urls')),
 ]
+
 # fmt: on
+
 
 if settings.DEBUG:
     # Serve media files in development server.

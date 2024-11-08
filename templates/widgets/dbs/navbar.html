@@ -1,9 +1,9 @@
 <div class="row">
     <div class="col">
-        <a href="?type=ventilador" class="btn {% if request.GET.type == 'ventilador' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-2">+ Ventilador</a>
-        <a href="?type=curva_diseno" class="btn {% if request.GET.type == 'curva_diseno' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-2 ms-1">+ Curva Diseño</a>
-        <a href="?type=ducto" class="btn {% if request.GET.type == 'ducto' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-2 ms-1">+ Ducto</a>
-        <a href="?type=equip_diesel" class="btn {% if request.GET.type == 'equip_diesel' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-2 ms-1">+ Equipamiento Diesel</a>
-        <a href="{% url 'dbs:create-caracteristica' %}" class="btn {% if request.path == 'create-caracteristica' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-2 ms-1">+ Caracteristica del ventilador</a>
+        <a href="{% url 'dbs:dbs' %}?type=ventilador" class="btn {% if request.GET.type == 'ventilador' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-2">+ Ventilador</a>
+        <a href="{% url 'dbs:dbs' %}?type=curva_diseno" class="btn {% if request.GET.type == 'curva_diseno' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-2 ms-1">+ Curva Diseño</a>
+        <a href="{% url 'dbs:dbs' %}?type=ducto" class="btn {% if request.GET.type == 'ducto' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-2 ms-1">+ Ducto</a>
+        <a href="{% url 'dbs:dbs' %}?type=equip_diesel" class="btn {% if request.GET.type == 'equip_diesel' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-2 ms-1">+ Equipamiento Diesel</a>
+        <a href="{% url 'dbs:create-caracteristica' %}" class="btn {% if 'create-caracteristica' in request.path %} btn-secondary{% else %}btn-outline-secondary{% endif %} mt-2 ms-1">+ Caracteristica del ventilador</a>
     </div>
 </div>

@@ -1,0 +1,93 @@
+<div class="row align-items-center my-4">
+
+  <!-- Información Principal -->
+  <div class="col-md-6">
+    <table class="table table-bordered">
+      <thead>
+        <tr class="bg-secondary text-white text-center">
+          <th colspan="3">Punto de Stall</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <!-- Número "5" como parte de la tabla -->
+          <td rowspan="4" class="align-middle text-center" style="width: 100px;">
+            <h1 class="display-1 fw-bold m-0">5</h1>
+          </td>
+          <td>Estado</td>
+          <td class="text-center" id="v5_estado" style="background-color: {% if punto_stall.estado == 1 %}#d4edda{% else %}#f8d7da{% endif %};">
+            {{ punto_stall.estado }}
+          </td>
+          <td rowspan="4" class="text-center align-middle font-italic fw-bold" style="font-size: 1.2rem;">
+            El punto de STALL, que corresponde al punto de operación del ventilador en donde este deja de funcionar, se calcula teniendo la CURVA DEL VENTILADOR. Corresponde al punto máximo de presión total del ventilador.
+          </td>
+        </tr>
+        <tr>
+          <td>Presión total consumida</td>
+          <td class="text-center" id="v5_stall">{{ punto_stall.presion_consumida }}</td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <div class="text-start">
+              Verde => El ventilador se encuentra operando BAJO un 90%.<br>
+              Rojo => El ventilador se encuentra operando entre un 90% y 100% de su capacidad.
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Rango de Operación -->
+  <div class="col-md-3">
+    <table class="table table-bordered">
+      <thead class="thead-light bg-secondary text-white text-center">
+        <tr>
+          <th colspan="2">Rango de Operación</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Presión total sistema</td>
+          <td class="text-center" id="v5_pt2">{{ punto_stall.presion_sistema }}</td>
+        </tr>
+        <tr>
+          <td>Presión total medida</td>
+          <td class="text-center" id="v5_presion_maxima">{{ punto_stall.presion_medida }}</td>
+        </tr>
+        <tr>
+          <td>Límites presión</td>
+          <td class="text-center" id="v5_stall">{{ punto_stall.limite_presion }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Semáforo -->
+  <div class="col-md-3">
+    <table class="table table-bordered">
+      <thead class="bg-secondary text-white text-center">
+        <tr>
+          <th>Semáforo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-center" id="v5_semaforo" style=""> 
+            {% comment %}
+              background-color: {% if punto_stall.presion_consumida < 0.9 * punto_stall.presion_sistema %}#28a745{% else %}#f8d7da{% endif %}; color: white;
+            
+            {% if punto_stall.presion_consumida < 0.9 * punto_stall.presion_sistema %}
+              90% < Punto Stall
+            {% else %}
+              {% if punto_stall.presion_consumida >= 0.9 * punto_stall.presion_sistema %}
+              Punto Stall > 90%
+              {% endif %}
+            {% endif %}
+            {% endcomment %}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -46,8 +46,8 @@ class VentiladorForm(forms.ModelForm):
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese A'})
     )
     
-    rmm = forms.FloatField(
-        label='R',
+    nmm = forms.FloatField(
+        label='N (mm)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese R'})
     )
     
@@ -62,7 +62,7 @@ class VentiladorForm(forms.ModelForm):
     )
     class Meta:
         model = Ventilador
-        fields = ['modelo', 'vmm', 'amm', 'rmm', 'hp', 'polos', 'img_ventilador', 'accesorios']
+        fields = ['modelo', 'vmm', 'amm', 'nmm', 'hp', 'polos', 'img_ventilador', 'accesorios']
         labels = {
             'modelo': 'Modelo',
             'vmm': 'V',
@@ -70,7 +70,7 @@ class VentiladorForm(forms.ModelForm):
             'rmm': 'R',
             'hp': 'Potencia (HP)'
         }
-        field_order = ['modelo', 'vmm', 'amm', 'rmm','hp','img_ventilador', 'accesorios']
+        field_order = ['modelo', 'vmm', 'amm', 'nmm','hp','img_ventilador', 'accesorios']
 
       
 class CurvaDisenoForm(forms.ModelForm):
@@ -160,7 +160,7 @@ class DuctoForm(forms.ModelForm):
         label='Largo (m)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el largo'})
     )
-
+    
     class Meta:
         model = Ducto
         fields = ['idu', 't_ducto','diametro','area', 'f_friccion', 'f_fuga', 't_acople', 'largo']

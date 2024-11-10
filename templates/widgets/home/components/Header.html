@@ -1,9 +1,59 @@
-<h3>Datos promediados VDF</h3>
-<div class="row" id="vdf">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h2>Datos del proyecto</h2>
+            <table class="table table-bordered table-striped">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Ventilador</th>
+                        <th>Curva de Diseño</th>
+                        <th>Ducto</th>
+                        <th>Codos</th>
+                        <th>Caudal Requerido</th>
+                        <th>Ancho Galería</th>
+                        <th>Alto Galería</th>
+                        <th>Área Galería</th>
+                        <th>Nivel Carga</th>
+                        <th>Tipo Trabajo</th>
+                        <th>Factor</th>
+                        <th>Potencia</th>
+                        <th>Dis E Sens</th>
+                        <th>LF</th>
+                        <th>Sistema de Partida</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ Project.id }}</td>
+                        <td>{{ Project.ventilador }}</td>
+                        <td>{{ Project.curva_diseno }}</td>
+                        <td>{{ Project.ducto }}</td>
+                        <td>{{ Project.codos }}</td>
+                        <td>{{ Project.caudal_requerido }}</td>
+                        <td>{{ Project.ancho_galeria }}</td>
+                        <td>{{ Project.alto_galeria }}</td>
+                        <td>{{ Project.area_galeria }}</td>
+                        <td>{{ Project.nivel_carga }}</td>
+                        <td>{{ Project.tipo_trabajo }}</td>
+                        <td>{{ Project.factor }}</td>
+                        <td>{{ Project.potencia }}</td>
+                        <td>{{ Project.dis_e_sens }}</td>
+                        <td>{{ Project.lf }}</td>
+                        <td>{{ Project.s_partida }}</td>
+                    </tr>
 
-</div>
-<h3>Datos promediados del sensor (10 mins)</h3>
-<div class="row" id="sensor">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <h3>Datos promediados VDF (10 mins)</h3>
+    <div class="row" id="vdf">
 
+    </div>
+    <h3>Datos promediados del sensor (10 mins)</h3>
+    <div class="row" id="sensor">
+
+    </div>
 </div>
 

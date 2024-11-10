@@ -100,7 +100,7 @@
                     <div class="list-group border border-3 border-warning p-3 mb-2">
                         <div class="row">
                             <p class="text-start fs-5 m-0 fw-bold">Presión máxima</p>
-                            <p class="text-start fs-6  ps-4 m-1">  {{peak_pressure}}% </p>
+                            <p class="text-start fs-6  ps-4 m-1">  {{peak_pressure}} % </p>
                         </div>
                     </div>
                 </div>
@@ -108,7 +108,6 @@
         </div>
         
         
-      
 {% endblock %}
 
 {% block body_js %}
@@ -121,7 +120,7 @@
    <script type="text/javascript">
       
       const dataV = {{ scatter_data|safe }};
-      const promedios = {{ c }};
+      const promedios = {{ c | safe }};
       const dataV2 = {{scatter_data2|safe}};
       {% comment %} const curva_dis = {{VenCurvaDis}}; {% endcomment %}
       // Call the function initially

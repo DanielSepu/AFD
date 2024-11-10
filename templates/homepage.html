@@ -4,8 +4,9 @@
 {% block body_container_classes %}mx-0 w-100 mw-100{% endblock %}
 {% block body_content %}
   <div class="row">
-    <h1 class="display-4 text-primary mb-4">
-      <i class="fas fa-fan"></i> Bienvenido a la plataforma AFD!
+    
+    <h1 class="display-4 text-primary mb-4 shadows" >
+      <span class="shadows"><i class="fas fa-fan rotating-icon" ></i></span></i> Bienvenido a la plataforma AFD!
     </h1>
   </div>
   <div class="row">
@@ -27,49 +28,51 @@
   </div>
 
   {% if Projects %}
-  <div class="row mt-4">
-    <div class="col">
-      <h3>Otros proyectos</h3>
-      <div class="table-responsive">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Ventilador</th>
-              <th>Curva diseño</th>
-              <th>Ducto</th>
-              <th>Equipamientos</th>
-              <th>Codos</th>
-              <th>Caudal</th>
-              <th>Sistema de partida</th>
-              <th>Opciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for project in Projects %}
-            <tr>
-              <td>{{ project.ventilador }}</td>
-              <td>{{project.curva_diseno}}</td>
-              <td>{{ project.ducto }}</td>
-              <td>
-                <ul>
-                  {% for equip in project.equipamientos.all %}
-                  <li>{{ equip }}</li>
-                  {% endfor %}
-                </ul>
-              </td>
-              <td>{{ project.codos }}</td>
-              <td>{{ project.caudal_requerido }}</td>
-              <td>{{ project.s_partida }}</td>
-              <td>
-
-                <a href="{% url 'settings:delete-project' project.id %}" class="btn btn-outline-danger">
-                  <i class="fas fa-trash-alt"></i>
-                </a>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+  <div class="container-fluid">
+    <div class="row mt-4">
+      <div class="col">
+        <h3>Otros proyectos</h3>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Ventilador</th>
+                <th>Curva diseño</th>
+                <th>Ducto</th>
+                <th>Equipamientos</th>
+                <th>Codos</th>
+                <th>Caudal</th>
+                <th>Sistema de partida</th>
+                <th>Opciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for project in Projects %}
+              <tr>
+                <td>{{ project.ventilador }}</td>
+                <td>{{project.curva_diseno}}</td>
+                <td>{{ project.ducto }}</td>
+                <td>
+                  <ul>
+                    {% for equip in project.equipamientos.all %}
+                    <li>{{ equip }}</li>
+                    {% endfor %}
+                  </ul>
+                </td>
+                <td>{{ project.codos }}</td>
+                <td>{{ project.caudal_requerido }}</td>
+                <td>{{ project.s_partida }}</td>
+                <td>
+  
+                  <a href="{% url 'settings:delete-project' project.id %}" class="btn btn-outline-danger">
+                    <i class="fas fa-trash-alt"></i>
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>

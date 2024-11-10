@@ -5,7 +5,7 @@
     <table class="table table-bordered">
       <thead>
         <tr class="bg-secondary text-white text-center">
-          <th colspan="3">Leakage Coefficient (Lc)</th>
+          <th colspan="4">Leakage Coefficient (Lc)</th>
         </tr>
       </thead>
       <tbody>
@@ -15,11 +15,11 @@
             <h1 class="display-1 fw-bold m-0">4</h1>
           </td>
           <td>Estado</td>
-          <td class="text-center" id="v4_estado" style="background-color: {% if lc.estado == 2 %}#ffc107{% else %}#f8d7da{% endif %};">
+          <td class="text-center" id="v4_estado" style="">
             {{ lc.estado }}
           </td>
           <td rowspan="3" class="text-center align-middle font-italic fw-bold" id="v4_formula" style="font-size: 1.2rem;">
-            El Lc se encuentra operando dentro de los rangos admitidos. <br> Excelente - Fair - Poor
+            El Lc se encuentra operando dentro de los rangos admitidos. 
           </td>
         </tr>
         <tr>
@@ -47,30 +47,18 @@
       </thead>
       <tbody>
         <tr>
-          <td class="text-center" id="v4_semaforo" style="background-color: {% if lc.valor < 0.5 %}#28a745{% else %}#f8d7da{% endif %}; color: white;">
-            {% if lc.valor < 0.5 %}
-              Lc < 0.5 - Excelente
-            {% else %}
-              Lc no en rango Excelente
-            {% endif %}
+          <td class="text-center" id="" style="background-color: green;color:white;">
+            Lc < 0.5
           </td>
         </tr>
         <tr>
-          <td class="text-center" style="background-color: {% if lc.valor >= 0.5 and lc.valor < 1 %}#ffc107{% else %}#f8d7da{% endif %}; color: white;">
-            {% if lc.valor >= 0.5 and lc.valor < 1 %}
-              0.5 < Lc < 1 - Fair
-            {% else %}
-              Lc no en rango Fair
-            {% endif %}
+          <td class="text-center" style="background-color: yellow; color:black">
+            0.5< Lc < 1
           </td>
         </tr>
         <tr>
-          <td class="text-center" style="background-color: {% if lc.valor >= 1 %}#dc3545{% endif %}; color: white;">
-            {% if lc.valor >= 1 %}
-              Lc > 1 - Poor
-            {% else %}
-              Lc no en rango Poor
-            {% endif %}
+          <td class="text-center" style="background-color: red;color: white;">
+            Lc > 1
           </td>
         </tr>
       </tbody>

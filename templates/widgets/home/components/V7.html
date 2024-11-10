@@ -17,7 +17,7 @@
                   <td class="text-center" id="v7_estado" style="background-color: {% if potencia.estado == 1 %}#d4edda{% else %}#f8d7da{% endif %};">
                       {{ potencia.estado }}
                   </td>
-                  <td rowspan="2" class="text-center align-middle font-italic fw-bold p-4" style="font-size: 1.2rem;">
+                  <td rowspan="2" id="v7_formula" class="text-center align-middle font-italic fw-bold p-4" style="font-size: 1.2rem;">
                       La potencia consumida frente a la potencia instalada es un indicador visual que representa la proporción entre la potencia eléctrica utilizada y la capacidad total de un sistema.
                   </td>
               </tr>
@@ -75,17 +75,17 @@
           </thead>
           <tbody>
               <tr>
-                  <td class="text-center fw-bold" style="background-color: #28a745; color: white;">
+                  <td class="text-center fw-bold" style="background-color: green; color: white;">
                       Potencia &lt; 95%
                   </td>
               </tr>
               <tr>
-                  <td class="text-center fw-bold" style="background-color: #ffc107; color: black;">
+                  <td class="text-center fw-bold" style="background-color: yellow; color: black;">
                       95% &lt; Potencia &lt; 99%
                   </td>
               </tr>
               <tr>
-                  <td class="text-center fw-bold" style="background-color: #dc3545; color: white;">
+                  <td class="text-center fw-bold" style="background-color: red; color: white;">
                       Potencia &gt; 99%
                   </td>
               </tr>

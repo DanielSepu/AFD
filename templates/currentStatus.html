@@ -1,14 +1,12 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block head_extra_meta %}{# <meta> tags go here #}{% endblock %}
+{% block head_extra_meta %}{% endblock %}
 
+{% block head_js %}{% endblock head_js %}
 
-{% block head_js %}{# <script defer> tags for deferred JS only #}{% endblock head_js %}
+{% block head_title %}{% endblock %}
 
-{% block head_title %}{# Page title. Base page has " | VentApp"; follow this pattern for sub-page titling #}{% endblock %}
-
-{# Add classes to the main <div> wrapping body content #}
 {% block body_container_classes %}mx-0 w-100 mw-100{% endblock %}
 
 {% block body_content %}
@@ -19,76 +17,46 @@
             {% include "widgets/currentStatus/current_data.html" %}
             {% include "widgets/currentStatus/vdf_frecuency.html" %}
          </div>
-         {% comment %} <div class="row mb-2">
-            <div class= "col">
-               <div class="btn-group" role="group" aria-label="Basic radio toggle button group" id  = "chart_type"> 
-                  <input type="radio" class="btn-check" name="btnradioChart" id="general" autocomplete="off"   checked >
-                  <label class="btn btn-outline-secondary" for="general"  onclick="changeDataChart({{data.general |safe}} ,  'general')" >General</label>
-
-                  <input type="radio" class="btn-check" name="btnradioChart" id="t_preassure" autocomplete="off" >
-                  <label class="btn btn-outline-secondary" for="t_preassure"  onclick="changeDataChart({{data.total_pressure |safe}},'t_preassure')" >Presión total</label>
-
-                  <input type="radio" class="btn-check" name="btnradioChart" id="s_pressure" autocomplete="off"  >
-                  <label class="btn btn-outline-secondary" for="s_pressure"    onclick="changeDataChart({{data.static_pressure|safe}}, 's_pressure')" >Presión estática</label>
-
-                  <input type="radio" class="btn-check" name="btnradioChart" id="power" autocomplete="off" >
-                  <label class="btn btn-outline-secondary" for="power" onclick="changeDataChart({{data.power|safe}},'power')" >Potencia</label>
-               </div>
-
-               <div class = "row-4 mt-2">
-                  <div class="btn-group" role="group" aria-label="Basic radio toggle button group" id  = "fan_selector"> 
-                        <input type="radio" class="btn-check" name="btnradioFan" id="f_performance" autocomplete="off"  checked >
-                        <label class="d-flex btn btn-outline-secondary p-0 m-1" for="f_performance"  onclick="chartSwitch(true)"  > <div class="col-3 " id = 'fp_status' style= "background-color: {{ data.general.FanPerformance.status }};">  </div> <div class="col p-1 me-2"> Fan Performance</div> </label>
-
-                        <input type="radio" class="btn-check" name="btnradioFan" id="f_operation" autocomplete="off" >
-                        <label class=" d-flex   btn btn-outline-secondary p-0 m-1"  for="f_operation" onclick="chartSwitch(false)" > <div class="col-3 " id = 'fo_status'  style= "background-color: {{ data.general.FanOperation.status }};">  </div> <div class="col p-1 me-2"> Fan Operation</div> </label>
-                  </div>
-
-               </div>
-            </div>
-         </div> {% endcomment %}
          
          {# Columna Derecha #}
          <div class="col-sm-12 col-md-3 ">
             <div class="row justify-content-center align-items-center">
                <div class="col-12 col-md-10 col-xl-8">
-                  {#  Model #}
+                  {# Modelo #}
                   <div class="list-group border border-lg-3 border-warning p-3 mb-2">
                      <div class="row">
                         <p class="text-center fs-4 fw-bold m-0 ">{{project.ventilador}}</p>
                      </div>
                   </div>
-                  {#  Model #}
+                  {# Desempeño Actual del Ventilador #}
                   <div class="list-group border border-3 border-warning p-3 mb-2">
                      <div class="row">
-                        <p class="text-start fs-5 m-0">Current Fan Performance</p>
+                        <p class="text-start fs-5 m-0">Desempeño Actual del Ventilador</p>
                      </div>
                   </div>
-                  {#  Blade angle #}
+                  {# Ángulo de la Hoja #}
                   <div class="list-group border border-3 border-warning p-3 mb-2">
                      <div class="row">
-                        <p class="text-start fs-6  ps-4 m-1">  {{project.factor}} % </p>
-                     </div>
-                  </div>
-                  <div class="list-group border border-3 border-warning p-3 mb-2">
-                     <div class="row">
-                        <p class="text-start fs-5 m-0">Current System Performance</p>
+                        <p class="text-start fs-6 ps-4 m-1">  {{project.factor}} % </p>
                      </div>
                   </div>
                   <div class="list-group border border-3 border-warning p-3 mb-2">
                      <div class="row">
-                        {# TODO ESTE VALOR DEBE SER ACTUALIZADO #}
-                        <p class="text-start fs-5 m-0">79 %</p>
+                        <p class="text-start fs-5 m-0">Desempeño Actual del Sistema</p>
                      </div>
                   </div>
-
                   <div class="list-group border border-3 border-warning p-3 mb-2">
                      <div class="row">
-                        <p class="text-start fs-5 m-0">Heat generated</p>
+                        <p class="text-start fs-5 m-0" id="desempeno">{{ data.3 }} %</p>
                      </div>
                   </div>
 
-                  
+                  <div class="list-group border border-3 border-warning p-3 mb-2">
+                     <div class="row">
+                        <p class="text-start fs-5 m-0">Calor generado</p>
+                     </div>
+                  </div>
+
                   <div class="list-group border border-3 border-warning p-3 mb-2">
                      <div class="row">
                         <p class="text-start fs-5 m-0">{{project.potencia}} kW</p>
@@ -103,10 +71,7 @@
 
 {% endblock %}
 
-
 {% block body_js %}
-{# Inline or other types of JS <script> tags here. #}
-{# Remember we've already got jQuery and Bootstrap bundle with Popper loaded. #}
    <script src="{% static 'js/d3.v7.js' %}"></script>
    <script src="{% static 'js/scatterplot.js' %}"></script>
 
@@ -117,11 +82,8 @@
       var sectionStatus = 'general'
       var switchStatus = true
 
-
-      {% comment %} document.addEventListener("DOMContentLoaded", function() { createChartScatterplot(dataSection.FanPerformance.data); }); {% endcomment %}
       document.addEventListener("DOMContentLoaded", function() { getValues() });
 
-      
       // Cambiar vista
       function changeChartType(type) {
          window.location.href = "{% url 'fanreal:fanreal' %}?chart_type=" + type;
@@ -132,36 +94,27 @@
       }
 
       function changeDataChart(data_input, section){
-
-      
          sectionStatus = section;
          dataSection = data_input;
          chartSwitch(switchStatus);
-
-         var status = []
 
          var fPStatus = document.getElementById('fp_status');
          var fOStatus = document.getElementById('fo_status');
 
          fPStatus.style.backgroundColor = data_input.FanPerformance.status;
          fOStatus.style.backgroundColor = data_input.FanOperation.status;
-         
       }
 
-
       function chartSwitch(fanSelector){
-
-         switchStatus= fanSelector;
+         switchStatus = fanSelector;
 
          if (switchStatus == true){
             console.log(sectionStatus)
             updateData(dataSection.FanPerformance.data);
-
-         }else{
+         } else {
             console.log(sectionStatus)
             updateData(dataSection.FanOperation.data);
          }
-         
       }
 
       function getValues() {
@@ -180,20 +133,19 @@
          $("#qf").text(data[1]);
          $("#pt1").text(data[2]);
          $("#power").text(data[3]);
+         $("#desempeno").text(`${data[3]} %`);
          $("#fref").text(data[4]);
          $("#pe").text(context.presion_estatica);
          $("#pd").text(context.presion_dinamica);
          $("#pch").text(context.perdida_de_choque);
          $("#pf").text(context.perdidas_friccionales);
-
-         
       }
 
       function editFrecuency(data) {
          $("#fref").text(data[4]);
       }
 
-      setInterval( () => {
+      setInterval(() => {
          getValues();
       }, 15000);
 
@@ -213,5 +165,5 @@
          .then(response => response.json())
          .then(data => console.log(data));
       });
-      </script>
+   </script>
 {% endblock %}

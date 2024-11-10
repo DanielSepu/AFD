@@ -110,25 +110,24 @@ class Semaforo:
         self.vdfData = get_10min_vdf_data()
         self.sensorData = get_10min_sensor_data()
 
-        dataframe_transpose = self.sensorData.mean().round(3)
-
+        # Filtrar solo columnas numéricas antes de calcular la media
+        numeric_sensor_data = self.sensorData.select_dtypes(include='number')
+        dataframe_transpose = numeric_sensor_data.mean().round(2)
         dataframe_sensor = pd.DataFrame([dataframe_transpose])
 
         dict_sensor = dict(dataframe_sensor.iloc[0].to_dict())
         self.detalle["sensor"] = dataframe_sensor.to_html(index=False)
         self.project = project
 
-        # mostrar vdf 
-        dataframe_vdfDatatranspose = self.vdfData.mean().round(3).to_frame().transpose() 
+        # Mostrar vdf
+        numeric_vdf_data = self.vdfData.select_dtypes(include='number')
+        dataframe_vdfDatatranspose = numeric_vdf_data.mean().round(2).to_frame().transpose()
         dataframe_vdfDatatranspose = dataframe_vdfDatatranspose.iloc[0]
         dataframe_vdfDatatranspose = dataframe_vdfDatatranspose.iloc[1:]
 
-        dataframe_transpose = self.vdfData.mean().round(3)
-        dataframe_sensor = pd.DataFrame([dataframe_transpose])
-        self.detalle["vdf"] = dataframe_sensor.to_html(index=False)
-
-
-
+        dataframe_transpose_vdf = numeric_vdf_data.mean().round(2)
+        dataframe_vdf = pd.DataFrame([dataframe_transpose_vdf])
+        self.detalle["vdf"] = dataframe_vdf.to_html(index=False)
 
     def calculate_tbh(self, tbs, hr):
         # tbh1 =E13*ATAN(0.151977*  SQRT(E8+8.313659))+     ATAN(E13+E8)-   ATAN(E8-1.6763)+    0.00391838*     POWER(E8,1.5)*ATAN(0.023101*E8)-4.686
@@ -312,7 +311,7 @@ class Semaforo:
         return tbs * atan(0.151977 * sqrt(hr + 8.313659)) + atan(tbs + hr) - atan(hr - 1.6763) + 0.00391838 * pow(hr, 1.5) * atan(0.023101 * hr) - 4.686035
 
     def calcular_semaforo_v2(self, velocidad_del_aire):
-        if velocidad_del_aire < 0.25 and velocidad_del_aire < 2.5:
+        if velocidad_del_aire > 0.25 and velocidad_del_aire < 2.5:
             color = "verde"
             return color
         color = "rojo"
@@ -371,13 +370,13 @@ class Semaforo:
         maximo = fila.iloc[-1]
         if tgbh < minimo :
             color = "rojo"
-            return minimo, maximo, "rojo"
+            return nivel_carga, minimo, maximo, "rojo"
         
         if tgbh > maximo:
             color = "rojo"
-            return minimo, maximo, "rojo"
+            return nivel_carga, minimo, maximo, "rojo"
         color = "verde"
-        return minimo, maximo,"verde"
+        return nivel_carga, minimo, maximo,"verde"
     
     def tgbh_v3(self):
         """
@@ -391,7 +390,7 @@ class Semaforo:
         tbh = self.sensorData["tbh"].mean()
         tbs = self.sensorData["tbs"].mean()
         tgbh = (0.7 * tbh) + (0.3 * tbs)
-        min, max, color = self.calcular_estado_v3(tgbh)
+        nivel_carga, min, max, color = self.calcular_estado_v3(tgbh)
         
         self.detalle['v3'] = {
             'tbh': round(tbh, 3),
@@ -400,6 +399,7 @@ class Semaforo:
             'color': color,
             'min': min,
             'max': max,
+            'nivel_carga': nivel_carga,
             'formula': formula,
         }
         self.detalle["colores"].append(color)
@@ -428,9 +428,7 @@ class Semaforo:
         L = self.project.dis_e_sens
 
         Lc = 3*(Q1-Q2)*(pt1-pt2)/(2*L*(pow(pt1,1.5)-pow(pt2,1.5)))*100*pow(1000,0.5)
-        # print(f"Variables de lc: Q1: {Q1}, Q2: {Q2}, pt1: {pt1}, pt2: {pt2}, L: {L}, Lc: {Lc}")
-        # print(f"V4: leakage ({Lc})")
-
+        formula = "Lc = 3 * (Q1-Q2) * (pt1-pt2) / ( 2 * L *(pow(pt1,1.5)  - pow(pt2,1.5) )) * 100 * pow(1000,0.5)"
         color = self.calcular_semaforo_v4(Lc)
         self.detalle['v4'] = {
             'Q1': round(Q1, 3),
@@ -439,7 +437,8 @@ class Semaforo:
             'pt2': round(pt2,3),
             'L': round(L,3),
             'Lc': round(Lc, 3),
-            'color': color
+            'color': color,
+            'formula': formula,
         }
         self.detalle["colores"].append(color)
         return Lc 
@@ -455,7 +454,6 @@ class Semaforo:
         pt2 = self.sensorData["pt2"].mean()
         
         presion_total_df =  presion_total(self.project, self.vdfData, self.sensorData)
-
         # obtener el valor maximo del dataframe que contiene la curva ajustada
         presion_maxima_curvaAjustada = presion_total_df['presion'].max()
         fila = presion_total_df.loc[presion_total_df['presion'] == presion_maxima_curvaAjustada ]
@@ -468,14 +466,22 @@ class Semaforo:
             'pt2': round(pt2,3),
             'presion_maxima': round(presion_maxima_curvaAjustada,3),
             'stall': round(stall,3),
-            'color': self.calcular_semaforo_v5(stall)
+            'color': self.calcular_semaforo_v5(stall),
+            'formula': "stall = pt2 / presion_maxima_curvaAjustada * 100"
         }
         self.detalle["colores"].append(color)
         return stall
 
 
     def calcular_semaforo_v6(self, porcentaje):
-        return ""
+        if porcentaje < 0.05:
+            return "verde"
+        
+        if porcentaje > 0.05 and porcentaje < 0.10:
+            return "amarillo"
+        
+        if porcentaje > 0.10:
+            return "rojo"
     
 
     def fugas_v6(self):
@@ -499,21 +505,14 @@ class Semaforo:
         else:
             unidades_faltantes = float("inf")
         
-        queryset = SensorsData.objects.all().order_by('-id')
-        print(f"{unidades_faltantes} registros para un total de 30 minutos")
         ultimos_30mins = SensorsData.objects.all().order_by('-id')[:int(unidades_faltantes)+3]
         primero = ultimos_30mins[0]
         ultimo = ultimos_30mins[len(ultimos_30mins) - 1]
 
         presion_actual = ultimo.pt1 
         presion_hace30m = primero.pt1
-        dict_data = {
-            "intervalo en segundos": segundos_diferencia,
-            "presion actual": presion_actual,
-            "presion hace30m": presion_hace30m
-        }
         porcentaje = 1 - (presion_hace30m/presion_actual)
-
+        formula = "porcentaje = 1 - (presion_hace30m/presion_actual)"
         color = self.calcular_semaforo_v6(porcentaje)
         self.detalle["colores"].append(color)
         self.detalle['v6'] = {
@@ -521,12 +520,20 @@ class Semaforo:
             "presion actual": round(presion_actual, 3),
             "presion hace30m": round(presion_hace30m, 3),
             "porcentaje": round(porcentaje, 3),
+            "formula": formula,
             "color": color
         }
         return color
 
     def calcular_semaforo_v7(self, potencia):
+        if potencia < 95:
+            return "verde"
         
+        if potencia > 95 and potencia < 99:
+            return "amarillo"
+        
+        if potencia > 99:
+            return "rojo"
         return ""
 
 
@@ -534,20 +541,17 @@ class Semaforo:
         power = self.project.ventilador.hp
         vdf_data = VdfData.objects.all().last()
         potencia_consumida = vdf_data.power 
-        dict_data  ={
-            "power": power,
-            "potencia consumida": potencia_consumida
-        }
 
         potencia = (potencia_consumida/power)*100
-
+        formula = "potencia = (potencia_consumida/power)*100"
         color = self.calcular_semaforo_v7(potencia)
         self.detalle["colores"].append(color)
         self.detalle['v7'] = {
             "power": round(power, 3),
             "potencia_consumida": round(potencia_consumida, 3),
             "potencia_porcent": round(potencia, 3),
-            "color": color
+            "color": color,
+            "formula": formula
         }
         return potencia
     

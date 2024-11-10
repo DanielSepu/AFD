@@ -5,7 +5,7 @@
     <table class="table table-bordered">
       <thead>
         <tr class="bg-secondary text-white text-center">
-          <th colspan="3">Punto de Stall</th>
+          <th colspan="4">Punto de Stall</th>
         </tr>
       </thead>
       <tbody>
@@ -18,12 +18,12 @@
           <td class="text-center" id="v5_estado" style="background-color: {% if punto_stall.estado == 1 %}#d4edda{% else %}#f8d7da{% endif %};">
             {{ punto_stall.estado }}
           </td>
-          <td rowspan="4" class="text-center align-middle font-italic fw-bold" style="font-size: 1.2rem;">
+          <td rowspan="4" id="v5_formula" class="text-center align-middle font-italic fw-bold" style="font-size: 1.2rem;">
             El punto de STALL, que corresponde al punto de operación del ventilador en donde este deja de funcionar, se calcula teniendo la CURVA DEL VENTILADOR. Corresponde al punto máximo de presión total del ventilador.
           </td>
         </tr>
         <tr>
-          <td>Presión total consumida</td>
+          <td>Stall</td>
           <td class="text-center" id="v5_stall">{{ punto_stall.presion_consumida }}</td>
         </tr>
         <tr>
@@ -48,16 +48,12 @@
       </thead>
       <tbody>
         <tr>
-          <td>Presión total sistema</td>
+          <td>Presión total sistema (pt2)</td>
           <td class="text-center" id="v5_pt2">{{ punto_stall.presion_sistema }}</td>
         </tr>
         <tr>
-          <td>Presión total medida</td>
+          <td>Presión máxima curva ajustada</td>
           <td class="text-center" id="v5_presion_maxima">{{ punto_stall.presion_medida }}</td>
-        </tr>
-        <tr>
-          <td>Límites presión</td>
-          <td class="text-center" id="v5_stall">{{ punto_stall.limite_presion }}</td>
         </tr>
       </tbody>
     </table>
@@ -73,18 +69,13 @@
       </thead>
       <tbody>
         <tr>
-          <td class="text-center" id="v5_semaforo" style=""> 
-            {% comment %}
-              background-color: {% if punto_stall.presion_consumida < 0.9 * punto_stall.presion_sistema %}#28a745{% else %}#f8d7da{% endif %}; color: white;
-            
-            {% if punto_stall.presion_consumida < 0.9 * punto_stall.presion_sistema %}
-              90% < Punto Stall
-            {% else %}
-              {% if punto_stall.presion_consumida >= 0.9 * punto_stall.presion_sistema %}
-              Punto Stall > 90%
-              {% endif %}
-            {% endif %}
-            {% endcomment %}
+          <td class="text-center" id="" style="background-color: green; color: white;"> 
+            90% < Pto Stall
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center" id="" style="background-color: red; color: white;"> 
+            Pto stall > 90%
           </td>
         </tr>
       </tbody>

@@ -1,11 +1,5 @@
 <div class="container-fluid">
   <div class="row">
-      <div class="col-12">
-          <h5 class="fw-bold">6 Fugas</h5>
-      </div>
-  </div>
-
-  <div class="row">
       <!-- Estado y Fugas -->
       <div class="col-md-5">
           <table class="table table-bordered">
@@ -73,16 +67,23 @@
               </thead>
               <tbody>
                   <tr>
-                      <td class="text-center fw-bold" id="v6_semaforo" style="background-color: {% if fugas.fugas_percent < 5 %}#28a745{% elif 5 <= fugas.fugas_percent < 10 %}#ffc107{% else %}#dc3545{% endif %}; color: white;">
-                          {% if fugas.fugas_percent < 5 %}
-                              Fugas &lt; 5%: Parpadeo normal
-                          {% elif 5 <= fugas.fugas_percent < 10 %}
-                              5% &lt; Fugas &lt; 10%: Parpadeo lento
-                          {% else %}
-                              Fugas &gt; 10%: Parpadeo rápido
-                          {% endif %}
+                      <td class="text-center fw-bold" id="" style="background-color: green; color: black;">
+                        Fugas < 5%
                       </td>
                   </tr>
+                  
+                  <tr>
+                      <td class="text-center fw-bold" id="" style="background-color: yellow ; color: black;">
+                        5% < Fugas < 10%
+                      </td>
+                  </tr>
+                  
+                  <tr>
+                      <td class="text-center fw-bold" id="" style="background-color: red; color:white;">
+                        Fugas > 10%
+                      </td>
+                  </tr>
+                  
               </tbody>
           </table>
       </div>

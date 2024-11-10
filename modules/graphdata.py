@@ -17,7 +17,7 @@ def  get_fan_data(proyect, chart_type):
       df_fan = pd.DataFrame(dict(proyect.curva_diseno.datos_curva))
    else:
       raise ValueError("No hay proyecto asignado")
-   #df_fan["rpm"] = df_fan["rpm"].mean()
+   #  df_fan["rpm"] = df_fan["rpm"].mean()
 
    return df_fan 
 
@@ -66,6 +66,11 @@ def dens_adjust_power(power_rpm, densidad_fan, densidad_sensor1):
    df_adjust = power_rpm * (densidad_sensor1/densidad_fan)
    return df_adjust
 
+def calculate_presion_estatica(presion, caudal, area_difusor, mid_densidad):
+   #print(f"presion: {presion} caudal: {caudal} area_difusor: {area_difusor}")
+   presion_estatica = pd.DataFrame()
+   presion_estatica = presion - mid_densidad *(caudal/area_difusor)**2
+   return presion_estatica
 # def build_context(chart_type):
 #    sensor_df = get_sensor_data()  
 #    fan_df = get_fan_data()

@@ -15,7 +15,6 @@ from applications.dbs.forms import *
 
 def settings(request):
    setting_type = request.GET.get('type')
-   print(setting_type)
    print(request.method)
    if request.method == 'GET':
       if setting_type == 'new_project' or setting_type is None:
@@ -24,8 +23,8 @@ def settings(request):
          return render(request, 'widgets/settings/newProject.html', context)
       
       if setting_type == 'current_project':
-         up = Proyecto.objects.all().order_by('-id').last()
-         print(up)
+         up = Proyecto.objects.all().order_by('id').last()
+         
          if up is not None:
             up_eqp = up.equipamientos.all()
             form = ProyectoForm(instance=up)

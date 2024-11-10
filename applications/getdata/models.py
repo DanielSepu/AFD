@@ -75,7 +75,8 @@ class SetParams(models.Model):  # Asegúrate de heredar de models.Model
 class Caracteristicas_Ventilador(models.Model):
    id = models.AutoField(primary_key=True)
    nombre = models.CharField()
-   factor_choque = models.IntegerField()
+   factor_choque = models.FloatField()
+   cantidad = models.IntegerField(default=0)
 
    def __str__(self) -> str:
       return f"{self.nombre} - {self.factor_choque}"
@@ -101,7 +102,7 @@ class Ventilador(models.Model):
    modelo = models.CharField()
    vmm = models.FloatField()
    amm = models.FloatField()
-   rmm = models.FloatField()
+   nmm = models.FloatField()
    hp = models.FloatField()
    polos = models.IntegerField()
    img_ventilador = models.ImageField(upload_to='ventilador/', default='ventilador/vent-def.png')
@@ -124,7 +125,7 @@ class CurvaDiseno(models.Model):
       db_table = "curva_diseno"
 
    def __str__(self) -> str:
-      return f"{self.ventilador} - {self.angulo} - {self.rpm}"
+      return f"Nomb: {self.ventilador} - ang: {self.angulo} - rpm: {self.rpm}"
 
 class Ducto(models.Model):
    DUCTO_CHOICES = (
@@ -144,7 +145,7 @@ class Ducto(models.Model):
       db_table = "ducto"
 
    def __str__(self) -> str:
-      return f"{self.t_ducto} - {self.f_friccion} - {self.f_fuga}"
+      return f"Nomb: {self.t_ducto} \n f friccion:{self.f_friccion} \n f fuga:{self.f_fuga}"
 
 
 class EquipamientoDiesel(models.Model):

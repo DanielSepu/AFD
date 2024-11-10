@@ -1,14 +1,23 @@
+<style>
+.semaforo-luz {
+  transition: box-shadow 0.3s ease;
+}
+
+.semaforo-luz:hover {
+  box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.3);
+}
+</style>
 <div class="row mb-4" style="height: 25vh; width: 100%;">
   <!-- Primera columna: Semáforo -->
   <div class="col-md-6">
     <div class="card h-100 shadow-lg">
       <div class="d-flex flex-row align-items-center justify-content-around" style="height: 100%;">
         <!-- Luz roja -->
-        <div id="luz-roja" class="semaforo-luz bg-secondary rounded-circle" style="width: 100px; height: 100px;" data-bs-toggle="modal" data-bs-target="#modalSemaforo" onclick="mostrarContenidoModal('rojo')"></div>
+        <div id="luz-roja" class="semaforo-luz bg-secondary rounded-circle" style="width: 100px; height: 100px; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#modalSemaforo" onclick="mostrarContenidoModal('rojo')"></div>
         <!-- Luz amarilla -->
-        <div id="luz-amarilla" class="semaforo-luz bg-secondary rounded-circle" style="width: 100px; height: 100px;" data-bs-toggle="modal" data-bs-target="#modalSemaforo" onclick="mostrarContenidoModal('amarillo')"></div>
+        <div id="luz-amarilla" class="semaforo-luz bg-secondary rounded-circle" style="width: 100px; height: 100px; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#modalSemaforo" onclick="mostrarContenidoModal('amarillo')"></div>
         <!-- Luz verde -->
-        <div id="luz-verde" class="semaforo-luz bg-success rounded-circle" style="width: 100px; height: 100px;" data-bs-toggle="modal" data-bs-target="#modalSemaforo" onclick="mostrarContenidoModal('verde')"></div>
+        <div id="luz-verde" class="semaforo-luz bg-success rounded-circle" style="width: 100px; height: 100px; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#modalSemaforo" onclick="mostrarContenidoModal('verde')"></div>
       </div>
     </div>
   </div>

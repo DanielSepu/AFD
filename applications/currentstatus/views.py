@@ -102,10 +102,6 @@ def get_recent_data(request):
         project = Proyecto.objects.all().order_by('id').last() 
         caracteristicas = project.ventilador.accesorios.all()
 
-
-        
-        
-
         # Consultar registro con ese id 
         item_sensors = SensorsData.objects.using('sensorDB').get(id=max_id_sensors)
         item_vdf = VdfData.objects.using('sensorDB').get(id=max_id_vdf)

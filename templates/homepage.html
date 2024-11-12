@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
 {% block head_title %}Home{% endblock %}
-{% block body_container_classes %}mx-0 w-100 mw-100{% endblock %}
 {% block body_content %}
   <div class="row">
     
@@ -14,7 +13,11 @@
       Estado del semaforo
     </h3>
   </div>
-  {% include "widgets/home/semaforo.html" %}
+  <div class="row">
+    <div class="col-md-12">
+      {% include "widgets/home/semaforo.html" %}
+    </div>
+  </div>
   <div class="row">
     <div class="col-6">
     {% include "widgets/home/projectDescription.html" %}

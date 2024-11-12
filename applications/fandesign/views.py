@@ -135,9 +135,9 @@ def fandesign(request):
          df_vdf =  VdfData.objects.using('sensorDB').all().last()
 
          #Q_medido = df_sensor1["q1"].mean()
-         Q_medido = df_sensor1.q1
-         print(f"Q_medido")
-         print(Q_medido)
+         #Q_medido = df_sensor1.q1
+         #p#rint(f"Q_medido")
+         #print(Q_medido)
          # P_medido = df_vdf["potencia"].mean()  
          P_medido = df_vdf.power
 
@@ -153,9 +153,13 @@ def fandesign(request):
          })
 
          # Calcular la columna 'power_dens' utilizando las columnas previamente calculadas
-         df_adjust['power_dens'] = dens_adjust_power(df_adjust['power_rpm'], densidad_fan, densidad_sensor1)
-            
-         df_graph = df_adjust.loc[:, ["q_rpm", "power_dens"]]
+         # df_adjust['power_dens'] = dens_adjust_power(df_adjust['power_rpm'], densidad_fan, densidad_sensor1)
+         new_df = pd.DataFrame({
+            'q_rpm': df_adjust['q_rpm'],
+            'power_rpm': df_adjust['power_rpm'],
+            'power_dens': dens_adjust_power(df_adjust['power_rpm'], densidad_fan, densidad_sensor1)
+         })
+         df_graph = new_df.loc[:, ["q_rpm", "power_dens"]]
 
          df_graph.rename(columns={"q_rpm":"caudal","power_dens":"potencia"}, inplace=True)
 

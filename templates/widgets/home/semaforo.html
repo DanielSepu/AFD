@@ -7,7 +7,7 @@
   box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.3);
 }
 </style>
-<div class="row mb-4" style="height: 25vh; width: 100%;">
+<div class="row mb-4" >
   <!-- Primera columna: Semáforo -->
   <div class="col-md-6">
     <div class="card h-100 shadow-lg">
@@ -23,11 +23,61 @@
   </div>
 
   <!-- Segunda columna: Card vacía con borde primary -->
-  <div class="col-md-6">
-    <div class="card border border-primary h-100">
-      <!-- Card vacía -->
+  <div class="col-md-6 ">
+    <div class="row">
+      <!-- Tarjeta 1 -->
+      <div class="col-md-4 mb-4">
+        <div class="card border border-primary h-100 d-flex align-items-center justify-content-between flex-row px-3 py-2">
+          <h6 class="mb-0">Caudal en la frente</h6>
+          <div id="color-caudal-frente" class="color-box" style="width: 20px; height: 20px; background-color: yellow;"></div>
+        </div>
+      </div>
+      <!-- Tarjeta 2 -->
+      <div class="col-md-4 mb-4">
+        <div class="card border border-primary h-100 d-flex align-items-center justify-content-between flex-row px-3 py-2">
+          <h6 class="mb-0">Velocidad del aire</h6>
+          <div id="color-velocidad-aire" class="color-box" style="width: 20px; height: 20px; background-color: red;"></div>
+        </div>
+      </div>
+      <!-- Tarjeta 3 -->
+      <div class="col-md-4 mb-4">
+        <div class="card border border-primary h-100 d-flex align-items-center justify-content-between flex-row px-3 py-2">
+          <h6 class="mb-0">TGBH</h6>
+          <div id="color-tgbh" class="color-box" style="width: 20px; height: 20px; background-color: green;"></div>
+        </div>
+      </div>
+      <!-- Tarjeta 4 -->
+      <div class="col-md-4 mb-4">
+        <div class="card border border-primary h-100 d-flex align-items-center justify-content-between flex-row px-3 py-2">
+          <h6 class="mb-0">Leakage Coefficient (Lc)</h6>
+          <div id="color-leakage-coefficient" class="color-box" style="width: 20px; height: 20px; background-color: yellow;"></div>
+        </div>
+      </div>
+      <!-- Tarjeta 5 -->
+      <div class="col-md-4 mb-4">
+        <div class="card border border-primary h-100 d-flex align-items-center justify-content-between flex-row px-3 py-2">
+          <h6 class="mb-0">Punto de Stall</h6>
+          <div id="color-punto-stall" class="color-box" style="width: 20px; height: 20px; background-color: red;"></div>
+        </div>
+      </div>
+      <!-- Tarjeta 6 -->
+      <div class="col-md-4 mb-4">
+        <div class="card border border-primary h-100 d-flex align-items-center justify-content-between flex-row px-3 py-2">
+          <h6 class="mb-0">Fugas</h6>
+          <div id="color-fugas" class="color-box" style="width: 20px; height: 20px; background-color: green;"></div>
+        </div>
+      </div>
+      <!-- Tarjeta 7 -->
+      <div class="col-md-4 mb-4">
+        <div class="card border border-primary h-100 d-flex align-items-center justify-content-between flex-row px-3 py-2">
+          <h6 class="mb-0">Potencia</h6>
+          <div id="color-potencia" class="color-box" style="width: 20px; height: 20px; background-color: yellow;"></div>
+        </div>
+      </div>
     </div>
   </div>
+  
+  
 </div>
 
 <!-- Modal Semáforo -->
@@ -81,6 +131,45 @@
       modalLabel.textContent = 'Color ' + color;
       contenidoModal.innerHTML =  `{% include "widgets/home/detalle_semaforo.html" %}`;
   }
+  function actualizarColorCuadros(colorData) {
+    // colorData es un objeto con pares de id de tarjeta y color
+    for (let [elementId, color] of Object.entries(colorData)) {
+        // Obtener el elemento de cuadro de color usando el ID
+        const colorBox = document.getElementById(elementId);
+        if (!colorBox) continue;
+
+        // Asignar el color correspondiente al cuadro
+        switch (color.toLowerCase()) {
+            case 'verde':
+                colorBox.style.backgroundColor = 'green';
+                break;
+            case 'amarillo':
+                colorBox.style.backgroundColor = 'yellow';
+                break;
+            case 'rojo':
+                colorBox.style.backgroundColor = 'red';
+                break;
+            default:
+                console.error('Color no válido para el elemento con ID:', elementId);
+        }
+    }
+}
+
+// Ejemplo de cómo llamar a la función
+// colorData contiene el id de cada cuadro de color y el color correspondiente
+const colorData = {
+    'color-caudal-frente': 'verde',
+    'color-velocidad-aire': 'verde',
+    'color-tgbh': 'verde',
+    'color-leakage-coefficient': 'verde',
+    'color-punto-stall': 'verde',
+    'color-fugas': 'verde',
+    'color-potencia': 'verde'
+};
+
+// Actualiza los colores de los cuadros de las tarjetas
+actualizarColorCuadros(colorData);
+
 
   // Cambiar color del semáforo a verde al iniciar
   

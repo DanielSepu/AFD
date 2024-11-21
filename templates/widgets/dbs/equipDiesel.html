@@ -1,0 +1,39 @@
+{% load django_bootstrap5 %}   
+   <div class="row">
+      <div class="col">
+         <a href="?type=ventilador" class="btn btn-outline-secondary mt-2">+ Ventilador</a>
+         <a href="?type=curva_diseno" class="btn btn-outline-secondary mt-2 ms-1">+ Curva Diseño</a>
+         <a href="?type=ducto" class="btn btn-outline-secondary mt-2 ms-1">+ Ducto</a>
+         <a href="?type=equip_diesel" class="btn btn-secondary mt-2 ms-1">+ Equipamiento Diesel</a>
+      </div>
+   </div>
+
+   <div class="row h-100">
+      <div class="col m-4">
+         <div class="h-100" >
+            <h2>Nuevo Equipamiento Diesel</h2>
+            <form method="POST">
+               {% csrf_token %}
+               {% bootstrap_form form %}
+               <button class="btn btn-primary">Guardar</button>
+            </form>
+         </div>
+      </div>
+   </div>
+
+   <script>
+      const qr_calculado = document.getElementById('id_qr_calculado');
+      const potencia = document.getElementById('id_potencia');
+      const qr_fabricante = document.getElementById('id_qr_fabricante');
+      function Funcion(){
+         qr_calculado.value = (potencia.value*2.83)/(60*0.746);
+         qr_fabricante.value = 0;
+      }
+      function Funcion2(){
+         if(qr_fabricante.value == ""){
+            Funcion()
+         }else{
+            qr_calculado.value = qr_fabricante.value;
+         };
+      }
+   </script>

@@ -1,0 +1,32 @@
+<h1 class="display-4">
+  <i class="fas fa-fan"></i>
+  Bienvenido a la plataforma AFD!
+</h1>
+
+<p>
+  El Auxiliary Fan Device (AFD) es un dispositivo que busca medir, calcular y controlar
+   parámetros relevantes para caracterizar un sistema de ventilación auxiliar, estos parámetros son.
+</p>
+
+<p>
+  El AFD es un dispositivo que busca medir, calcular y controlar parámetros relevantes para
+   caracterizar un sistema de ventilación auxiliar, estos parámetros son.
+</p>
+
+<ul>
+  <li>Medir presión total y estática en ducto</li>
+  <li>Calcular caudal de aire</li>
+  <li>Medir corriente eléctrica</li>
+  <li>Medir temperatura, humedad relativa y presión barométrica</li>
+  <li>Calcular resistencia a la fuga</li>
+  <li>Calcular potencia real consumida</li>
+  <li>Medir caudal en frente de trabajo</li>
+  <li>Controlar VDF para ajustar rotación del ventilador </li>
+</ul>
+
+<h3><i class="fas fa-clone"></i>&nbsp; Secciones:</h3>
+<div class="list-group">
+  <a type="button" class="list-group-item list-group-item-action" href="{% url 'settings:settings' %}?type=current_project">Proyecto actual</a>
+  <a type="button" class="list-group-item list-group-item-action" href="{% url 'settings:settings' %}?type=new_project">Configurara nuevo proyecto</a>
+  <a type="button" class="list-group-item list-group-item-action" href="{% url 'dbs:dbs' %}">Añadir equipamiento a la base de datos</a>
+</div>

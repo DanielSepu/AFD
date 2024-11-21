@@ -1,13 +1,10 @@
+from math import sqrt
 import pdb
 from django.shortcuts import render
 import numpy as np
 import pandas as pd  # Importa pandas
-from django.http import HttpResponse
-import requests as rq
 
-from django.conf import settings
-import os
-
+from applications.currentstatus.tools import goal_seek_custom
 from applications.fandesign.mixins import presion_total
 from modules.graphdata import *
 from modules.queries import *
@@ -35,6 +32,7 @@ def fandesign(request):
       ### VDF DATA ###
       # df_vdf = get_vdf_data() # desde CSVs
       df_vdf = get_10min_vdf_data() # desde BD
+
       # obtener datos
       #df_vdf =  VdfData.objects.using('sensorDB').all().last()
       Q_medido = df_sensor1["q1"].mean()
@@ -44,25 +42,67 @@ def fandesign(request):
       
       # indice del valor maximo de presion 
       ind  = df_fan['presion'].idxmax()
-      # obtener el cociente de entre presion maxima y el caudal maximo
-      r_max  = df_fan.loc[ind]['presion']/df_fan.loc[ind]['caudal']
+
       # obtiene la ultima medicion del sensor
       ultima_medicion =  SensorsData.objects.all().order_by('id').last()  
+
       # presion estatica / caudal al cuadrado
       r_actual = ultima_medicion.ps1/ ultima_medicion.q1**2
-      # porcentaje de rendimiento del ventilador 
-      pr = int(r_max/r_actual *100)
 
-      
-      peak_pressure =  int(ultima_medicion.ps1/df_fan.loc[ind]['presion'] *100 )
+      # Y = R * X**2
+      ajuste_cubico = np.polyfit(df_fan['caudal'], df_fan['presion'], 3)
+      print(f"ajuste cubico: {ajuste_cubico}")
+      # obtener el cociente de entre presion maxima y el caudal maximo
+      # resistencia_maxima = presionMaxima/(caudalMaximo**2)
+      r_max  = df_fan.loc[ind]['presion']/df_fan.loc[ind]['caudal']**2
+
+      # porcentaje de rendimiento del ventilador 
+      # peak resistance = resistencia / resistencia maxima
+      peak_resistance = round(r_actual/r_max, 2 )
+
+      # Ejemplo de uso:
+      """ 
+         flow_rate = np.array([10, 20, 30, 40, 50])  # Ejemplo de caudales
+         total_pressure = np.array([100, 400, 900, 1600, 2500])  # Ejemplo de presiones totales
+         measured_point = (35, 1225)  # Punto medido (caudal, presión total)
+
+         fan_performance = calculate_fan_performance(flow_rate, total_pressure, measured_point)
+         print(f"Rendimiento del ventilador: {fan_performance:.2f}%") 
+      """
+      ecuacion1, ecuacion2, goal_seek = goal_seek_custom(ajuste_cubico, r_actual)
+
+      print(f"ecuacion 1: {ecuacion1} ecuacion 2: {ecuacion2} goal_seek: {goal_seek}")
+
+      # distancia 2 = sqrt(X**2 + ecuacion 2 **2)
+      distancia2 = sqrt(goal_seek**2 + ecuacion2 **2)
+
+      # distancia1 = sqrt(caudal**2 + presion_total**2)
+      distancia1 = sqrt((Q_medido**2)+(P_medido**2))
+
+      # rendimiento ventilador = distancia 1 / distancia 2
+      rendimiento_ventilador = round(distancia1 / distancia2, 3)
+
+      # peak_pressure = ecuacion1 /presion maxima
+      peak_pressure =  int(ecuacion1/df_fan.loc[ind]['presion'] )
       scatter_data_fan_list = []
+
+      resistencia_del_sistema = 0
       if chart_type == 'total_pressure':
       
          densidad_fan = float(proyect.curva_diseno.densidad) 
          densidad_sensor1 = df_sensor1["densidad1"].mean()
          
          df_graph = presion_total(proyect, df_vdf, df_sensor1)
+         presion_maxima_curvaAjustada = df_graph['presion'].max()
+         fila = df_graph.loc[df_graph['presion'] == presion_maxima_curvaAjustada ]
+
          
+         ps_curvaAjustada = fila.loc[0, "presion"]
+         ps_caudal_curvaAjustada = fila.loc[0, "caudal"]
+         
+         resistencia_del_sistema = (ps_curvaAjustada / ps_caudal_curvaAjustada**2)/100
+
+
          scatter_data_fan_list = df_graph[['caudal','presion']].to_dict(orient='records')
          for k,v in enumerate(scatter_data_fan_list):
             v['CAUDAL (m³/s)'] = v['caudal']
@@ -80,7 +120,7 @@ def fandesign(request):
          # f_fan = get_fan_data(proyect, 'pt')
 
 
-         print(df_fan)
+         #print(df_fan)
          new_df = pd.DataFrame({
             'caudal': df_fan['caudal'],
             'presion': df_fan['presion'],
@@ -93,7 +133,7 @@ def fandesign(request):
          #df_fan['presion_estatica']= calculate_presion_estatica(df_fan['presion'], df_fan['caudal'], area_difusor)
          #df_fan['presion_estatica'] = calculate_presion_estatica(df_fan['presion'], df_fan['caudal'], area_difusor)
 
-         print(new_df)
+         #print(new_df)
 
          #df_graph = presion_total(proyect, df_vdf, df_sensor1)
          #print(df_graph)
@@ -174,7 +214,6 @@ def fandesign(request):
       else:
          return render(request, 'fanDesign.html')
       
-
       # Convierte los datos a una lista de diccionarios
       # print(scatter_data_fan_list)
       # Pasa los datos a la plantilla
@@ -195,9 +234,19 @@ def fandesign(request):
       for i in range(0, 6):
          XY_segunda.append({'caudal':Q_curvaR[i],'presion':P_curvaR[i]})
 
-      context = {'scatter_data': scatter_data_fan_list, 'scatter_data2':XY_segunda, 'chart_type': chart_type, 'c':[Q_medido,P_medido], 'proyecto':proyect , 'peak_resistance':pr, 'peak_pressure':peak_pressure }
+      context = {
+                 'scatter_data': scatter_data_fan_list, 
+                 'scatter_data2':XY_segunda, 
+                 'chart_type': chart_type, 
+                 'c':[Q_medido,P_medido], 
+                 'proyecto':proyect , 
+                 'peak_resistance':peak_resistance, 
+                 'peak_pressure':peak_pressure, 
+                 'rendimiento_ventilador':rendimiento_ventilador 
+                 }
       # print(f"context: {context}")
       return render(request, 'fanDesign.html', context)
 
    # Si la solicitud no es un POST, simplemente renderiza la página sin datos
    return render(request, 'fanDesign.html')
+

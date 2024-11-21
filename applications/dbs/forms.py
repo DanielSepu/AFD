@@ -48,7 +48,7 @@ class VentiladorForm(forms.ModelForm):
     
     nmm = forms.FloatField(
         label='N (mm)',
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese R'})
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese N'})
     )
     
     hp = forms.FloatField(

@@ -11,6 +11,7 @@
 
 {% block body_content %}
    <div class="container-fluid h-100">
+      
       <div class="row h-100" style="height: calc(100% - 40px);">
          {# Columna Izquierda #}
          <div class="col-sm-12 col-md-9 ">
@@ -67,6 +68,7 @@
             </div>
          </div>
       </div>
+      
    </div>
 
 {% endblock %}
@@ -122,8 +124,10 @@
             .then(response => response.json())
             .then(context => {
                // Información en data
-               console.log(context);
+               console.log(context.variables);
+               actualizarElementosHTML(context.variables)
                updateValues(context.data, context);
+
          });
       }
 
@@ -139,6 +143,7 @@
          $("#pd").text(context.presion_dinamica);
          $("#pch").text(context.perdida_de_choque);
          $("#pf").text(context.perdidas_friccionales);
+
       }
 
       function editFrecuency(data) {
@@ -149,6 +154,31 @@
          getValues();
       }, 15000);
 
+      function actualizarElementosHTML(variables) {
+         for (const key in variables) {
+            if (variables.hasOwnProperty(key)) {
+                  const valor = variables[key];
+
+                  if (typeof valor === 'object' && valor !== null) {
+                     // Si el valor es un objeto, recorre sus propiedades
+                     for (const subKey in valor) {
+                        if (valor.hasOwnProperty(subKey)) {
+                              const elemento = document.getElementById(subKey);
+                              if (elemento) {
+                                 elemento.textContent = valor[subKey].toFixed(2);
+                              }
+                        }
+                     }
+                  } else {
+                     // Si el valor es un valor simple, actualiza el elemento directamente
+                     const elemento = document.getElementById(key);
+                     if (elemento) {
+                        elemento.textContent = valor.toFixed(2);
+                     }
+                  }
+            }
+         }
+      }
    </script>
    
    <script>
@@ -165,5 +195,6 @@
          .then(response => response.json())
          .then(data => console.log(data));
       });
+   
    </script>
 {% endblock %}

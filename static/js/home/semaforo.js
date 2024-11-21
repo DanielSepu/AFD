@@ -23,6 +23,18 @@ function get_semaforo() {
             $("#sensor table").addClass("table");
             $("#vdf").html(semaforo.vdf);
             $("#vdf table").addClass("table");
+            const colorData = {
+                'color-caudal-frente': v1.color,
+                'color-velocidad-aire': semaforo.v2.color,
+                'color-tgbh': semaforo.v3.color,
+                'color-leakage-coefficient': semaforo.v4.color,
+                'color-punto-stall': semaforo.v5.color,
+                'color-fugas': semaforo.v6.color,
+                'color-potencia': semaforo.v7.color
+            };
+            
+            // Actualiza los colores de los cuadros de las tarjetas
+            actualizarColorCuadros(colorData);
         },
         error: function(xhr, status, error) {
             alert("Error: " + error);
@@ -32,6 +44,7 @@ function get_semaforo() {
 
 function actualizarV1(v1) {
     $('#v1_estado').css('background-color', v1.color === 'verde' ? 'green' : 'red');
+    $('#color-caudal-frente').css('background-color', v1.color === 'verde' ? 'green' : 'red');
     $('#v1_Q2').text(v1.Q2);
     $('#v1_q_frente').text(v1.Qf);
     $('#v1_pt2').text(v1.pt2);
@@ -50,7 +63,8 @@ function actualizarV1(v1) {
 
 
 function actualizarV2(v2) {
-    $('#v2_vel_aire_min').css('background-color', v2.color === 'verde' ? 'green' : 'red');
+    $('#v2_estado').css('background-color', v2.color === 'verde' ? 'green' : 'red');
+    
     $('#v2_vel_aire_min').text(v2.Vmin);
     $('#v2_q_ventilador_min').text(v2.q_ventilador);
     

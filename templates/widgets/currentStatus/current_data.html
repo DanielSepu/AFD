@@ -1,6 +1,6 @@
 <div class="row py-4 d-flex justify-content-evenly align-items-center">
    <div class="col-sm-8 col-md-5  m-2 p-2  d-flex border border-3 border-success">
-      <div class="col  border-end border-3 border-success">Presión total ventilador (PH)</div>
+      <div class="col  border-end border-3 border-success">Presión total ventilador (PA)</div>
       <div class="col  text-center m-auto" id="pt1"></div>
    </div>
    <div class="col-sm-8 col-md-5  m-2 p-2  d-flex border border-3 border-success">
@@ -16,20 +16,29 @@
       <div class="col text-center m-auto" id="qf"></div>
    </div>
    <div class="col-sm-8 col-md-5  m-2 p-2  d-flex border border-3 border-success">
-      <div class="col border-end border-3 border-success">Presión Estática ventilador  (PH) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+      <div class="col border-end border-3 border-success">Presión Estática ventilador  (PA) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
       <div class="col text-center m-auto" id="pe"></div>
    </div>
    <div class="col-sm-8 col-md-5  m-2 p-2  d-flex border border-3 border-success">
-      <div class="col border-end border-3 border-success">Presión dinámica ventilador (PH) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+      <div class="col border-end border-3 border-success">Presión dinámica ventilador (PA) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
       <div class="col text-center m-auto" id="pd"></div>
    </div>
    <div class="col-sm-8 col-md-5  m-2 p-2  d-flex border border-3 border-success">
-      <div class="col border-end border-3 border-success">Pérdida de choque de sistema (PH) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+      <div class="col border-end border-3 border-success">Pérdida de choque de sistema (PA) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
       <div class="col text-center m-auto" id="pch"></div>
    </div>
    <div class="col-sm-8 col-md-5  m-2 p-2  d-flex border border-3 border-success">
-      <div class="col border-end border-3 border-success">Pérdidas fricionales de sistema (PH) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+      <div class="col border-end border-3 border-success">Pérdidas fricionales de sistema (PA) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
       <div class="col text-center m-auto" id="pf"></div>
    </div>
 </div>
-<a rel="stylesheet" class="btn btn-primary" href="{% url 'currentstatus:Excel' %}">Descargar Excel</a>
+<div class="row">
+   <div class="col-3">
+      <a rel="stylesheet" class="btn btn-primary" href="{% url 'currentstatus:Excel' %}">Descargar Excel</a>
+   </div>
+   <div class="col-3">
+      {% include "widgets/currentStatus/modal.html" %}
+   </div>
+   
+   
+</div>

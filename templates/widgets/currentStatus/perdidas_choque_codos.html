@@ -1,0 +1,226 @@
+<div class="container">
+    <div class="row">
+      <!-- Información General -->
+      <div class="col-md-6">
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th colspan="2" class="text-center">INFORMACIÓN GENERAL</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Q ventilador</td>
+              <td id="q_ventilador">Q1</td>
+            </tr>
+            <tr>
+              <td>Q frente</td>
+              <td id="q_frente">Qf</td>
+            </tr>
+            <tr>
+              <td>A ducto</td>
+              <td id="a_ducto"></td>
+            </tr>
+            <tr>
+              <td>N codos</td>
+              <td id="n_codos">total_codos</td>
+            </tr>
+            <tr>
+              <td>Perdidas choque codos</td>
+              <td id="perdidas_choque_codos"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  
+      <!-- Entradas -->
+      <div class="col-md-6">
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th colspan="2" class="text-center">ENTRADAS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Q1 (m³/s)</td>
+              <td id="Q1"></td>
+            </tr>
+            <tr>
+              <td>Qf (m³/s)</td>
+              <td id="Qf"></td>
+            </tr>
+            <tr>
+              <td>Densidad (kg/m³)</td>
+              <td id="densidad"></td>
+            </tr>
+            <tr>
+              <td>Total codos</td>
+              <td id="total_codos"></td>
+            </tr>
+            <tr>
+              <td>Factor choque codo X</td>
+              <td id="factor_choque_codo_X"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  
+      <!-- Entradas Ducto -->
+      <div class="col-md-6">
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th colspan="2" class="text-center">ENTRADAS DUCTO</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Tipo</td>
+              <td id="tipo_circular">Circular</td>
+            </tr>
+            <tr>
+              <td>Diámetro (mm)</td>
+              <td id="diametro_circular"></td>
+            </tr>
+            <tr>
+              <td>Tipo</td>
+              <td id="tipo_ovalado">Ovalado</td>
+            </tr>
+            <tr>
+              <td>Ancho ducto (mm)</td>
+              <td id="ancho_ducto"></td>
+            </tr>
+            <tr>
+              <td>Alto ducto (mm)</td>
+              <td id="alto_ducto"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  
+      <!-- Medidas Ventilador -->
+      <div class="col-md-6">
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th colspan="2" class="text-center">MEDIDAS VENTILADOR</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>V (mm)</td>
+              <td id="vmm"></td>
+            </tr>
+            <tr>
+              <td>A (mm)</td>
+              <td id="amm"></td>
+            </tr>
+            <tr>
+              <td>N (mm)</td>
+              <td id="nmm"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  
+      <!-- Cálculos -->
+      <div class="col-md-6">
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th colspan="2" class="text-center">CÁLCULOS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>mid_densidad</td>
+              <td id="mid_densidad"></td>
+            </tr>
+            <tr>
+              <td>Area ducto circular (m²)</td>
+              <td id="area_ducto_circular"></td>
+            </tr>
+            <tr>
+              <td>Area ducto ovalado (m²)</td>
+              <td id="area_ducto_ovalado"></td>
+            </tr>
+            <tr>
+              <td>Area inlet bell (m²)</td>
+              <td id="area_inlet_bell_val"></td>
+            </tr>
+            <tr>
+              <td>Area ventilador (m²)</td>
+              <td id="Area_ventilador"></td>
+            </tr>
+            <tr>
+              <td>formula_parte_1</td>
+              <td id="first_section"></td>
+            </tr>
+            <tr>
+              <td>formula_parte_2_ducto_circular</td>
+              <td id="formula_parte_2_circular"></td>
+            </tr>
+            <tr>
+              <td>formula_parte_2_ducto_ovalado</td>
+              <td id="formula_parte_2_ovalado"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  
+      <!-- Fórmula Parte 3 -->
+      <div class="col-md-6">
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th colspan="2" class="text-center">FÓRMULA PARTE 3</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Q codo 1</td>
+              <td id="q_codo_1"></td>
+            </tr>
+            <tr>
+              <td>Q codo 2</td>
+              <td id="q_codo_2"></td>
+            </tr>
+            <tr>
+              <td>Q codos 3,4,5...</td>
+              <td id="q_codo_3"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  
+      <!-- Pérdida por codos ducto circular y ovalado -->
+      <div class="col-md-6">
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th colspan="2" class="text-center">PÉRDIDA POR CODOS DUCTO</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>perdida_codo_1_ducto_circular_Pa</td>
+              <td id="first_codo"></td>
+            </tr>
+            <tr>
+              <td>perdida_codo_2_ducto_circular_Pa</td>
+              <td id="second_codo"></td>
+            </tr>
+            <tr>
+              <td>perdida_codo_3,4,5..._ducto_circular_Pa</td>
+              <td id="third_codo"></td>
+            </tr>
+            <tr class="fw-bold">
+              <td>perdida_choque_codos_ducto_Pa</td>
+              <td id="sumatoria_Sl"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>

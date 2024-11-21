@@ -25,7 +25,7 @@ def presion_total(proyecto, df_vdf, df_sensor):
         'pt_rpm': rpm_adjust_pt(df_fan['presion'], rpm_fan, rpm_vdf),
         'pt_dens': pd.NA,
     })
-
+    
     # Ajuste de densidad basado en los valores calculados de 'pt_rpm'
     df_adjust['pt_dens'] = dens_adjust_pt(df_adjust['pt_rpm'], densidad_fan, densidad_sensor1)
 

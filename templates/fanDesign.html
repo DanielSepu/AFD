@@ -46,66 +46,91 @@
                {% include "widgets/fanDesignCurve/totalPreassure.html" %}
             {% endif %}
          </div>
-
          <div class="col-lg-3 col-sm-12 h-100">
-            <div class="row justify-content-center align-items-center">
-                <div class="col">
-                    <div class="list-group border border-3 border-warning p-3 mb-2">
-                        <div class="row">
-                            <p class="text-center fs-4 fw-bold m-0  fw-bold ">{{proyecto.ventilador.modelo}}</p>
+            <div class="row g-3">
+                <!-- Modelo -->
+                <div class="col-12">
+                    <div class="list-group border border-3 border-warning p-3">
+                        <p class="text-center fs-4 fw-bold m-0">{{ proyecto.ventilador.modelo }}</p>
+                    </div>
+                </div>
+                
+                <!-- Ángulo de las palas -->
+                <div class="col-12">
+                    <div class="list-group border border-3 border-warning p-3">
+                        <p class="text-start fs-5 fw-bold m-0">Ángulo de las palas</p>
+                        <p class="text-start fs-6 ps-4 m-1">{{ proyecto.curva_diseno.angulo }} °</p>
+                    </div>
+                </div>
+        
+                <!-- Accesorios -->
+                <div class="col-12">
+                    <div class="list-group border border-3 border-warning p-3">
+                        <p class="text-start fs-5 fw-bold m-0">Accesorios</p>
+                        <ul class="fs-6 ps-4 m-1">
+                            {% for accesorio in proyecto.ventilador.accesorios.all %}
+                                <li>{{ accesorio.nombre }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+        
+                <!-- Densidad y Frecuencia -->
+                <div class="col-12">
+                    <div class="d-flex border border-3 border-warning">
+                        <div class="flex-fill border-end border-warning text-center py-4">
+                            <p class="fs-5 fw-bold m-0">Densidad de diseño</p>
+                            <p class="fs-6">{{ proyecto.curva_diseno.densidad}} kg/m<sup>3</sup></p>
+                        </div>
+                        <div class="flex-fill text-center py-4">
+                            <p class="fs-5 fw-bold m-0">Densidad Actual</p>
+                            <p class="fs-6">{{ proyecto.curva_diseno.densidad }} kg/m<sup>3</sup></p>
                         </div>
                     </div>
-                    <div class="list-group border border-3 border-warning p-3 mb-2">
-                        <div class="row">
-                            <p class="text-start fs-5 m-0  fw-bold">Ángulo de las palas</p>
-                            <p class="text-start fs-6  ps-4 m-1">  {{proyecto.curva_diseno.angulo}} ° </p>
+                </div>
+        
+                <!-- Rotación -->
+                <div class="col-12">
+                    <div class="d-flex border border-3 border-warning">
+                        <div class="flex-fill border-end border-warning text-center py-4">
+                            <p class="fs-5 fw-bold m-0">Rotación de diseño</p>
+                            <p class="fs-6">{{proyecto.curva_diseno.rpm}} Hz</p>
+                        </div>
+                        <div class="flex-fill text-center py-4">
+                            <p class="fs-5 fw-bold m-0">Rotación Actual</p>
+                            <p class="fs-6" id="rendimiento_ventilador">{{ rendimiento_ventilador }} Hz</p>
                         </div>
                     </div>
-                    <div class="list-group border border-3 border-warning p-3 mb-2">
-                        <div class="row">
-                            <p class="text-start fs-5 m-0  fw-bold">Accesorios</p>
-                            <ul class="fs-6  ps-4 m-1">
-                                {% for accesorio in proyecto.ventilador.accesorios.all %}
-                                    <li>
-                                        {{accesorio.nombre}}
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
+                </div>
+        
+                <!-- Potencia del motor -->
+                <div class="col-12">
+                    <div class="list-group border border-3 border-warning p-3">
+                        <p class="text-start fs-5 fw-bold m-0">Potencia del motor</p>
+                        <p class="text-start fs-6 ps-4 m-1">{{ proyecto.ventilador.hp }} Kw</p>
                     </div>
-                    <div class="list-group border border-3 border-warning p-3 mb-2">
-                        <div class="row">
-                            <p class="text-start fs-5 m-0 fw-bold">Densidad de diseño</p>
-                            <p class="text-start fs-6  ps-4 m-1"> {{proyecto.curva_diseno.densidad}} kg/m<sup>3</sup> </p>
-                        </div>
+                </div>
+        
+                <!-- Resistencia máxima -->
+                <div class="col-12">
+                    <div class="list-group border border-3 border-warning p-3">
+                        <p class="text-start fs-5 fw-bold m-0">Resistencia máxima</p>
+                        <p class="text-start fs-6 ps-4 m-1">{{ peak_resistance }}%</p>
                     </div>
-                    <div class="list-group border border-3 border-warning p-3 mb-2">
-                        <div class="row">
-                            <p class="text-start fs-5 m-0 fw-bold">Frecuencia de diseño</p>
-                            <p class="text-start fs-6  ps-4 m-1"> {{proyecto.curva_diseno.frecuencia}} Hz </p>
-                        </div>
-                    </div>
-                    <div class="list-group border border-3 border-warning p-3 mb-2">
-                        <div class="row">
-                            <p class="text-start fs-5 m-0 fw-bold">Potencia del motor</p>
-                            <p class="text-start fs-6  ps-4 m-1">  {{proyecto.ventilador.hp}} </p>
-                        </div>
-                    </div>
-                    <div class="list-group border border-3 border-warning p-3 mb-2">
-                        <div class="row">
-                            <p class="text-start fs-5 m-0 fw-bold">Resistencia máxima</p>
-                            <p class="text-start fs-6  ps-4 m-1">  {{peak_resistance}}%</p>
-                        </div>
-                    </div>
-                    <div class="list-group border border-3 border-warning p-3 mb-2">
-                        <div class="row">
-                            <p class="text-start fs-5 m-0 fw-bold">Presión máxima</p>
-                            <p class="text-start fs-6  ps-4 m-1">  {{peak_pressure}} % </p>
-                        </div>
+                </div>
+        
+                <!-- Presión máxima -->
+                <div class="col-12">
+                    <div class="list-group border border-3 border-warning p-3">
+                        <p class="text-start fs-5 fw-bold m-0">Presión máxima</p>
+                        <p class="text-start fs-6 ps-4 m-1">{{ peak_pressure }} %</p>
                     </div>
                 </div>
             </div>
         </div>
+        
+        
+        
         
         
 {% endblock %}

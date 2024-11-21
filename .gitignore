@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -127,7 +126,6 @@ dmypy.json
 
 # VS Code
 .vscode/
-=======
 venv/
 .env
->>>>>>> 935ff88b7adb741504f4e4aaec1f423f300afca2
+

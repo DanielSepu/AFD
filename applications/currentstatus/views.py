@@ -194,6 +194,7 @@ def get_recent_data(request):
             raise ValueError("No se pudo identificar el tipo de ducto")
 
         variables['perdida_choque_salida_ducto'] = perdida_choque_salida_ducto
+        variables['perdida_choque_salida_ducto2'] = perdida_choque_salida_ducto
 
         # sumatoria de datos --> confirmar si la sumatoria de las perdidas de choque es esta variable
         #perdida_choque_sistema = round(sumatoria_choque_accesorios + perdidas_choque_codos + perdida_choque_entrada +perdida_choque_salida,2)

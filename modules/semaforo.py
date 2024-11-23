@@ -146,6 +146,7 @@ class Semaforo:
         
         if area_ducto == None:
             raise ValueError("NO hemos calculado el area del ducto correctamente.")
+            messages.error(self.request, "Error algunos valores para calcular el area del ducto no se han especificado, verifique: tipo ducto: {self.project.ducto.t_ducto} y sus valores")
         return area_ducto
 
     def calcular_velocidad_sensor(self, tbs, hr, P, pt, ps, tipo):

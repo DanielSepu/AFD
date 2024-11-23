@@ -100,7 +100,7 @@ def fandesign(request):
          try:
             ps_curvaAjustada = fila.loc[0, "presion"]
          except KeyError as e:
-            messages.warning(request, "no se ha podido obtener los valores relacionados a la presión:{e}, la curva no se ha calculado")
+            messages.warning(request, f"no se ha podido obtener los valores relacionados a la presión:{e}, la curva no se ha calculado, verifique los valores de diseño")
             return render(request, 'fanDesign.html') 
 
          ps_caudal_curvaAjustada = fila.loc[0, "caudal"]

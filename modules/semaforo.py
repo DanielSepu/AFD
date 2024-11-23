@@ -186,6 +186,7 @@ class Semaforo:
             velocidad_sensor = sqrt(2*(pt-ps)/densidad_aire_frente) # Densidad aire en la frente)   2 decimales >>> velocidad aire sensor frente
         except ValueError as e:
             messages.error(self.request, f"Alerta un numero intenta realizar un calculo con un valor bajo cero: {e}")
+            velocidad_sensor = 0
         values_dic = {
             'densidad_aire_frente': densidad_aire_frente,
             'pt': pt,

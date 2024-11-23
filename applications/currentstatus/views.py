@@ -161,15 +161,21 @@ def get_recent_data(request):
         total_codos = project.codos
         variables['sumatoria_choque_accesorios'] = sumatoria_choque_accesorios
 
+        try:
+            vars, perdidas_choque_codos = calculate_perdida_choque_codos(
+                        total_codos=total_codos, 
+                        mid_densidad=mid_densidad, 
+                        Q1=caudal_del_ventilador,
+                        project=project, 
+                        Qf = Qf
+                        )
+            variables["perdida_choque_codos"] = vars
+        except TypeError as e:
+            context = {}
+            context["status"] = "error"
+            context["message"] = f"No se pudo realizar el calculo de calcular choque de codos: {e}, verifique el valor de diametro del ducto"
 
-        vars, perdidas_choque_codos = calculate_perdida_choque_codos(
-                    total_codos=total_codos, 
-                    mid_densidad=mid_densidad, 
-                    Q1=caudal_del_ventilador,
-                    project=project, 
-                    Qf = Qf
-                    )
-        variables["perdida_choque_codos"] = vars
+            JsonResponse(context, safe=False)
         #perdida_choque_accesorios = sumatoria_choque_accesorios * presion_dinamica
        
         # TODO

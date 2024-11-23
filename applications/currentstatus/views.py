@@ -175,7 +175,7 @@ def get_recent_data(request):
             context["status"] = "error"
             context["message"] = f"No se pudo realizar el calculo de calcular choque de codos: {e}, verifique el valor de diametro del ducto"
 
-            JsonResponse(context, safe=False)
+            return JsonResponse(context, safe=False)
         #perdida_choque_accesorios = sumatoria_choque_accesorios * presion_dinamica
        
         # TODO
@@ -191,7 +191,7 @@ def get_recent_data(request):
             context["status"] = "error"
             context["message"] = f"No se pudo realizar el calculo: {e}, verifique el valor de diametro del ducto"
 
-            JsonResponse(context, safe=False)
+            return JsonResponse(context, safe=False)
 
         perdida_choque_salida_ducto_circular = mid_densidad*(Qf*Qf/(area_ducto_circular_*area_ducto_circular_))
         perdida_choque_salida_ducto_ovalado = mid_densidad*Qf*Qf/(project.ducto.area*project.ducto.area)

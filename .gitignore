@@ -128,8 +128,3 @@ dmypy.json
 .vscode/
 venv/
 .env
-<<<<<<< HEAD
-
-=======
-__pycache__/
->>>>>>> 9771e4dc1a9c35277d7bf73279a54f835b7ce572

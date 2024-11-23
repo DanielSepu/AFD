@@ -6,7 +6,7 @@ from applications.fandesign.mixins import presion_total
 from applications.getdata.models import SensorsData, VdfData
 from modules.queries import get_10min_sensor_data, get_10min_vdf_data
 from IPython.display import display, Markdown
-
+from django.contrib import messages
 
 from IPython.display import display, HTML
 
@@ -95,11 +95,12 @@ class Semaforo:
     el semaforo tiene  7 variables para medir, que pueden retornar verde, rojo, o amarillo cada una de sus funciones, a partir
     de la sumatoria de cada resultado de las 7 variables se pondera el estado final.
     """
-    def __init__(self):
+    def __init__(self, request):
         self.estado = 'verde'
         self.sensorData = None
         self.vdfData = None
         self.project = None
+        self.request = request
         self.Q1 = None 
         self.Q2 = None 
         self.detalle = {
@@ -181,9 +182,10 @@ class Semaforo:
         densidad_aire_frente = (P-e)/(287.04*(tbs+273.15)); #  Kg aire seco/m3
 
         # =SQRT(2*(E5-E6)/E22)
-        velocidad_sensor = sqrt(2*(pt-ps)/densidad_aire_frente) # Densidad aire en la frente)   2 decimales >>> velocidad aire sensor frente
-
-        
+        try:
+            velocidad_sensor = sqrt(2*(pt-ps)/densidad_aire_frente) # Densidad aire en la frente)   2 decimales >>> velocidad aire sensor frente
+        except ValueError as e:
+            messages.alert(self.request, f"Alerta un valor no tiene un valor adecuado o está siendo calculado mal: {e}")
         values_dic = {
             'densidad_aire_frente': densidad_aire_frente,
             'pt': pt,

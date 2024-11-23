@@ -249,7 +249,12 @@ class Semaforo:
         # velocidad_sensor_1 = self.calcular_velocidad_sensor1()   # 2 decimales
 
         area_ducto = self.calcular_area_ducto()
-        Q1  = velocidad_sensor_1 *area_ducto #  m3/s = (m2)*(m/s).  (Crear variable Q1) caudal_ventilador_2
+        
+        try:
+            Q1  = velocidad_sensor_1 *area_ducto #  m3/s = (m2)*(m/s).  (Crear variable Q1) caudal_ventilador_2
+        except TypeError as e: #
+            messages.error(self.request, "error al calcuar Q1: los valores no se pueden procesar: {e}, verifique los errores de: q2, lc, densidad2, pt2, ps2, area_ducto, ")
+            Q1 = 0
         # asignar a las variables del entorno global 
         self.Q1 = Q1  # guardar el resultado en el entorno global para usarlo en otros metodos
         return Q1

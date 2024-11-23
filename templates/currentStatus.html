@@ -121,13 +121,29 @@
 
       function getValues() {
          fetch("/get_recent_data")
-            .then(response => response.json())
-            .then(context => {
-               // Información en data
+         .then(response => {
+            if (!response.ok) {
+               // Si hay un error HTTP, lanza un error
+               throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+         })
+         .then(context => {
+            if (context.status === "error") {
+               // Manejo del error en el JSON
+               console.error(context.message);
+               alert(context.message); // Muestra un mensaje de alerta al usuario
+            } else {
+               // Procesa los datos en caso de éxito
                console.log(context.variables);
-               actualizarElementosHTML(context.variables)
+               actualizarElementosHTML(context.variables);
                updateValues(context.data, context);
-
+            }
+         })
+         .catch(error => {
+            // Manejo de errores generales
+            console.error("Error al realizar la solicitud:", error);
+            alert("Ocurrió un problema al obtener los datos.");
          });
       }
 

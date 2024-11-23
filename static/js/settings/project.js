@@ -1,3 +1,30 @@
+$(document).ready(function() {
+    $("input[type='checkbox'][name^='eq_']").change(function() {
+        var valor_actual_checkbox = $(this).data('value');
+        var caudal_requerido_input = $("#id_caudal_requerido");
+        
+        var actual_caudal = caudal_requerido_input.val();
+        if (!actual_caudal){
+            actual_caudal = 0;
+            
+        }
+        if(this.checked) {
+            var sumatoria = parseInt(actual_caudal)+parseInt(valor_actual_checkbox);
+            $(caudal_requerido_input).val(sumatoria);
+            
+        }
+        else {
+            if (parseInt(actual_caudal) >= parseInt(valor_actual_checkbox)){
+                var resta = parseInt(actual_caudal)- parseInt(valor_actual_checkbox);
+                $(caudal_requerido_input).val(resta);
+            }
+
+        }
+    });
+});
+
+
+
 $(document).on('change','#id_ventilador',function(e){
     e.preventDefault(); 
     $.ajax({ 
@@ -50,6 +77,6 @@ $(document).on('change','#id_equipamientos',function(e){
         }, 
         success:function(response){
             $('#id_caudal_requerido').val(response.sumatoria);
-        } 
+        }
     })
 })

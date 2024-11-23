@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, reverse
+from django.urls import reverse_lazy
 import pandas as pd  # Importa pandas
 import numpy as np
 from django.http import JsonResponse
 from django.core import serializers
+from django.views.generic import DeleteView
 import json
 #import requests as rq
 
@@ -13,22 +15,20 @@ from applications.dbs.forms import *
 
 def settings(request):
    setting_type = request.GET.get('type')
-   print(setting_type)
    print(request.method)
    if request.method == 'GET':
       if setting_type == 'new_project' or setting_type is None:
          form = ProyectoForm()
          context = {'setting_type': setting_type, 'form': form, 'equipamientos': EquipamientoDiesel.objects.all()}
-      
-         return render(request, 'settings.html', context)
+         return render(request, 'widgets/settings/newProject.html', context)
       
       if setting_type == 'current_project':
-         up = Proyecto.objects.all().order_by('-id').first()
-         print(up)
+         up = Proyecto.objects.all().order_by('id').last()
+         
          if up is not None:
             up_eqp = up.equipamientos.all()
             form = ProyectoForm(instance=up)
-            context = {'setting_type': setting_type, 'form': form, 'id': up.id, 'up_eqp': up_eqp, 'equipamientos': EquipamientoDiesel.objects.all()}
+            context = {'exist': True, 'setting_type': setting_type, 'form': form, 'id': up.id, 'up_eqp': up_eqp, 'equipamientos': EquipamientoDiesel.objects.all()}
          else:
             # Manejo de cuando no hay proyectos
             up_eqp = None
@@ -36,7 +36,7 @@ def settings(request):
 
             context = {'exist':False,'setting_type': setting_type, 'form': form, 'up_eqp': up_eqp, 'equipamientos': EquipamientoDiesel.objects.all(), 'message': 'No hay proyectos disponibles.'}
          
-         return render(request, 'settings.html', context)
+         return render(request, 'widgets/settings/currentProject.html', context)
 
    
    if request.method == 'POST':
@@ -85,44 +85,8 @@ def settings(request):
          return JsonResponse({'sumatoria':sumatoria})
 
 
-
-# def newvent(request):
-#    if request.method == 'POST':
-#       form = VentiladorForm(request.POST) # Bound form
-#       if form.is_valid():
-#             modelo = form.cleaned_data['modelo']
-#             vmm = form.cleaned_data['vmm'] 
-#             amm = form.cleaned_data['amm'] 
-#             rmm = form.cleaned_data['rmm'] 
-#             polos = form.cleaned_data['polos'] 
-#             accesorios = form.cleaned_data['accesorios'] 
-#             ventilador = Ventilador.objects.create(
-#                modelo=modelo,
-#                vmm=vmm,
-#                amm=amm,
-#                rmm=rmm,
-#                polos=polos,
-#                accesorios=accesorios
-#             )
-#       print("POST")
-#       print(ventilador)
-#       request.session['proyecto'] = Proyecto()
-
-#    else:
-#       form = VentiladorForm()
-
-#    context = {'form': form}
-#    return render(request, 'ventilador_form.html', context)
-
-
-# def save_project(request):
-#    if request.method == 'POST':
-#       proyecto = request.session.get('proyecto') 
-#       # Relacionar modelos        
-#       proyecto.ventilador = Ventilador.objects.last()
-#       proyecto.galeria = DimensionGaleria.objects.last()
-#       # etc
-#       proyecto.save()
-#       # Redirigir a detail
-#       print(proyecto)
-#       return redirect('proyecto_detail', proyecto.id)
+class ProjectDelete(DeleteView):
+    model = Proyecto
+    success_url = reverse_lazy('/') 
+    template_name = 'widgets/settings/confirm_delete.html'
+    

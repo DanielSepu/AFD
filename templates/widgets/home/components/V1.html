@@ -1,0 +1,77 @@
+<div class="row align-items-center my-4">
+
+  <!-- Estado y Fórmula -->
+  <div class="col-md-5">
+    <table class="table table-bordered">
+      <thead>
+        <tr class="bg-secondary text-white text-center">
+          <th colspan="4">Caudal en la frente</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <!-- Número "1" como parte de la tabla -->
+          <td rowspan="3" class="align-middle text-center" style="width: 100px;">
+            <h1 class="display-1 fw-bold m-0">1</h1>
+          </td>
+          <td>Estado</td>
+          <td class="text-center" id="v1_estado" style="background-color: {% if caudal_de_frente.estado == 1 %}#d4edda{% else %}#f8d7da{% endif %};">
+            {{ caudal_de_frente.estado }}
+          </td>
+          <td rowspan="2" class="text-center align-middle font-italic fw-bold" id="v1_formula" style="font-size: 1.2rem;">
+            Qf = Velocidad aire x Área ducto [m³/s]
+          </td>
+        </tr>
+        <tr>
+          <td>Lc</td>
+          <td class="text-center" id="v1_lc">{{ caudal_de_frente.q_requerido }}</td>
+        </tr>
+        <tr>
+          <td>Q Frente</td>
+          <td colspan="2" class="text-center" id="v1_q_frente">{{ caudal_de_frente.q_frente }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <!-- Requerimientos de Caudal -->
+  <div class="col-md-3">
+    <table class="table table-bordered">
+      <thead class="thead-light bg-secondary text-white text-center">
+        <tr>
+          <th>Q2</th>
+          <th>Lf</th>
+          <th>Pt2</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-center " id="v1_Q2">{{ caudal_de_frente.q_frente }}</td>
+          <td class="text-center" id="v1_lf">{{ caudal_de_frente.q_requerido }}</td>
+          <td class="text-center" id="v1_pt2">{{ caudal_de_frente.q_requerido }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Semáforo -->
+  <div class="col-md-3">
+    <table class="table table-bordered">
+      <thead class="bg-secondary text-white text-center">
+        <tr>
+          <th>Semáforo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-center" id="v1_semaforo" style="background-color: {% if caudal_de_frente.q_frente >= caudal_de_frente.q_requerido %}#28a745{% else %}#dc3545{% endif %}; color: white;">
+            {% if caudal_de_frente.q_frente >= caudal_de_frente.q_requerido %}
+              Caudal sobre requerimiento
+            {% else %}
+              Caudal bajo requerimiento
+            {% endif %}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

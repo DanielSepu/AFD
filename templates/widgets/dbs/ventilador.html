@@ -1,22 +1,27 @@
-{% load django_bootstrap5 %}
-   <div class="row">
-      <div class="col">
-         <a href="?type=ventilador" class="btn btn-secondary mt-2">+ Ventilador</a>
-         <a href="?type=curva_diseno" class="btn btn-outline-secondary mt-2 ms-1">+ Curva Diseño</a>
-         <a href="?type=ducto" class="btn btn-outline-secondary mt-2 ms-1">+ Ducto</a>
-         <a href="?type=equip_diesel" class="btn btn-outline-secondary mt-2 ms-1">+ Equipamiento Diesel</a>
-      </div>
-   </div>
+{% extends "dbs.html" %}
+{% block body_content %}
 
-   <div class="row h-100">
-      <div class="col m-4">
-         <div class="h-100" >
-            <h2>Nuevo Ventilador</h2>
-            <form method="POST">
-               {% csrf_token %}
-               {% bootstrap_form form %}
-               <button class="btn btn-primary">Guardar</button>
-            </form>
-         </div>
+
+<div class="row ">
+   <div class="col m-4">
+      <h2>Nuevo Ventilador</h2>
+         <form method="POST" class="card p-4">
+            {% csrf_token %}
+            {{form}}
+            <hr>
+            <button class="btn btn-primary">Guardar</button>
+         </form>
+   </div>
+   <!-- Columna derecha con el botón para cargar una imagen -->
+   <div class="col-8">
+      <div class="card mx-auto p-4 mt-4 shadow-lg" style="max-width: 1200px;">
+         <h4>Imagen actual</h4>
+         {% if form.instance.img_ventilador %}
+            <div class="mt-4 text-center">
+               <img src="{{ form.instance.img_ventilador.url }}" alt="Imagen del ventilador" class="img-fluid rounded" style="max-width: 100%;">
+            </div>
+         {% endif %}
       </div>
    </div>
+</div>
+{% endblock body_content %}

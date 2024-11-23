@@ -1,0 +1,71 @@
+<div class="container">
+    <div class="row">
+      <!-- Entradas Accesorios Ventilador -->
+      <div class="col-md-6">
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th colspan="3" class="text-center">ENTRADAS ACCESORIOS VENTILADOR</th>
+            </tr>
+            <tr>
+              <th>Accesorios</th>
+              <th>Factor Choque X</th>
+              <th>Cantidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Campana entrada (inlet bell)</td>
+              <td id="factor_choque_campana">0.06</td>
+              <td id="cantidad_campana">1</td>
+            </tr>
+            <tr>
+              <td>Silenciador entrada</td>
+              <td id="factor_choque_silenciador_entrada">0.5</td>
+              <td id="cantidad_silenciador_entrada">1</td>
+            </tr>
+            <tr>
+              <td>Silenciador salida</td>
+              <td id="factor_choque_silenciador_salida">0.5</td>
+              <td id="cantidad_silenciador_salida">1</td>
+            </tr>
+            <tr>
+              <td>Rejilla admisión</td>
+              <td id="factor_choque_rejilla">0.14</td>
+              <td id="cantidad_rejilla">1</td>
+            </tr>
+            <tr>
+              <td>Expansión salida (adaptador)</td>
+              <td id="factor_choque_expansion">0.3</td>
+              <td id="cantidad_expansion">1</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  
+      <!-- Cálculos -->
+      <div class="col-md-6">
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th colspan="2" class="text-center">CÁLCULOS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Presion dinámica ventilador (Pa)</td>
+              <td id="Presion_dinamica_ventilador_Pa"></td>
+            </tr>
+            <tr>
+              <td>Presion dinámica entrada (Pa)</td>
+              <td id="presion_dinamica_entrada_Pa"></td>
+            </tr>
+            <tr class="fw-bold">
+              <td>Pérdida total accesorios ventilador (Pa)</td>
+              <td id="sumatoria_choque_accesorios"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>

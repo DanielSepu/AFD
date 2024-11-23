@@ -1,0 +1,41 @@
+{% extends "settings.html" %}
+{% load static %}
+{% block body_content %}
+
+<div class="row h-100 justify-content-center align-items-center">
+   <!-- Columna izquierda con la card -->
+   <div class="col-6 col-md-4">
+      <div class="card p-4 mt-4">
+         {% if exist %}
+         <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <label for="#l_ep" class="form-label">Equipamientos</label>
+            <div id="l_ep" class="d-flex justify-content-between">
+               <div class="list-group">
+                  {% for eqp in equipamientos %}
+                     {% if eqp in up_eqp %}
+                        <label class="list-group-item">
+                           <input name="eq_{{ eqp.id }}" data-value="{{eqp.potencia}}" type="checkbox" checked class="form-check-input me-2">{{ eqp.id }} | {{ eqp.modelo_diesel }}  
+                        </label>
+                     {% else %}
+                        <label class="list-group-item">
+                           <input name="eq_{{ eqp.id }}" data-value="{{eqp.potencia}}"  type="checkbox" class="form-check-input me-2">{{ eqp.id }} |  {{ eqp.modelo_diesel }} 
+                        </label>
+                     {% endif %}
+                  {% endfor %}
+               </div>
+            </div>
+            <input type="hidden" name="id" value="{{id}}">
+            <button class="btn btn-primary mt-3">Guardar</button>
+         </form>
+         {% else %}
+         <div class="alert alert-danger mt-4">Aun no haz creado un proyecto. Ve a la sección nuevo proyecto y crea uno para poder editarlo en esta sección.</div>
+         {% endif %}
+      </div>
+   </div>
+</div>
+{% endblock body_content %}
+{% block body_js %}
+   <script src="{% static 'js/settings/project.js' %}"></script>
+{% endblock body_js %}

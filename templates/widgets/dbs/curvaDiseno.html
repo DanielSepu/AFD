@@ -1,0 +1,76 @@
+{% extends "dbs.html" %}
+{% block body_content %}
+<div class="row h-100 justify-content-center align-items-center">
+   <div class="col-6">
+      <div class="card p-4">
+         <h2 class="text-center">Nueva curva caracteristica ventilador</h2>
+         <form method="POST" id="id_cd_p">
+            {% csrf_token %}
+            {{ form }}
+
+            <div class="row mb-3 d-flex justify-content-between">
+               <div class="col m-1 ps-2">
+                  <label for="cau">Caudal (m³/s)</label>
+               </div>
+               <div class="col m-1 ps-2">
+                  <label for="cau">Presión Total (Pa)</label>
+               </div>
+               <div class="col m-1 ps-2">
+                  <label for="cau">Potencia (kW)</label>
+               </div>
+            </div>
+
+            <button id="btn_mas" type="button" class="btn btn-secondary m-1" onclick="NFila()">+</button>
+            <br>
+            <hr>
+            <div class="d-flex justify-content-end">
+               <button class="btn btn-primary mt-1">Guardar</button>
+               <input type="hidden" value="0" id="id_v" name="veces">
+            </div>
+         </form>
+      </div>
+   </div>
+</div>
+
+<script>
+var itr = 0;
+const form = document.getElementById('id_cd_p');
+const btn = document.getElementById('btn_mas');
+const veces = document.getElementById('id_v');
+
+const div = document.createElement('div');
+div.className = "d-flex justify-content-between";
+div.innerHTML = `
+   <div class="col-4 m-1">
+      <input class="form-control" type="number" step="any" name="caudal_${itr}">
+   </div>
+   <div class="col-4 m-1">
+      <input class="form-control" type="number" step="any" name="presion_${itr}">
+   </div>
+   <div class="col-4 m-1">
+      <input class="form-control" type="number" step="any" name="power_${itr}">
+   </div>
+`;
+form.insertBefore(div, btn);
+veces.value = (itr + 1).toString();
+
+function NFila() {
+   itr++;
+   veces.value = (itr + 1).toString();
+   const div = document.createElement('div');
+   div.className = "d-flex justify-content-between";
+   div.innerHTML = `
+      <div class="col-4 m-1">
+         <input class="form-control" type="number" step="any" name="caudal_${itr}">
+      </div>
+      <div class="col-4 m-1">
+         <input class="form-control" type="number" step="any" name="presion_${itr}">
+      </div>
+      <div class="col-4 m-1">
+         <input class="form-control" type="number" step="any" name="power_${itr}">
+      </div>
+   `;
+   form.insertBefore(div, btn);
+}
+</script>
+{% endblock body_content %}

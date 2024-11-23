@@ -1,0 +1,36 @@
+{
+	"folders": [
+		{
+			"path": "../../../../../Hibring/Pirolisis/gauge_reader_py"
+		},
+		{
+			"name": "analog_gauge_reader",
+			"path": "../../../../../Hibring/analog_gauge_reader"
+		},
+		{
+			"path": "../../../../../Hibring/Pirolisis/analog-gauge-reader-menu"
+		},
+		{
+			"path": "../../../../../Hibring/Pirolisis/analog_gauge_reader-video"
+		},
+		{
+			"path": "../../.."
+		},
+		{
+			"path": "../../../../../Hibring/Pirolisis/FrameSensor1"
+		},
+		{
+			"path": "../../../../../Hibring/Notebooks/modeloGenko"
+		},
+		{
+			"path": "../../../../../Hibring/IT"
+		},
+		{
+			"path": "../../../../../Hibring/Pirolisis/cam1"
+		},
+		{
+			"path": "../../../../../Hibring/Pirolisis/cam2"
+		}
+	],
+	"settings": {}
+}

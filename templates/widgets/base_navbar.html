@@ -1,0 +1,22 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url "homepage" %}">
+      <img src="{% static 'img/favicon.png' %}" alt="" width="30" height="24">
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="btn {% if request.resolver_match.url_name == 'fandesign' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-1" href="{% url 'fandesign:fandesign' %}?chart_type=total_pressure" role="button">Curva de diseño del ventilador</a>
+
+          <a class="btn {% if request.resolver_match.url_name == 'currentstatus' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-1" href="{% url 'currentstatus:currentstatus' %}" role="button">Estado actual</a>
+
+          <a class="btn {% if request.resolver_match.url_name == 'settings' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-1" href="{% url 'settings:settings' %}?type=current_project" role="button">Configuraciones</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

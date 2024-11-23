@@ -178,8 +178,14 @@ def get_recent_data(request):
         # perdida_choque_entrada = 0.06 * mid_densidad * pow((caudal_del_ventilador/down),2) 
 
         # perdida_choque_salida = 1 * mid_densidad * pow((item_sensors.qf/project.ducto.area),2) 
+        try:
+            area_ducto_circular_ = area_ducto_circular(project)
+        except ValueError as e:
+            context = {}
+            context["status"] = "error"
+            context["message"] = f"No se pudo realizar el calculo: {e}, verifique el valor de diametro del ducto"
 
-        area_ducto_circular_ = area_ducto_circular(project)
+            JsonResponse(context, safe=False)
 
         perdida_choque_salida_ducto_circular = mid_densidad*(Qf*Qf/(area_ducto_circular_*area_ducto_circular_))
         perdida_choque_salida_ducto_ovalado = mid_densidad*Qf*Qf/(project.ducto.area*project.ducto.area)

@@ -180,7 +180,7 @@ def get_recent_data(request):
         # perdida_choque_salida = 1 * mid_densidad * pow((item_sensors.qf/project.ducto.area),2) 
         try:
             area_ducto_circular_ = area_ducto_circular(project)
-        except ValueError as e:
+        except TypeError as e:
             context = {}
             context["status"] = "error"
             context["message"] = f"No se pudo realizar el calculo: {e}, verifique el valor de diametro del ducto"

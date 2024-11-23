@@ -3,6 +3,7 @@ import pdb
 from django.shortcuts import render
 import numpy as np
 import pandas as pd  # Importa pandas
+from django.contrib import messages
 
 from applications.currentstatus.tools import goal_seek_custom
 from applications.fandesign.mixins import presion_total
@@ -96,8 +97,12 @@ def fandesign(request):
          presion_maxima_curvaAjustada = df_graph['presion'].max()
          fila = df_graph.loc[df_graph['presion'] == presion_maxima_curvaAjustada ]
 
-         
-         ps_curvaAjustada = fila.loc[0, "presion"]
+         try:
+            ps_curvaAjustada = fila.loc[0, "presion"]
+         except KeyError as e:
+            messages.warning(request, "no se ha podido obtener los valores relacionados a la presión:{e}, la curva no se ha calculado")
+            return render(request, 'fanDesign.html') 
+
          ps_caudal_curvaAjustada = fila.loc[0, "caudal"]
          
          resistencia_del_sistema = (ps_curvaAjustada / ps_caudal_curvaAjustada**2)/100

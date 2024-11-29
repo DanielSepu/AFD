@@ -33,7 +33,7 @@ SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG")
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*','127.0.0.1']
 
 
 # Application definition
@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "applications.newproject",
     "applications.dbs",
 ]
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

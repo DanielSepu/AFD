@@ -16,9 +16,9 @@
 {% block body_content %}
 {# All your page content goes here! #}
    <div class="container-fluid">
-      <div class="row">
+      <div class="row-md-8 row-sm-12">
          {# Contenido Izquierda #}
-         <div class="col-8 border-end border-3 border-dark">
+         <div class="col-md-8 col-sm-12">
             {% if setting_type == 'current_project' %}
                {% include "widgets/settings/currentProject.html" %}
             {% elif setting_type == 'new_project' %}

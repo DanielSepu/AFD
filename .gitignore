@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> merge-local-server
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -104,14 +107,8 @@ celerybeat.pid
 
 # Environments
 .env
-.venv
-env/
-venv/
-.env/
-.venv/
-ENV/
-env.bak/
-venv.bak/
+env/*
+
 
 # Spyder project settings
 .spyderproject
@@ -133,9 +130,15 @@ dmypy.json
 
 # VS Code
 .vscode/
+<<<<<<< HEAD
 =======
 venv/
 .env
 __pycache__/
 *.pyc
 >>>>>>> 0e809f2e53b8a52bd8cfa73a749e8dc72f0a3f10
+=======
+venv/
+.env
+
+>>>>>>> merge-local-server

@@ -3,7 +3,6 @@
 
 {% block head_extra_meta %}{# <meta> tags go here #}{% endblock %}
 
-{% block head_css %}{# additional <link> tags for CSS #}{% endblock %}
 
 {% block head_js %}{# <script defer> tags for deferred JS only #}{% endblock head_js %}
 
@@ -16,8 +15,9 @@
    <div class="container-fluid h-100">
       <div class="row h-100" style="height: calc(100% - 40px);">
          {# Columna Izquierda #}
-         <div class="col-9 border-end border-3 border-dark">
+         <div class="col-sm-12 col-md-9 ">
             {% include "widgets/currentStatus/current_data.html" %}
+            {% include "widgets/currentStatus/vdf_frecuency.html" %}
          </div>
          {% comment %} <div class="row mb-2">
             <div class= "col">
@@ -48,28 +48,52 @@
          </div> {% endcomment %}
          
          {# Columna Derecha #}
-         <div class="col-3">
+         <div class="col-sm-12 col-md-3 ">
             <div class="row justify-content-center align-items-center">
                <div class="col-12 col-md-10 col-xl-8">
                   {#  Model #}
-                  <div class="list-group border border-3 border-warning p-3 mb-2">
+                  <div class="list-group border border-lg-3 border-warning p-3 mb-2">
                      <div class="row">
-                        <p class="text-center fs-4 fw-bold m-0 ">Fan 1</p>
+                        <p class="text-center fs-4 fw-bold m-0 ">JetStream AXT0800</p>
                      </div>
                   </div>
                   {#  Model #}
                   <div class="list-group border border-3 border-warning p-3 mb-2">
                      <div class="row">
-                        <p class="text-start fs-5 m-0">JetStream AXT0800</p>
+                        <p class="text-start fs-5 m-0">Current Fan Performance</p>
                      </div>
                   </div>
                   {#  Blade angle #}
                   <div class="list-group border border-3 border-warning p-3 mb-2">
                      <div class="row">
-                        <p class="text-start fs-5 m-0">Density</p>
-                        <p class="text-start fs-6  ps-4 m-1">&#8226; 1.08 kg/m&#179;</p>
+                        
+                        <p class="text-start fs-6  ps-4 m-1">  89 % </p>
                      </div>
                   </div>
+                  <div class="list-group border border-3 border-warning p-3 mb-2">
+                     <div class="row">
+                        <p class="text-start fs-5 m-0">Current System Performance</p>
+                     </div>
+                  </div>
+                  <div class="list-group border border-3 border-warning p-3 mb-2">
+                     <div class="row">
+                        <p class="text-start fs-5 m-0">79 %</p>
+                     </div>
+                  </div>
+
+                  <div class="list-group border border-3 border-warning p-3 mb-2">
+                     <div class="row">
+                        <p class="text-start fs-5 m-0">Heat generated</p>
+                     </div>
+                  </div>
+
+                  
+                  <div class="list-group border border-3 border-warning p-3 mb-2">
+                     <div class="row">
+                        <p class="text-start fs-5 m-0">13 kW</p>
+                     </div>
+                  </div>
+
                </div>
             </div>
          </div>
@@ -155,11 +179,36 @@
          $("#qf").text(data[1]);
          $("#pt1").text(data[2]);
          $("#power").text(data[3]);
+         $("#fref").text(data[4]);
+         $("#fref").text(data[4]);
+         $("#fref").text(data[4]);
+         $("#fref").text(data[4]);
+         
+      }
+
+      function editFrecuency(data) {
+         $("#fref").text(data[4]);
       }
 
       setInterval( () => {
          getValues();
       }, 15000);
 
-   </script> 
+   </script>
+   
+   <script>
+      window.opener = null;
+      const displayF = document.getElementById('fref');
+      const inputFDiv = document.getElementById('fref-input-div');
+      const container = document.getElementById('fref-container');
+      let editMode = false;
+      
+      document.getElementById('edit-btn').addEventListener('click', () => {
+         // Enviar newFref al servidor aqui
+         var newFref = document.getElementById('fref-input').value;
+         fetch(`/update_frequency?frecuency=${newFref}`)
+         .then(response => response.json())
+         .then(data => console.log(data));
+      });
+      </script>
 {% endblock %}

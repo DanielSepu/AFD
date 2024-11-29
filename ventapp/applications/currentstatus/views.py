@@ -7,10 +7,8 @@ import requests as rq
 from django.conf import settings
 import os
 
-from yaml import serialize
 
-
-from applications.getdata.models import SensorsData, VdfData
+from applications.getdata.models import SensorsData, VdfData, Ventilador, SensorData, CurvaDiseno
 from django.db.models import Max
 
 
@@ -80,14 +78,87 @@ def currentstatus(request):
 
 
 def get_recent_data(request):
+
     if request.method == 'GET':
+
         latest_record_sensors = SensorsData.objects.using('sensorDB').aggregate(Max('id'))
         max_id_sensors = latest_record_sensors['id__max']
         latest_record_vdf = VdfData.objects.using('sensorDB').aggregate(Max('id'))
         max_id_vdf = latest_record_vdf['id__max']
 
+
         # Consultar registro con ese id 
         item_sensors = SensorsData.objects.using('sensorDB').get(id=max_id_sensors)
         item_vdf = VdfData.objects.using('sensorDB').get(id=max_id_vdf)
-        data=[round(item_sensors.q1, 2), round(item_sensors.qf, 2), round(item_sensors.pt1, 2), round(item_vdf.powerc, 2)]
+        data = [round(item_sensors.q1, 2), round(item_sensors.qf, 2), round(item_sensors.pt1, 2), round(item_vdf.powerc, 2), round(item_vdf.fref, 2), round((item_vdf.freal/item_vdf.fref) * ( 100 ) , 2 ) , round((item_vdf.freal/item_vdf.fref) * ( 100 ), 2) , round(item_vdf.powerc, 2)]
+
+
         return JsonResponse(data, safe=False)
+    
+
+
+def update_frequency(request):
+   if request.method == 'GET':
+      newFref = request.GET.get('frecuency')
+      url = f"http://localhost:1880/update-frequency?frecuency={newFref}"
+      try:
+            #Enviar al endpoint del Node-Red
+            response = rq.get(url)
+      except rq.exceptions.RequestException as e:
+            print(f"Error updating frequency: {e}")
+
+   return JsonResponse('Frecuencia Ref Actualizada', safe=False)
+
+
+def Excel(request):
+    import datetime
+    from django.utils import timezone
+    import openpyxl
+    from django.http import HttpResponse
+
+    now = timezone.now() - datetime.timedelta(days=1) #Obtencion de Timezone menos 24horas
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="Datos.xlsx"'
+
+    workbook = openpyxl.Workbook()
+    worksheet = workbook.active
+    worksheet.title = 'VDF'
+
+    # Write header row
+    header = ['Frecuencia referencia', 'Frecuencia Real', 'VF', 'IF', 'power','powerc','rpm']
+    for col_num, column_title in enumerate(header, 1):
+        cell = worksheet.cell(row=1, column=col_num)
+        cell.value = column_title
+
+    # Write data rows
+    queryset = VdfData.objects.filter(ts__gte=now).values_list('fref', 'freal', 'vf','oc','power','powerc','rpm')
+    for row_num, row in enumerate(queryset, 1):
+        for col_num, cell_value in enumerate(row, 1):
+            cell = worksheet.cell(row=row_num+1, column=col_num)
+            cell.value = cell_value
+
+    ############
+            
+    workbook.create_sheet('Sensores')
+    workbook.active = workbook['Sensores']
+    worksheet = workbook.active
+    
+    # Write header row
+    header = ['pt2', 'ps2', 'densidad2','q2','pt1','ps1','densidad1','q1','lc','qf','k','tbs','hr','tbh','tgbh']
+    for col_num, column_title in enumerate(header, 1):
+        cell = worksheet.cell(row=1, column=col_num)
+        cell.value = column_title
+
+    # Write data rows
+    queryset = SensorsData.objects.filter(ts__gte=now).values_list('pt2', 'ps2', 'densidad2','q2','pt1','ps1','densidad1','q1','lc','qf','k','tbs','hr','tbh','tgbh')
+    for row_num, row in enumerate(queryset, 1):
+        for col_num, cell_value in enumerate(row, 1):
+            cell = worksheet.cell(row=row_num+1, column=col_num)
+            cell.value = cell_value
+
+    
+
+    workbook.save(response)
+
+    return response

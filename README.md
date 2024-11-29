@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> merge-local-server
 # VentApp
 
 plataforma web para el control de la solución Auxiliary Fan Device AFD
@@ -62,7 +65,11 @@ This project uses the MIT license. Please see the [LICENSE](LICENSE) for details
    ```
 
 1. Open http://localhost:8000 to view the running site.
+<<<<<<< HEAD
 =======
+=======
+
+>>>>>>> merge-local-server
 > [!NOTE]
 > features
 > 1. se corrigio error en la seccion de agregar a base de datos. seccion ventilador, se pueden agregar nuevos accesorios
@@ -72,4 +79,8 @@ This project uses the MIT license. Please see the [LICENSE](LICENSE) for details
 > [!IMPORTANT]
 > en la seccion de nuevo proyecto, los campos caudal requerido, curva de diseño y area galeria estaban solo de lectura sin ningun valor por default, por lo que se desbloqueo para que sea un campo editable,
 > queda pendiente revisar si debe ser de solo lectura y de donde saldra el valor por defector para estos campos.
+<<<<<<< HEAD
 >>>>>>> 0e809f2e53b8a52bd8cfa73a749e8dc72f0a3f10
+=======
+
+>>>>>>> merge-local-server

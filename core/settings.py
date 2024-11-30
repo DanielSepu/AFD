@@ -36,7 +36,6 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env.bool("DEBUG")
 ALLOWED_HOSTS = ['192.168.4.1']
 
-
 # Application definition
 INSTALLED_APPS = [
     "django.contrib.admin",

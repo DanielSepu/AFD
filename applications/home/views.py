@@ -13,17 +13,17 @@ class HomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
-        proyecto = get_last_project()
+        proyecto = None
+        try:
+            proyecto = get_last_project()
+        except Exception as e:
+            pass
         if proyecto:
             context['Project']  = proyecto 
-
-        if context['Project']:
             context['Projects'] = Proyecto.objects.exclude(pk=context['Project'].pk)
-        else:
-            context['Projects'] = Proyecto.objects.none()  
-        semaforo= Semaforo(self.request)
-        semaforo.calcular_estado_final(proyecto)
-        context["detalle_semaforo"]=semaforo.detalle
+        
+            semaforo= Semaforo(self.request)
+            semaforo.calcular_estado_final(proyecto)
+            context["detalle_semaforo"]=semaforo.detalle
         
         return context

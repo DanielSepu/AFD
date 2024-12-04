@@ -1,22 +1,23 @@
-{% load django_bootstrap5 %}
-   <div class="row">
-      <div class="col">
-         <a href="?type=ventilador" class="btn btn-outline-secondary mt-2">+ Ventilador</a>
-         <a href="?type=curva_diseno" class="btn btn-outline-secondary mt-2 ms-1">+ Curva Diseño</a>
-         <a href="?type=ducto" class="btn btn-secondary mt-2 ms-1">+ Ducto</a>
-         <a href="?type=equip_diesel" class="btn btn-outline-secondary mt-2 ms-1">+ Equipamiento Diesel</a>
-      </div>
-   </div>
+{% extends "dbs.html" %}
+{% load static %}
+{% block body_content %}
 
-   <div class="row h-100">
-      <div class="col m-4">
-         <div class="h-100" >
-            <h2>Nuevo Ducto</h2>
-            <form method="POST">
-               {% csrf_token %}
-               {% bootstrap_form form %}
+<div class="row h-100 justify-content-center align-items-center">
+   <div class="col-6">
+      <div class="card p-4">
+         <h2 class="text-center">Nuevo Ducto</h2>
+         <form method="POST">
+            {% csrf_token %}
+            {{ form  }}
+            <div class="d-flex justify-content-end mt-3">
                <button class="btn btn-primary">Guardar</button>
-            </form>
-         </div>
+            </div>
+         </form>
       </div>
    </div>
+</div>
+
+{% endblock body_content %}
+{% block body_js %}
+   <script src="{% static 'js/dbs/ducto.js' %}"></script>
+{% endblock body_js %}

@@ -20,3 +20,7 @@ def get_10min_sensor_data():
    items = SensorsData.objects.using('sensorDB').order_by('-id')[:40]
    df = pd.DataFrame(list(items.values()))
    return df
+
+
+###
+

@@ -1,0 +1,66 @@
+<div class="row">
+    <div class="col text-end">
+        <!-- Botón para abrir el modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#fullScreenModal">
+            Ver calculos
+        </button>
+    </div>
+</div>
+
+<!-- Modal de pantalla completa -->
+<div class="modal fade" id="fullScreenModal" tabindex="-1" aria-labelledby="fullScreenModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fullScreenModalLabel">Fullscreen Modal</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <br>
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="choque-total-tab" data-bs-toggle="tab" data-bs-target="#choque-total" type="button" role="tab" aria-controls="choque-total" aria-selected="true">
+                            Pérdida Choque Total
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="choque-codos-tab" data-bs-toggle="tab" data-bs-target="#choque-codos" type="button" role="tab" aria-controls="choque-codos" aria-selected="false">
+                            Pérdidas Choque Codos
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="accesorios-ventilador-tab" data-bs-toggle="tab" data-bs-target="#accesorios-ventilador" type="button" role="tab" aria-controls="accesorios-ventilador" aria-selected="false">
+                            Pérdidas Accesorios Ventilador
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="choque-salida-tab" data-bs-toggle="tab" data-bs-target="#choque-salida" type="button" role="tab" aria-controls="choque-salida" aria-selected="false">
+                            Pérdida Choque Salida
+                        </button>
+                    </li>
+                </ul>
+                <br>
+                <!-- Tab content -->
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="choque-total" role="tabpanel" aria-labelledby="choque-total-tab">
+                        {% include "widgets/currentStatus/perdida_choque_total.html" %}
+                    </div>
+                    <div class="tab-pane fade" id="choque-codos" role="tabpanel" aria-labelledby="choque-codos-tab">
+                        {% include "widgets/currentStatus/perdidas_choque_codos.html" %}
+                    </div>
+                    <div class="tab-pane fade" id="accesorios-ventilador" role="tabpanel" aria-labelledby="accesorios-ventilador-tab">
+                        {% include "widgets/currentStatus/perdidas_accesorios_ventilador.html" %}
+                    </div>
+                    <div class="tab-pane fade" id="choque-salida" role="tabpanel" aria-labelledby="choque-salida-tab">
+                        {% include "widgets/currentStatus/perdida_choque_salida.html" %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>

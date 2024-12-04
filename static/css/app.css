@@ -41,3 +41,39 @@ code {
 @media print {
   .footer { display: none!important; }
 }
+
+/* cursores */
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+
+
+      .semaforo-luz {
+        transition: box-shadow 0.3s ease;
+      }
+      
+      .semaforo-luz:hover {
+        box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.3);
+      }
+      .shadows {
+        text-shadow: 4px 5px 6px rgba(0, 0, 0, 0.8);
+      }
+      .rotating-icon {
+        display: inline-block;
+        animation: rotateFan 5s linear infinite;
+      }
+
+      @keyframes rotateFan {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }

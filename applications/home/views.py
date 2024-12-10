@@ -23,7 +23,10 @@ class HomeView(TemplateView):
             context['Projects'] = Proyecto.objects.exclude(pk=context['Project'].pk)
         
             semaforo= Semaforo(self.request)
-            semaforo.calcular_estado_final(proyecto)
-            context["detalle_semaforo"]=semaforo.detalle
+            try:
+                semaforo.calcular_estado_final(proyecto)
+                context["detalle_semaforo"]=semaforo.detalle
+            except Exception as e:
+                context["detalle_semaforo"]={}
         
         return context

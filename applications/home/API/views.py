@@ -10,6 +10,7 @@ class  SemaforoApiView(APIView):
     """
         Clase que representa un API para obtener el estado del semaforo de la ventilacion.
     """
+    
     def get(self, request, format=None):
         # Obtener el ultimo proyecto
         project = get_last_project()

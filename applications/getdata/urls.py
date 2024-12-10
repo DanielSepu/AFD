@@ -7,6 +7,7 @@ app_name = "getdata"
 
 urlpatterns = [
   path('getdata',views.getdata,name="getdata"),
+    
 ]
 
 urlpatterns += staticfiles_urlpatterns()

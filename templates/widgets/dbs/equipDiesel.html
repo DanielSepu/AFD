@@ -16,7 +16,8 @@
    const potencia = document.getElementById('id_potencia');
    const qr_fabricante = document.getElementById('id_qr_fabricante');
    function Funcion(){
-      qr_calculado.value = (potencia.value*2.83)/(60*0.746).toFixed(1);
+      qr_calculado.value = (parseFloat(potencia.value*2.83)/(60*0.746)).toFixed(1);
+      console.log(((potencia.value*2.83)/(60*0.746)).toFixed(2))
       qr_fabricante.value = 0;
    }
    function Funcion2(){
@@ -24,7 +25,7 @@
          Funcion()
       }else{
          if ($(qr_calculado).val() > qr_fabricante.value) {
-            qr_calculado.value = qr_fabricante.value;
+            qr_calculado.value = parseFloat(qr_fabricante.value).toFixed(2);
          }
       };
    }

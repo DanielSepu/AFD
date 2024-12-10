@@ -1,5 +1,6 @@
 from django import forms
 from applications.getdata.models import Ventilador, CurvaDiseno, Ducto, EquipamientoDiesel, Tipo_Equipamiento_Diesel, Caracteristicas_Ventilador, Proyecto, Sistema_Partida
+from django.core.validators import MaxValueValidator
 
 ##################### Extractores de nombres para los select, de otro modo se ven: "table object (1)"
 class CustomMMCF(forms.ModelMultipleChoiceField):
@@ -37,12 +38,12 @@ class VentiladorForm(forms.ModelForm):
     )
 
     vmm = forms.FloatField(
-        label='V',
+        label='V (mm)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese V'})
     )
     
     amm = forms.FloatField(
-        label='A',
+        label='A (mm)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese A'})
     )
     
@@ -94,8 +95,8 @@ class CurvaDisenoForm(forms.ModelForm):
     )
     
     densidad = forms.FloatField(
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese densidad (kg/m3)'}),
-        label='ρ (kg/m3)'
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese superindice (kg/m³)'}),
+        label='ρ (kg/m³)'
     )
 
     class Meta:
@@ -127,7 +128,7 @@ class DuctoForm(forms.ModelForm):
 
     
     f_friccion = forms.FloatField(
-        label='Factor de fricción (Kg/m²) (opcional)',
+        label='Factor de fricción (kg/m³) (opcional)',
         required=False,
         initial=0,
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el factor de fricción'})
@@ -316,8 +317,12 @@ class ProyectoForm(forms.ModelForm):
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el área de la galería'})
     )
     factor = forms.FloatField(
-        label='Factor corrección (%)',
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'max': '100', 'step': '1', 'placeholder': 'Ingrese el factor de corrección'})
+        validators=[MaxValueValidator(100)],  # Limita el valor máximo a 100
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ingrese un valor (máximo 100)',
+        }),
+        label="Factor"
     )
 
     potencia = forms.FloatField(
@@ -368,7 +373,7 @@ class SistemaPartidaForm(forms.ModelForm):
 
 class Caracteristicas_VentiladorForm(forms.ModelForm):
     nombre = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el nombre de la caracteristica'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el nombre del accesorio'})
     )
     factor_choque = forms.IntegerField(
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Factor de choque'}),

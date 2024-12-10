@@ -10,14 +10,12 @@ from modules.semaforo import Semaforo
 
 class HomeView(TemplateView):
     template_name = 'homepage.html'
-
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
         proyecto = get_last_project()
         if proyecto:
             context['Project']  = proyecto 
-
         if context['Project']:
             context['Projects'] = Proyecto.objects.exclude(pk=context['Project'].pk)
         else:

@@ -206,25 +206,39 @@ class Semaforo:
         if self.Q2 != None:
             return self.Q2
 
-        # calcular densidad aire en la frente
-        HRf  = self.sensorData["q2"].mean()
-        # temperatura bulbo seco
-        Tbs2 = self.sensorData["lc"].mean()
-        # presion barometrica en la frente
-        P2  = self.sensorData["densidad2"].mean()
-        # definir variables
-        pt2 = self.sensorData["pt2"].mean()
-
-        ps2 = self.sensorData["ps2"].mean()
         
-        velocidad_sensor_2 = self.calcular_velocidad_sensor(Tbs2, HRf, P2, pt2, ps2, "solicitado desde Q2" )
-        area_ducto = self.calcular_area_ducto()
         # = J22  * E24
         try:
+            # calcular densidad aire en la frente
+            HRf  = self.sensorData["q2"].mean()
+            # temperatura bulbo seco
+            Tbs2 = self.sensorData["lc"].mean()
+            # presion barometrica en la frente
+            P2  = self.sensorData["densidad2"].mean()
+            # definir variables
+            pt2 = self.sensorData["pt2"].mean()
+
+            ps2 = self.sensorData["ps2"].mean()
+            
+            velocidad_sensor_2 = self.calcular_velocidad_sensor(Tbs2, HRf, P2, pt2, ps2, "solicitado desde Q2" )
+            area_ducto = self.calcular_area_ducto()
             Q2 = velocidad_sensor_2 * area_ducto  #  caudal sensor 2 = (m/s)/(m2)
         except TypeError as e: #
             messages.warning(self.request, f"error al calcuar Q2: los valores no se pueden procesar: {e}, verifique los errores de: q2, lc, densidad2, pt2, ps2, area_ducto, ")
             Q2 = 0
+        except KeyError as e:
+            Q2 = 0
+            messages.warning(self.request, f"La base de datos del sensor aun no recibe datos")
+            # calcular densidad aire en la frente
+            HRf  = 0
+            # temperatura bulbo seco
+            Tbs2 = 0
+            # presion barometrica en la frente
+            P2  = 0
+            # definir variables
+            pt2 = 0
+
+            ps2 = 0
         # asignar al entorno global
         self.Q2 = Q2
         return Q2
@@ -239,22 +253,33 @@ class Semaforo:
             return self.Q1
         
 
-        pt1 = self.sensorData["pt1"].mean()
-        ps1 = self.sensorData["ps1"].mean()
-        tbs = self.sensorData["tbs"].mean() # humedad relativa
-        hr = self.sensorData["hr"].mean() # temperatura bulbo seco
-        P1 = self.sensorData["densidad1"].mean()  #  Presión barométrica ventilador
-        tbs1 = self.sensorData["lc"].mean() # 
-        velocidad_sensor_1 = self.calcular_velocidad_sensor(tbs, hr, P1, pt1, ps1, "solicitado desde Q1" )
-        # velocidad_sensor_1 = self.calcular_velocidad_sensor1()   # 2 decimales
-
-        area_ducto = self.calcular_area_ducto()
+        
         
         try:
+            pt1 = self.sensorData["pt1"].mean()
+            ps1 = self.sensorData["ps1"].mean()
+            tbs = self.sensorData["tbs"].mean() # humedad relativa
+            hr = self.sensorData["hr"].mean() # temperatura bulbo seco
+            P1 = self.sensorData["densidad1"].mean()  #  Presión barométrica ventilador
+            tbs1 = self.sensorData["lc"].mean() # 
+            velocidad_sensor_1 = self.calcular_velocidad_sensor(tbs, hr, P1, pt1, ps1, "solicitado desde Q1" )
+            # velocidad_sensor_1 = self.calcular_velocidad_sensor1()   # 2 decimales
+
+            area_ducto = self.calcular_area_ducto()
             Q1  = velocidad_sensor_1 *area_ducto #  m3/s = (m2)*(m/s).  (Crear variable Q1) caudal_ventilador_2
         except TypeError as e: #
             messages.warning(self.request, f"error al calcuar Q1: los valores no se pueden procesar: {e}, verifique los errores de: q2, lc, densidad2, pt2, ps2, area_ducto, ")
             Q1 = 0
+        except KeyError as e:
+            messages.warning(self.request, f"error la base de datos del sensor aun no recibe datos")
+            Q1 = 0
+            pt1 = 0
+            ps1 = 0
+            tbs = 0 # humedad relativa
+            hr = 0 # temperatura bulbo seco
+            P1 = 0  #  Presión barométrica ventilador
+            tbs1 = 0 # 
+            velocidad_sensor_1 = 0
         # asignar a las variables del entorno global 
         self.Q1 = Q1  # guardar el resultado en el entorno global para usarlo en otros metodos
         return Q1

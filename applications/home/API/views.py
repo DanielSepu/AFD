@@ -15,9 +15,13 @@ class  SemaforoApiView(APIView):
         # Obtener el ultimo proyecto
         project = get_last_project()
         semaforo= Semaforo(self.request)
-        semaforo.calcular_estado_final(project)
         context = {}
-        context["detalle_semaforo"]=semaforo.detalle
+        try:
+            semaforo.calcular_estado_final(project)
+            
+            context["detalle_semaforo"]=semaforo.detalle
+        except Exception as e:
+            pass
 
         return Response(context)
     

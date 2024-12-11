@@ -10,13 +10,13 @@ $(document).ready(function() {
         }
         if(this.checked) {
             var sumatoria = parseInt(actual_caudal)+parseInt(valor_actual_checkbox);
-            $(caudal_requerido_input).val(sumatoria);
+            $(caudal_requerido_input).val(sumatoria.toFixed(2));
             
         }
         else {
             if (parseInt(actual_caudal) >= parseInt(valor_actual_checkbox)){
                 var resta = parseInt(actual_caudal)- parseInt(valor_actual_checkbox);
-                $(caudal_requerido_input).val(resta);
+                $(caudal_requerido_input).val(resta.toFixed(2));
             }
 
         }
@@ -44,6 +44,7 @@ $(document).on('change','#id_ventilador',function(e){
         } 
     }) 
 });
+
 $(document).on('change','#id_ancho_galeria',function(e){
     e.preventDefault();
     const a = $('#id_ancho_galeria').val();

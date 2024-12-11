@@ -1,11 +1,10 @@
-
 <style>
   td {
     text-align: center;
   }
 </style>
-<div class="row align-items-center my-4">
 
+<div class="row align-items-start my-4">
   <!-- Velocidad del aire -->
   <div class="col-md-5">
     <table class="table table-bordered">
@@ -21,46 +20,41 @@
             <h1 class="display-1 fw-bold m-0">2</h1>
           </td>
           <td colspan="4" class="text-center fw-bold bg-light">Velocidad mínima</td>
-          <td colspan="1" rowspan="8" id="v2_formula">
-            formula
+          <td rowspan="8" id="v2_formula" class="text-center align-middle">
+            Fórmula
           </td>
         </tr>
         <tr>
           <td colspan="2" class="text-center">Estado</td>
-          <td colspan="1" id="v2_estado" class="text-center"></td>
-         
+          <td colspan="1" id="v2_estado"></td>
         </tr>
         <tr>
-          <td colspan="1" lass="text-center">V min</td>
-          <td colspan="1" id="" class="text-center">Vel. Aire</td>
-          <td colspan="1" id="v2_vel_aire_min" class="text-center"></td>
+          <td>V min</td>
+          <td>Vel. Aire</td>
+          <td id="v2_vel_aire_min"></td>
         </tr>
         <tr>
-          <td colspan="1" id="v2_q_ventilador_min" class="text-center">0.25</td>
-          <td colspan="1" class="text-center"></td>
-          <td colspan="1" id="v2_q_frente" class="text-center"></td>
+          <td id="v2_q_ventilador_min">0.25</td>
+          <td></td>
+          <td id="v2_q_frente"></td>
         </tr>
         <tr>
           <td colspan="4" class="text-center fw-bold bg-light">Velocidad máxima</td>
         </tr>
         <tr>
           <td colspan="2" class="text-center">Estado</td>
-          <td id="v2_estado_max" class="text-center"></td>
-          
+          <td id="v2_estado_max"></td>
         </tr>
         <tr>
-          <td colspan="1" id="" class="text-center">V max</td>
-          <td colspan="1" class="text-center"></td>
-          <td colspan="1" id="" class="text-center"></td>
+          <td>V max</td>
+          <td></td>
+          <td></td>
         </tr>
         <tr>
-          
-          <td colspan="1" id="v2_q_frente" class="text-center">2.5</td>
-          <td colspan="1" lass="text-center"></td>
-          <td colspan="1" id="v2_q_frente" class="text-center"></td>
-          
+          <td id="v2_q_frente">2.5</td>
+          <td></td>
+          <td id="v2_q_frente"></td>
         </tr>
-        
       </tbody>
     </table>
   </div>
@@ -75,23 +69,23 @@
       </thead>
       <tbody>
         <tr>
-          <td id="">Q1</td>
-          <td id="v2_Q1" class="text-center"></td>
+          <td>Q1</td>
+          <td id="v2_Q1"></td>
         </tr>
         <tr>
           <td>Área de la galería [m²]</td>
-          <td id="v2_area_galeria" class="text-center"></td>
+          <td id="v2_area_galeria"></td>
         </tr>
         <tr>
           <td>Velocidad del aire [m/s]</td>
-          <td id="v2_vel_aire" class="text-center"></td>
+          <td id="v2_vel_aire"></td>
         </tr>
       </tbody>
     </table>
   </div>
 
   <!-- Semáforo -->
-  <div class="col-md-3">
+  <div class="col-md-4">
     <table class="table table-bordered">
       <thead class="bg-secondary text-white text-center">
         <tr>
@@ -100,19 +94,17 @@
       </thead>
       <tbody>
         <tr>
-          <td id="" class="text-center bg-red"  style="background-color: #07f873; color: black;">
+          <td class="text-center" style="background-color: #07f873; color: black;">
             0.25 m/s < Velocidad del aire < 2.5 m/s
           </td>
-          
         </tr>
         <tr>
-          <td id="" class="text-center bg-green" style="background-color: #dc3545; color: white;">
+          <td class="text-center" style="background-color: #dc3545; color: white;">
             Velocidad del aire fuera de rango
           </td>
         </tr>
       </tbody>
     </table>
   </div>
-
 </div>
-
+<hr/>

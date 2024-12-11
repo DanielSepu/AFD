@@ -1,92 +1,91 @@
 <div class="container-fluid">
-  <div class="row">
-      <!-- Estado y Fugas -->
-      <div class="col-md-5">
-          <table class="table table-bordered">
-              <thead>
-                  <tr class="bg-secondary text-white text-center">
-                      <th colspan="3">Fugas</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <tr>
-                      <!-- Número "6" como parte de la tabla -->
-                      <td rowspan="3" class="align-middle text-center" style="width: 100px;">
-                          <h1 class="display-1 fw-bold m-0">6</h1>
-                      </td>
-                      <td>Estado</td>
-                      <td class="text-center fw-bold" id="v6_estado" style="background-color: {% if fugas.estado == 3 %}#f8d7da{% elif fugas.estado == 2 %}#fff3cd{% elif fugas.estado == 1 %}#d4edda{% else %}#f8d7da{% endif %};">
-                          {% if fugas.estado == 3 %}Crítico{% elif fugas.estado == 2 %}Moderado{% elif fugas.estado == 1 %}Normal{% else %}Desconocido{% endif %}
-                      </td>
-                  </tr>
-                  <tr>
-                      <td>Fugas</td>
-                      <td class="text-center" id="v6_porcentaje">{{ fugas.fugas_percent }}%</td>
-                  </tr>
-                  <tr>
-                      <td colspan="2" class="text-center font-italic align-middle" style="font-size: 1rem;">
-                          Con esta configuración, el sistema de parpadeo indicará visualmente el nivel de desviación de la presión actual en comparación con la presión nominal.
-                      </td>
-                  </tr>
-              </tbody>
-          </table>
-      </div>
-
-      <!-- Presión Total y Porcentaje de Fuga -->
-      <div class="col-md-4">
-          <table class="table table-bordered">
-              <thead>
-                  <tr class="bg-secondary text-white text-center">
-                      <th colspan="2">Presión Total Medida (Ventilador)</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <tr>
-                      <td>Presión total inicial medida</td>
-                      <td class="text-center" id="v6_presion_hace30m">{{ fugas.presion_inicial }}</td>
-                  </tr>
-                  <tr>
-                      <td>Presión total final medida</td>
-                      <td class="text-center" id="v6_presion_actual">{{ fugas.presion_final }}</td>
-                  </tr>
-                  <tr>
-                      <td>% de Fuga</td>
-                      <td class="text-center" id="v6_porcentaje2">{{ fugas.porcentaje_fuga }}%</td>
-                  </tr>
-              </tbody>
-          </table>
-      </div>
-
-      <!-- Semáforo de Fugas -->
-      <div class="col-md-3">
-          <table class="table table-bordered">
-              <thead class="bg-secondary text-white text-center">
-                  <tr>
-                      <th>Semáforo</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <tr>
-                      <td class="text-center fw-bold" id="" style="background-color: green; color: black;">
-                        Fugas < 5%
-                      </td>
-                  </tr>
-                  
-                  <tr>
-                      <td class="text-center fw-bold" id="" style="background-color: yellow ; color: black;">
-                        5% < Fugas < 10%
-                      </td>
-                  </tr>
-                  
-                  <tr>
-                      <td class="text-center fw-bold" id="" style="background-color: red; color:white;">
-                        Fugas > 10%
-                      </td>
-                  </tr>
-                  
-              </tbody>
-          </table>
-      </div>
+    <div class="row align-items-start my-4">
+        <!-- Estado y Fugas -->
+        <div class="col-md-5">
+            <table class="table table-bordered">
+                <thead>
+                    <tr class="bg-secondary text-white text-center">
+                        <th colspan="3">Fugas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td rowspan="3" class="align-middle text-center" style="width: 100px;">
+                            <h1 class="display-1 fw-bold m-0">6</h1>
+                        </td>
+                        <td>Estado</td>
+                        <td class="text-center fw-bold" id="v6_estado" style="background-color: {% if fugas.estado == 3 %}#f8d7da{% elif fugas.estado == 2 %}#fff3cd{% elif fugas.estado == 1 %}#d4edda{% else %}#f8d7da{% endif %};">
+                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Fugas</td>
+                        <td class="text-center" id="v6_porcentaje">{{ fugas.fugas_percent }}%</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="text-center font-italic align-middle" style="font-size: 1rem;">
+                            Con esta configuración, el sistema de parpadeo indicará visualmente el nivel de desviación de la presión actual en comparación con la presión nominal.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+  
+        <!-- Presión Total y Porcentaje de Fuga -->
+        <div class="col-md-4">
+            <table class="table table-bordered">
+                <thead>
+                    <tr class="bg-secondary text-white text-center">
+                        <th colspan="2">Presión Total Medida (Ventilador)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Presión total inicial medida</td>
+                        <td class="text-center" id="v6_presion_hace30m">{{ fugas.presion_inicial }}</td>
+                    </tr>
+                    <tr>
+                        <td>Presión total final medida</td>
+                        <td class="text-center" id="v6_presion_actual">{{ fugas.presion_final }}</td>
+                    </tr>
+                    <tr>
+                        <td>% de Fuga</td>
+                        <td class="text-center" id="v6_porcentaje2">{{ fugas.porcentaje_fuga }}%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+  
+        <!-- Semáforo de Fugas -->
+        <div class="col-md-3">
+            <table class="table table-bordered">
+                <thead class="bg-secondary text-white text-center">
+                    <tr>
+                        <th>Semáforo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-center fw-bold" id="" style="background-color: green; color: rgb(249, 248, 248);">
+                          Fugas < 5%
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="text-center fw-bold" id="" style="background-color: yellow; color: black;">
+                          5% < Fugas < 10%
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="text-center fw-bold" id="" style="background-color: red; color: white;">
+                          Fugas > 10%
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
   </div>
-</div>
-
+  <hr/>
+  

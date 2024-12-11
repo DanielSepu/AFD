@@ -4,6 +4,7 @@
         <a href="{% url 'dbs:dbs' %}?type=curva_diseno" class="btn {% if request.GET.type == 'curva_diseno' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-2 ms-1">+ Curva Diseño</a>
         <a href="{% url 'dbs:dbs' %}?type=ducto" class="btn {% if request.GET.type == 'ducto' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-2 ms-1">+ Ducto</a>
         <a href="{% url 'dbs:dbs' %}?type=equip_diesel" class="btn {% if request.GET.type == 'equip_diesel' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-2 ms-1">+ Equipamiento Diesel</a>
-        <a href="{% url 'dbs:create-caracteristica' %}" class="btn {% if 'create-caracteristica' in request.path %} btn-secondary{% else %}btn-outline-secondary{% endif %} mt-2 ms-1">+ Caracteristica del ventilador</a>
+        <a href="{% url 'dbs:create-caracteristica' %}" class="btn {% if 'create-caracteristica' in request.path %} btn-secondary{% else %}btn-outline-secondary{% endif %} mt-2 ms-1">+ Accesorio del ventilador</a>
+        <a href="{% url 'dbs:crear-sistema-partida' %}" class="btn {% if 'crear-sistema-partida' in request.path %} btn-secondary{% else %}btn-outline-secondary{% endif %} mt-2 ms-1">+ Sistema de partida</a>
     </div>
 </div>

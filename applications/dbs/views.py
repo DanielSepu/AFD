@@ -1,12 +1,5 @@
-import pdb
-from django.forms import BaseModelForm
 from django.shortcuts import render, redirect
-import pandas as pd  # Importa pandas
-import numpy as np
-from django.http import HttpResponse
-import requests as rq
-
-from django.conf import settings
+from django.views.generic.edit import FormView
 from django.contrib import messages
 from django.views.generic import UpdateView, CreateView
 
@@ -121,8 +114,13 @@ def dbs(request):
 class CaracteristicasVentiladorView(CreateView):
    model = Caracteristicas_Ventilador 
    form_class = Caracteristicas_VentiladorForm
-   template_name = 'widgets/dbs/createCaracteristicaVentilador.html'
+   template_name = 'widgets/dbs/create.html'
    success_url = '/'
+
+   def get_context_data(self, **kwargs):
+      context = super().get_context_data(**kwargs)
+      context['db_type'] = 'Nuevo accesorio del ventilador'
+      return context
 
 
 class CurvaDisenoEditView(UpdateView):
@@ -188,3 +186,27 @@ class EquipamientoEditView(UpdateView):
       return context
    
 
+class SistemaPartidaCreateView(FormView):
+    """
+    Vista para manejar la creación de elementos del modelo Sistema_Partida.
+    """
+    template_name = 'widgets/dbs/create.html'  # Ruta a tu plantilla HTML
+    form_class = SistemaPartidaForm  # Formulario asociado a esta vista
+    success_url = '/'  # URL a redirigir tras guardar
+
+    def get_context_data(self, **kwargs):
+      context = super().get_context_data(**kwargs)
+      context['db_type'] = 'Sistema de partida'
+      return context
+      
+
+    def form_valid(self, form):
+        # Guardar el formulario en la base de datos
+        form.save()
+        messages.success(self.request, "Elemento sistema de partida creado con éxito.")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        # Manejar errores de validación
+        messages.error(self.request, "Por favor corrige los errores del formulario.")
+        return super().form_invalid(form)

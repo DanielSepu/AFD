@@ -210,3 +210,30 @@ class SistemaPartidaCreateView(FormView):
         # Manejar errores de validación
         messages.error(self.request, "Por favor corrige los errores del formulario.")
         return super().form_invalid(form)
+
+
+class TipoEquipDieselCreateView(FormView):
+    """
+    Vista para manejar la creación de elementos del modelo Sistema_Partida.
+    """
+    template_name = 'widgets/dbs/create.html'  # Ruta a tu plantilla HTML
+    form_class = TipoEquipamientodieselForm  # Formulario asociado a esta vista
+    success_url = '/'  # URL a redirigir tras guardar
+
+    def get_context_data(self, **kwargs):
+      context = super().get_context_data(**kwargs)
+      context['db_type'] = 'Tipo de equipamiento diesel'
+      return context
+      
+
+    def form_valid(self, form):
+        # Guardar el formulario en la base de datos
+        form.save()
+        messages.success(self.request, "Elemento tipo de equipamiento diesel creado con éxito.")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        # Manejar errores de validación
+        messages.error(self.request, "Por favor corrige los errores del formulario.")
+        return super().form_invalid(form)
+    

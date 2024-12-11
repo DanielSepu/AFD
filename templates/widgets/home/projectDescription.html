@@ -1,207 +1,236 @@
 <div class="row mt-4">
     <div class="col-md-12">
-      <div class="card">
-        <div class="card-header d-flex align-items-center">
-            <h4 class="card-title">Configuración actual</h4>
-            <a class="btn btn-success ms-auto" href="{% url 'settings:settings' %}?type=current_project">
-                <i class="fas fa-edit"></i> Editar
-            </a>
-            <a class="btn btn-success ms-auto" href="{% url 'dbs:dbs' %}">
-                Añadir equipamiento
-            </a>
-        </div>
-        <div class="card-body">
-            {% if Project %}
-            <div class="row">
-                <div class="col">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h5>Codos</h5>
-                            <p>{{Project.codos}}</p>
-                            <h5>Ancho de la galería</h5>
-                            <p>{{Project.ancho_galeria}} (m)</p>
-                            <h5>Área de la galería</h5>
-                            <p>{{Project.area_galeria}} (m²)</p>
-                            <h5>Distancia entre sensores</h5>
-                            <p>{{Project.dis_e_sens}} (m)</p>
-                        </div>
-                        <div class="col-md-6">
-                            <h5>Caudal requerido</h5>
-                            <p>{{Project.caudal_requerido}} (m³/s)</p>
-                            <h5>Alto de galería</h5>
-                            <p>{{Project.alto_galeria}} (m)</p>
-                            <h5>Ancho de galería</h5>
-                            <p>{{Project.ancho_galeria}} (m)</p>
-                            <h5>Factor de corrección</h5>
-                            <p>{{Project.factor}} (%)</p>
-                        </div>
-                    </div>
-      
-                    <div class="row">
-                        <fieldset class="border border-success rounded p-2">
-                            <legend class="d-flex justify-content-between align-items-center">
-                                Ventilador
-                                <button type="button" class="btn btn-link p-0 ms-auto toggle-button">
-                                    <i class="fas fa-chevron-down"></i>
-                                </button>
-                            </legend>
-                            <div class="table-responsive toggle-content" style="display: none;">
-                                <table class="table w-100">
-                                    <thead>
-                                        <tr>
-                                            <th>Modelo</th>
-                                            <th>V (mm)</th>
-                                            <th>A (mm)</th>
-                                            <th>R (mm)</th>
-                                            <th>Potencia motor (kw)</th>
-                                            <th>Polos</th>
-                                            <th>Accesorios</th>
-                                            <th>Opciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>{{ Project.ventilador.modelo }}</td>
-                                            <td>{{ Project.ventilador.vmm }}</td>
-                                            <td>{{ Project.ventilador.amm }}</td>
-                                            <td>{{ Project.ventilador.rmm }}</td>
-                                            <td>{{ Project.ventilador.hp }}</td>
-                                            <td>{{ Project.ventilador.polos }}</td>
-                                            <td>{{ Project.ventilador.accesorios }}</td>
-                                            <td>
-                                                <a href="{% url 'dbs:edit-ventilador' Project.ventilador.id %}" class="btn btn-success">Editar</a>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </fieldset>
-      
-                        <fieldset class="border border-success rounded p-2">
-                            <legend class="d-flex justify-content-between align-items-center">
-                                Curva diseño
-                                <button type="button" class="btn btn-link p-0 ms-auto toggle-button">
-                                    <i class="fas fa-chevron-down"></i>
-                                </button>
-                            </legend>
-                            <div class="table-responsive toggle-content" style="display: none;">
-                                <table class="table w-100">
-                                    <thead>
-                                        <tr>
-                                            <th>Ventilador</th>
-                                            <th>Ángulo</th>
-                                            <th>RPM</th>
-                                            <th>Densidad</th>
-                                            <th>Opciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>{{ Project.curva_diseno.ventilador }}</td>
-                                            <td>{{ Project.curva_diseno.angulo }}</td>
-                                            <td>{{ Project.curva_diseno.rpm }}</td>
-                                            <td>{{ Project.curva_diseno.densidad }}</td>
-                                            <td><a href="{% url 'dbs:edit-curva-diseno' Project.curva_diseno.id %}" class="btn btn-success">Editar</a></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </fieldset>
-      
-                        <fieldset class="border border-success rounded p-2">
-                            <legend class="d-flex justify-content-between align-items-center">
-                                Ducto
-                                <button type="button" class="btn btn-link p-0 ms-auto toggle-button">
-                                    <i class="fas fa-chevron-down"></i>
-                                </button>
-                            </legend>
-                            <div class="table-responsive toggle-content" style="display: none;">
-                                <table class="table w-100">
-                                    <thead>
-                                        <tr>
-                                            <th>Tipo de ducto</th>
-                                            <th>Factor de fricción</th>
-                                            <th>Factor de fuga</th>
-                                            <th>Tipo de acople</th>
-                                            <th>Largo</th>
-                                            <th>Opciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>{{ Project.ducto.t_ducto }}</td>
-                                            <td>{{ Project.ducto.f_friccion }}</td>
-                                            <td>{{ Project.ducto.f_fuga }}</td>
-                                            <td>{{ Project.ducto.t_acople }}</td>
-                                            <td>{{ Project.ducto.largo }}</td>
-                                            <td><a href="{% url 'dbs:edit-ducto' Project.ducto.id %}" class="btn btn-success">Editar</a></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </fieldset>
-      
-                        <fieldset class="border border-success rounded p-2">
-                            <legend class="d-flex justify-content-between align-items-center">
-                                Equipamientos
-                                <button type="button" class="btn btn-link p-0 ms-auto toggle-button">
-                                    <i class="fas fa-chevron-down"></i>
-                                </button>
-                            </legend>
-                            <div class="table-responsive toggle-content" style="display: none;">
-                                <table class="table w-100">
-                                    <thead>
-                                        <tr>
-                                            <th>Tipo</th>
-                                            <th>Modelo diésel</th>
-                                            <th>Potencia</th>
-                                            <th>Caudal informado</th>
-                                            <th>Requerimiento de caudal</th>
-                                            <th>Opciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for eqp in Project.equipamientos.all %}
-                                        <tr>
-                                            <td>{{ eqp.tipo }}</td>
-                                            <td>{{ eqp.modelo_diesel }}</td>
-                                            <td>{{ eqp.potencia }}</td>
-                                            <td>{{ eqp.qr_fabricante }}</td>
-                                            <td>{{ eqp.qr_calculado }}</td>
-                                            <td><a href="" class="btn btn-success">Editar</a></td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </fieldset>
-      
-                        <fieldset class="border border-success rounded p-2">
-                            <legend class="d-flex justify-content-between align-items-center">
-                                Sistema de partida
-                                <button type="button" class="btn btn-link p-0 ms-auto toggle-button">
-                                    <i class="fas fa-chevron-down"></i>
-                                </button>
-                            </legend>
-                            <div class="toggle-content" style="display: none;">
-                                <p>
-                                    <h5>Nombre de la partida: 
-                                        <a href="{% url 'dbs:edit-sistema-partida' Project.s_partida.id %}" class="btn btn-success">Editar</a>
-                                    </h5>
-                                    {{ Project.s_partida.nombre }}
-                                </p>
-                            </div>
-                        </fieldset>
-                    </div>
-                </div>
+        <div class="card">
+            <div class="card-header d-flex align-items-center">
+                <h4 class="card-title">Configuración actual</h4>
+                <a class="btn btn-success ms-auto" href="{% url 'settings:settings' %}?type=current_project">
+                    <i class="fas fa-edit"></i> Editar
+                </a>
+                <a class="btn btn-success ms-auto" href="{% url 'dbs:dbs' %}">
+                    Añadir equipamiento
+                </a>
             </div>
-            {% else %}
-            <a class="list-group-item list-group-item-action" href="{% url 'settings:settings' %}?type=new_project">
-                <i class="fas fa-plus-circle"></i> Configurar nuevo proyecto
-            </a>
-            {% endif %}
+            <div class="card-body">
+                {% if Project %}
+                    <div class="row">
+                        <div class="row">
+                            <!-- Primera columna -->
+                            <div class="col-md-6">
+                                <h5>Codos</h5>
+                                <p>{{ Project.codos }}</p>
+                                <h5>Ancho de la galería</h5>
+                                <p>{{ Project.ancho_galeria }} (m)</p>
+                                <h5>Área de la galería</h5>
+                                <p>{{ Project.area_galeria }} (m²)</p>
+                                <h5>Distancia entre sensores</h5>
+                                <p>{{ Project.dis_e_sens }} (m)</p>
+                            </div>
+                        
+                            <!-- Segunda columna -->
+                            <div class="col-md-6">
+                                <h5>Caudal requerido</h5>
+                                <p>{{ Project.caudal_requerido }} (m³/s)</p>
+                                <h5>Alto de galería</h5>
+                                <p>{{ Project.alto_galeria }} (m)</p>
+                                <h5>Ancho de galería</h5>
+                                <p>{{ Project.ancho_galeria }} (m)</p>
+                                <h5>Factor de corrección</h5>
+                                <p>{{ Project.factor }} (%)</p>
+                            </div>
+                        </div>
+                        
+        
+                            <fieldset class="border border-success rounded p-2">
+                                <legend class="d-flex justify-content-between align-items-center">
+                                    Ventilador
+                                    <button type="button" class="btn btn-link p-0 ms-auto toggle-button">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </legend>
+                                <div class="table-responsive toggle-content" style="display: none;">
+                                    <table class="table table-sm table-bordered align-middle w-100">
+                                        <thead class="table-light">
+                                            <tr class="text-center">
+                                                <th scope="col">Modelo</th>
+                                                <th scope="col">V (mm)</th>
+                                                <th scope="col">A (mm)</th>
+                                                <th scope="col">R (mm)</th>
+                                                <th scope="col">Potencia motor (kw)</th>
+                                                <th scope="col">Polos</th>
+                                                <th scope="col">Accesorios</th>
+                                                <th scope="col">Opciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>{{ Project.ventilador.modelo }}</td>
+                                                <td>{{ Project.ventilador.vmm }}</td>
+                                                <td>{{ Project.ventilador.amm }}</td>
+                                                <td>{{ Project.ventilador.rmm }}</td>
+                                                <td>{{ Project.ventilador.hp }}</td>
+                                                <td>{{ Project.ventilador.polos }}</td>
+                                                <td>
+                                                    {% for accesorio in Project.ventilador.accesorios.all %}
+                                                        <span class="badge bg-secondary">{{ accesorio.nombre }}</span>
+                                                    {% empty %}
+                                                        <span class="text-muted">Sin accesorios</span>
+                                                    {% endfor %}
+                                                </td>
+                                                <td>
+                                                    <a href="{% url 'dbs:edit-ventilador' Project.ventilador.id %}" class="btn btn-success btn-sm">
+                                                        Editar
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </fieldset>
+                        
+                           
+        
+                            <fieldset class="border border-success rounded p-2">
+                                <legend class="d-flex justify-content-between align-items-center">
+                                    Curva diseño
+                                    <button type="button" class="btn btn-link p-0 ms-auto toggle-button">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </legend>
+                                <div class="table-responsive toggle-content" style="display: none;">
+                                    <table class="table table-sm table-bordered align-middle w-100">
+                                        <thead class="table-light">
+                                            <tr class="text-center">
+                                                <th scope="col">Ventilador</th>
+                                                <th scope="col">Ángulo</th>
+                                                <th scope="col">RPM</th>
+                                                <th scope="col">Densidad (kg/m³)</th>
+                                                <th scope="col">Opciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>{{ Project.curva_diseno.ventilador }}</td>
+                                                <td>{{ Project.curva_diseno.angulo }}</td>
+                                                <td>{{ Project.curva_diseno.rpm }}</td>
+                                                <td>{{ Project.curva_diseno.densidad }}</td>
+                                                <td>
+                                                    <a href="{% url 'dbs:edit-curva-diseno' Project.curva_diseno.id %}" class="btn btn-success btn-sm">
+                                                        Editar
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                            </fieldset>
+        
+                            <fieldset class="border border-success rounded p-2">
+                                <legend class="d-flex justify-content-between align-items-center">
+                                    Ducto
+                                    <button type="button" class="btn btn-link p-0 ms-auto toggle-button">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </legend>
+                                <div class="table-responsive toggle-content" style="display: none;">
+                                    <table class="table table-sm table-bordered align-middle">
+                                        <thead class="table-light">
+                                            <tr class="text-center">
+                                                <th scope="col">Tipo de ducto</th>
+                                                <th scope="col">Factor de fricción (kg/m³)</th>
+                                                <th scope="col">Factor de fuga</th>
+                                                <th scope="col">Tipo de acople</th>
+                                                <th scope="col">Largo</th>
+                                                <th scope="col">Opciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>{{ Project.ducto.t_ducto }}</td>
+                                                <td>{{ Project.ducto.f_friccion }}</td>
+                                                <td>{{ Project.ducto.f_fuga }}</td>
+                                                <td>{{ Project.ducto.t_acople }}</td>
+                                                <td>{{ Project.ducto.largo }}</td>
+                                                <td>
+                                                    <a href="{% url 'dbs:edit-ducto' Project.ducto.id %}" class="btn btn-success btn-sm">
+                                                        Editar
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                
+                            </fieldset>
+        
+                            <fieldset class="border border-success rounded p-2">
+                                <legend class="d-flex justify-content-between align-items-center">
+                                    Equipamientos
+                                    <button type="button" class="btn btn-link p-0 ms-auto toggle-button">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </legend>
+                                <div class="table-responsive toggle-content" style="display: none;">
+                                    <table class="table table-sm table-bordered align-middle w-100">
+                                        <thead class="table-light">
+                                            <tr class="text-center">
+                                                <th scope="col">Tipo</th>
+                                                <th scope="col">Modelo diésel</th>
+                                                <th scope="col">Potencia</th>
+                                                <th scope="col">Caudal informado</th>
+                                                <th scope="col">Requerimiento de caudal</th>
+                                                <th scope="col">Opciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for eqp in Project.equipamientos.all %}
+                                            <tr>
+                                                <td>{{ eqp.tipo }}</td>
+                                                <td>{{ eqp.modelo_diesel }}</td>
+                                                <td>{{ eqp.potencia }}</td>
+                                                <td>{{ eqp.qr_fabricante }}</td>
+                                                <td>{{ eqp.qr_calculado }}</td>
+                                                <td>
+                                                    <a href="" class="btn btn-success btn-sm">Editar</a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                            </fieldset>
+        
+                            <fieldset class="border border-success rounded p-2">
+                                <legend class="d-flex justify-content-between align-items-center">
+                                    Sistema de partida
+                                    <button type="button" class="btn btn-link p-0 ms-auto toggle-button">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </legend>
+                                <div class="toggle-content" style="display: none;">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5 class="mb-0">Nombre de la partida:</h5>
+                                        <a href="{% url 'dbs:edit-sistema-partida' Project.s_partida.id %}" class="btn btn-success btn-sm">
+                                            Editar
+                                        </a>
+                                    </div>
+                                    <p class="mt-2">
+                                        {{ Project.s_partida.nombre }}
+                                    </p>
+                                </div>
+                                
+                            </fieldset>
+                    </div>
+            
+                {% else %}
+                <a class="list-group-item list-group-item-action" href="{% url 'settings:settings' %}?type=new_project">
+                    <i class="fas fa-plus-circle"></i> Configurar nuevo proyecto
+                </a>
+                {% endif %}
+            </div>
         </div>
-      </div>
     </div>
 </div>
 

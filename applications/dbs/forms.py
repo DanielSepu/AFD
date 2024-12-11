@@ -1,6 +1,7 @@
 from django import forms
 from applications.getdata.models import Ventilador, CurvaDiseno, Ducto, EquipamientoDiesel, Tipo_Equipamiento_Diesel, Caracteristicas_Ventilador, Proyecto, Sistema_Partida
 from django.core.validators import MaxValueValidator
+from django.utils.safestring import mark_safe
 
 ##################### Extractores de nombres para los select, de otro modo se ven: "table object (1)"
 class CustomMMCF(forms.ModelMultipleChoiceField):
@@ -28,13 +29,14 @@ class VentiladorForm(forms.ModelForm):
         widget=forms.Select(
             choices=[(2, '2'), (4, '4'), (6, '6'), (8, '8'), (10, '10'), (12, '12')],
             attrs={'class': 'form-select'}
-        )
+        ),
+        label="Polos"
     )
 
     img_ventilador = forms.ImageField(
         label='Imagen del ventilador',
         required=False,
-        widget=forms.ClearableFileInput(attrs={'class': 'form-control-file'})
+        widget=forms.ClearableFileInput(attrs={'class': 'form-control'})
     )
 
     vmm = forms.FloatField(
@@ -56,11 +58,13 @@ class VentiladorForm(forms.ModelForm):
         label='Potencia motor (kW)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese Potencia'})
     )
+    
     accesorios = CustomMMCF(
         queryset=Caracteristicas_Ventilador.objects.all(),
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-check'}),
-        label='Accesorios'
+        label="Accesorios"
     )
+    
     class Meta:
         model = Ventilador
         fields = ['modelo', 'vmm', 'amm', 'nmm', 'hp', 'polos', 'img_ventilador', 'accesorios']
@@ -71,8 +75,21 @@ class VentiladorForm(forms.ModelForm):
             'rmm': 'R',
             'hp': 'Potencia (HP)'
         }
-        field_order = ['modelo', 'vmm', 'amm', 'nmm','hp','img_ventilador', 'accesorios']
+        field_order = ['modelo', 'vmm', 'amm', 'nmm', 'hp', 'img_ventilador', 'accesorios']
+    
+    class Meta:
+        model = Ventilador
+        fields = ['modelo', 'vmm', 'amm', 'nmm', 'hp', 'polos',  'img_ventilador','accesorios']
+        labels = {
+            'modelo': 'Modelo',
+            'vmm': 'V',
+            'amm': 'A',
+            'rmm': 'R',
+            'hp': 'Potencia (HP)'
+        }
+        field_order = ['modelo', 'vmm', 'amm', 'nmm', 'hp',  'img_ventilador','accesorios']
 
+    
       
 class CurvaDisenoForm(forms.ModelForm):
     idu = forms.IntegerField(
@@ -369,6 +386,15 @@ class SistemaPartidaForm(forms.ModelForm):
     )
     class Meta:
         model = Sistema_Partida
+        fields = ['nombre']
+
+class TipoEquipamientodieselForm(forms.ModelForm):
+    nombre = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el nombre del equipo disel'})
+    )
+
+    class Meta:
+        model = Tipo_Equipamiento_Diesel
         fields = ['nombre']
 
 class Caracteristicas_VentiladorForm(forms.ModelForm):

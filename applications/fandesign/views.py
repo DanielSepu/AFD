@@ -1,5 +1,6 @@
 from math import sqrt
 import pdb
+import traceback
 from django.shortcuts import render
 import numpy as np
 import pandas as pd  # Importa pandas
@@ -49,7 +50,11 @@ def fandesign(request):
          ultima_medicion =  SensorsData.objects.all().order_by('id').last()  
 
          # presion estatica / caudal al cuadrado
-         r_actual = ultima_medicion.ps1/ ultima_medicion.q1**2
+         try:
+            r_actual = ultima_medicion.ps1/ ultima_medicion.q1**2
+         except AttributeError:
+            r_actual = 0.1
+            messages.warning(request,f"Aun no hay datos del sensor")
 
          # Y = R * X**2
          ajuste_cubico = np.polyfit(df_fan['caudal'], df_fan['presion'], 3)
@@ -253,7 +258,9 @@ def fandesign(request):
          # print(f"context: {context}")
          return render(request, 'fanDesign.html', context)
       except Exception as e:
-         pass
+         traceback.print_exc()
+         print(f"error")
+         messages.warning(request,f"Warning: {e}")
 
    # Si la solicitud no es un POST, simplemente renderiza la página sin datos
    return render(request, 'fanDesign.html')

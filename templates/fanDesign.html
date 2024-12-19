@@ -36,15 +36,17 @@
 
       <div class="d-sm-flex flex-sm-column d-lg-flex  flex-lg-row ">
          <div class="col-lg-8 col-sm-12  ms-0 px-n2 mb-3">
-            {% if chart_type == 'total_pressure' %}
-               {% include "widgets/fanDesignCurve/totalPreassure.html" %}
-            {% elif chart_type == 'static_pressure' %}
-               {% include "widgets/fanDesignCurve/staticPreassure.html" %}
-            {% elif chart_type == 'power' %}
-               {% include "widgets/fanDesignCurve/power.html" %}
-            {% else %}
-               {% include "widgets/fanDesignCurve/totalPreassure.html" %}
-            {% endif %}
+            <div class="card shadow m-1 p-2">
+                {% if chart_type == 'total_pressure' %}
+                {% include "widgets/fanDesignCurve/totalPreassure.html" %}
+                {% elif chart_type == 'static_pressure' %}
+                {% include "widgets/fanDesignCurve/staticPreassure.html" %}
+                {% elif chart_type == 'power' %}
+                {% include "widgets/fanDesignCurve/power.html" %}
+                {% else %}
+                {% include "widgets/fanDesignCurve/totalPreassure.html" %}
+                {% endif %}
+            </div>
          </div>
          <div class="col-lg-3 col-sm-12 h-100">
             <div class="row g-3">

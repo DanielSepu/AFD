@@ -239,10 +239,10 @@ def get_recent_data(request):
         context = {}
         context["data"] = data
 
-        context["presion_estatica"] = round(presion_estatica_ventilador, 3)
-        context["presion_dinamica"] = round(presion_dinamica_entrada_Pa, 3)
-        context["perdida_de_choque"] = round(perdida_choque_total_sistema_ducto, 3)
-        context["perdidas_friccionales"] = round(perdidas_friccionales, 3)
+        context["presion_estatica"] = round(presion_estatica_ventilador, 1)
+        context["presion_dinamica"] = round(presion_dinamica_entrada_Pa, 1)
+        context["perdida_de_choque"] = round(perdida_choque_total_sistema_ducto, 1)
+        context["perdidas_friccionales"] = round(perdidas_friccionales, 1)
         context['variables'] = variables
 
         # otros

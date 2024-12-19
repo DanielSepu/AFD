@@ -248,7 +248,7 @@ def fandesign(request):
                   'proyecto':proyect , 
                   'peak_resistance':peak_resistance, 
                   'peak_pressure':peak_pressure, 
-                  'rendimiento_ventilador':rendimiento_ventilador 
+                  'rendimiento_ventilador':round(rendimiento_ventilador, 1) 
                   }
          # print(f"context: {context}")
          return render(request, 'fanDesign.html', context)

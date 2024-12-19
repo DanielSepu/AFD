@@ -7,7 +7,7 @@ import pandas as pd  # Importa pandas
 from django.contrib import messages
 
 from applications.currentstatus.tools import goal_seek_custom
-from applications.fandesign.mixins import presion_total
+from applications.fandesign.mixins import presion_total, presion_total_2
 from modules.graphdata import *
 from modules.queries import *
 from django.db.models import Max
@@ -94,12 +94,13 @@ def fandesign(request):
          scatter_data_fan_list = []
 
          resistencia_del_sistema = 0
+         df_graph = presion_total(proyect, df_vdf, df_sensor1)
          if chart_type == 'total_pressure':
          
             densidad_fan = float(proyect.curva_diseno.densidad) 
             densidad_sensor1 = df_sensor1["densidad1"].mean()
             
-            df_graph = presion_total(proyect, df_vdf, df_sensor1)
+            
             presion_maxima_curvaAjustada = df_graph['presion'].max()
             fila = df_graph.loc[df_graph['presion'] == presion_maxima_curvaAjustada ]
 
@@ -128,47 +129,19 @@ def fandesign(request):
             df_sensor1 = get_10min_sensor_data()
             ### VDF DATA ###
             df_vdf = get_10min_vdf_data() # desde BD 
-            # f_fan = get_fan_data(proyect, 'pt')
-
-
-            #print(df_fan)
+            print(f"contenido de df_grap")
+            print(df_graph)
+            print(df_fan)
             new_df = pd.DataFrame({
-               'caudal': df_fan['caudal'],
-               'presion': df_fan['presion'],
+               'caudal': df_graph['caudal'],
+               'presion_total': presion_total_2(proyect.ventilador.nmm, mid_densidad, df_graph['caudal']),
+               'presion': df_graph['presion'],
                'potencia': df_fan['potencia'],
-               'presion_estatica': calculate_presion_estatica(df_fan['presion'],mid_densidad, df_fan['caudal'], area_difusor)
+               'presion_estatica': calculate_presion_estatica(df_graph['presion'],mid_densidad, df_graph['caudal'], area_difusor)
             })
-            #df_fan['presion_estatica']= pd.NA
             
-            # df_fan['presion_estatica']= pd.DataFrame(df_fan['presion'] - 0.6 * (df_fan['caudal']/area_difusor)**2)
-            #df_fan['presion_estatica']= calculate_presion_estatica(df_fan['presion'], df_fan['caudal'], area_difusor)
-            #df_fan['presion_estatica'] = calculate_presion_estatica(df_fan['presion'], df_fan['caudal'], area_difusor)
-
-            #print(new_df)
-
-            #df_graph = presion_total(proyect, df_vdf, df_sensor1)
-            #print(df_graph)
-            """ Q_medido = df_sensor1["q1"].mean()
-            P_medido = df_sensor1["pe1"].mean()
-            densidad_fan = float(proyect.curva_diseno.densidad)
-            densidad_sensor1 = df_sensor1["densidad1"].mean()
-            rpm_fan = float(proyect.curva_diseno.rpm)
-            rpm_vdf = df_vdf["rpm"].mean()
-
-
-            df_adjust = pd.DataFrame()
-            df_adjust['q_rpm']=rpm_adjust_caudal(df_fan['caudal'],rpm_fan,rpm_vdf)
-            df_adjust['pt_rpm']=rpm_adjust_pt(df_fan['presion'],rpm_fan,rpm_vdf)
-            df_adjust['pt_dens']=dens_adjust_pt(df_adjust['pt_rpm'],densidad_fan,densidad_sensor1)
-
-            df_graph = df_adjust.loc[:, ["q_rpm", "pt_dens"]] """
-
-            #new_df.rename(columns={"q_rpm":"caudal","pt_dens":"presion"}, inplace=True)
-            # print(df_graph)
-            
-            scatter_data_fan_list = new_df[['presion_estatica','caudal']].to_dict(orient='records')
-
-            #scatter_data_fan_list = df_fan[['caudal','presion']].to_dict(orient='records')
+            print(new_df)
+            scatter_data_fan_list = new_df[['caudal','presion_estatica']].to_dict(orient='records')
 
             for k,v in enumerate(scatter_data_fan_list):
                v['CAUDAL (m³/s)'] = v['caudal']
@@ -185,11 +158,6 @@ def fandesign(request):
             df_vdf = get_vdf_data()
             df_vdf =  VdfData.objects.using('sensorDB').all().last()
 
-            #Q_medido = df_sensor1["q1"].mean()
-            #Q_medido = df_sensor1.q1
-            #p#rint(f"Q_medido")
-            #print(Q_medido)
-            # P_medido = df_vdf["potencia"].mean()  
             P_medido = df_vdf.power
 
             densidad_fan = proyect.curva_diseno.densidad

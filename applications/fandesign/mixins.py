@@ -33,3 +33,10 @@ def presion_total(proyecto, df_vdf, df_sensor):
     df_graph = df_adjust.loc[:, ["q_rpm", "pt_dens"]].rename(columns={"q_rpm": "caudal", "pt_dens": "presion"})
 
     return df_graph
+
+
+def presion_total_2(N, mid_densidad, Q):
+    # Area difusor = 3.14159*(N(mm)/2000)^2
+    # Presión total - mid_densidad*((Q^2)/(Adifusor^2))
+    area_difusor = 3.14159 * (N/2000)**2
+    return mid_densidad*((Q**2)/area_difusor)

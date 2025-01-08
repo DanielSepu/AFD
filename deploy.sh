@@ -4,7 +4,7 @@
 USER=$(whoami)
 PROJECT_DIR="/home/$USER/AFD"
 SERVICE_NAME="AFD"
-GUNICORN_BIND="0.0.0.0:8080"
+GUNICORN_BIND="0.0.0.0:3005"
 GUNICORN_WORKERS=3
 
 # Crear un archivo de servicio systemd para Gunicorn
@@ -21,12 +21,11 @@ After=network.target
 User=$USER
 Group=$USER
 WorkingDirectory=$PROJECT_DIR
-ExecStart=$PROJECT_DIR/venv/bin/python $PROJECT_DIR/manage.py runserver 0.0.0.0:8080
+ExecStart=$PROJECT_DIR/venv/bin/python $PROJECT_DIR/manage.py runserver 0.0.0.0:3005
 Restart=always
 
 [Install]
 WantedBy=multi-user.target
-EOL
 
 # Recargar systemd para aplicar los cambios
 echo "Recargando systemd y habilitando el servicio..."

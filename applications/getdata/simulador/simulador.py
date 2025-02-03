@@ -6,23 +6,22 @@ from applications.getdata.models import SensorsData, VdfData
 
 # Valores base para simular datos reales en SensorsData
 base_data = {
-    'pt2': 1450,
-    'ps2': 1180,
-    'densidad2': 90000,
-    'q2': 80,
-    'pt1': 1920,
-    'ps1': 1610,
-    'densidad1': 1.1,
-    'q1': 20,
-    'lc': 27,
-    'qf': 15,
+    'pt2': 488,
+    'ps2': 271,
+    'densidad2': 95362,
+    'q2': 30.5,
+    'pt1': 34.5,
+    'ps1': 709,
+    'densidad1': 490,
+    'q1': 95362,
+    'lc': 30.7,
+    'qf': 37.2,
     'k': 0,
-    'tbs': 29,
-    'hr': 70,
+    'tbs': 0,
+    'hr': 0,
     'tbh': 0,
-    'tgbh': 100.0
+    'tgbh': 0
 }
-
 
 
 # Valores base para simular datos reales en VdfData

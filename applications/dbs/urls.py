@@ -14,7 +14,7 @@ urlpatterns = [
   path('edit-ducto/<int:pk>/',views.DuctoEditView.as_view(),name="edit-ducto"),
   path('edit-sistema-partida/<int:pk>/',views.SistemaPartidaEditView.as_view(),name="edit-sistema-partida"),
   path('edit-ventilador/<int:pk>/',views.VentiladorEditView.as_view(),name="edit-ventilador"),
-  path('edit-equipamiento/<int:pk>/',views.VentiladorEditView.as_view(),name="edit-equipamiento"),
+  path('edit-equipamiento/<int:pk>/',views.EquipamientoEditView.as_view(),name="edit-equipamiento"),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

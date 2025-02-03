@@ -18,7 +18,7 @@ class  SemaforoApiView(APIView):
         context = {}
         try:
             semaforo.calcular_estado_final(project)
-            
+            print(semaforo)
             context["detalle_semaforo"]=semaforo.detalle
         except Exception as e:
             pass

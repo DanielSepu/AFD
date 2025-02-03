@@ -9,6 +9,7 @@ function get_semaforo() {
         url:"v1/semaforo",
         type: "GET",
         success: function(data) {
+            console.log(data);
             var semaforo = data.detalle_semaforo;
             var v1 = semaforo.v1;
             cambiarSemaforo(semaforo.color)

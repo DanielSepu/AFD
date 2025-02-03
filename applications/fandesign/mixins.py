@@ -13,6 +13,7 @@ def presion_total(proyecto, df_vdf, df_sensor):
         df_vdf (model): datos del sensor ultimo registro
         df_sensor (_type_): _description_
     """
+    
     rpm_fan = float(proyecto.curva_diseno.rpm)
     rpm_vdf = df_vdf["rpm"].mean()
     densidad_fan = float(proyecto.curva_diseno.densidad) 

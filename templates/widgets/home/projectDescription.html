@@ -192,7 +192,7 @@
                                                 <td>{{ eqp.qr_fabricante }}</td>
                                                 <td>{{ eqp.qr_calculado }}</td>
                                                 <td>
-                                                    <a href="" class="btn btn-success btn-sm">Editar</a>
+                                                    <a href="{% url 'dbs:edit-equipamiento' eqp.pk %}" class="btn btn-success btn-sm">Editar</a>
                                                 </td>
                                             </tr>
                                             {% endfor %}

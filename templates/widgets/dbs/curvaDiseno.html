@@ -20,7 +20,10 @@
                </div>
             </div>
 
-            <button id="btn_mas" type="button" class="btn btn-secondary m-1" onclick="NFila()">+</button>
+            <!-- Contenedor de los campos dinámicos -->
+            <div id="curva_container"></div>
+
+            <button id="btn_mas" type="button" class="btn btn-secondary m-1">+</button>
             <br>
             <hr>
             <div class="d-flex justify-content-end">
@@ -33,44 +36,53 @@
 </div>
 
 <script>
-var itr = 0;
-const form = document.getElementById('id_cd_p');
-const btn = document.getElementById('btn_mas');
-const veces = document.getElementById('id_v');
+document.addEventListener("DOMContentLoaded", function() {
+    const container = document.getElementById("curva_container");
+    const btnAgregar = document.getElementById("btn_mas");
+    const veces = document.getElementById("id_v");
+    let itr = 0; // Índice para controlar el número de filas
+    
+    // Datos iniciales pasados desde Django
+    const datos_curva = {
+        caudal: {{ datos_curva.caudal|safe }},
+        presion: {{ datos_curva.presion|safe }},
+        potencia: {{ datos_curva.potencia|safe }}
+    };
 
-const div = document.createElement('div');
-div.className = "d-flex justify-content-between";
-div.innerHTML = `
-   <div class="col-4 m-1">
-      <input class="form-control" type="number" step="any" name="caudal_${itr}">
-   </div>
-   <div class="col-4 m-1">
-      <input class="form-control" type="number" step="any" name="presion_${itr}">
-   </div>
-   <div class="col-4 m-1">
-      <input class="form-control" type="number" step="any" name="power_${itr}">
-   </div>
-`;
-form.insertBefore(div, btn);
-veces.value = (itr + 1).toString();
+    // Función para agregar una nueva fila
+    function agregarFila(caudal = "", presion = "", potencia = "") {
+        const div = document.createElement('div');
+        div.className = "d-flex justify-content-between";
+        div.innerHTML = `
+            <div class="col-4 m-1">
+                <input class="form-control" type="number" step="any" name="caudal_${itr}" value="${caudal}">
+            </div>
+            <div class="col-4 m-1">
+                <input class="form-control" type="number" step="any" name="presion_${itr}" value="${presion}">
+            </div>
+            <div class="col-4 m-1">
+                <input class="form-control" type="number" step="any" name="potencia_${itr}" value="${potencia}">
+            </div>
+        `;
+        container.appendChild(div);
+        itr++;
+        veces.value = itr.toString();
+    }
 
-function NFila() {
-   itr++;
-   veces.value = (itr + 1).toString();
-   const div = document.createElement('div');
-   div.className = "d-flex justify-content-between";
-   div.innerHTML = `
-      <div class="col-4 m-1">
-         <input class="form-control" type="number" step="any" name="caudal_${itr}">
-      </div>
-      <div class="col-4 m-1">
-         <input class="form-control" type="number" step="any" name="presion_${itr}">
-      </div>
-      <div class="col-4 m-1">
-         <input class="form-control" type="number" step="any" name="power_${itr}">
-      </div>
-   `;
-   form.insertBefore(div, btn);
-}
+    // Agregar datos existentes (Modo Edición)
+    if (datos_curva.caudal.length > 0) {
+        for (let i = 0; i < datos_curva.caudal.length; i++) {
+            agregarFila(datos_curva.caudal[i], datos_curva.presion[i], datos_curva.potencia[i]);
+        }
+    } else {
+        // Si no hay datos previos, agregar una fila vacía por defecto
+        agregarFila();
+    }
+
+    // Evento para agregar nuevas filas
+    btnAgregar.addEventListener("click", function() {
+        agregarFila();
+    });
+});
 </script>
 {% endblock body_content %}

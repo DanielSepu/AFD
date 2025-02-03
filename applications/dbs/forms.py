@@ -112,26 +112,105 @@ class CurvaDisenoForm(forms.ModelForm):
     )
     
     densidad = forms.FloatField(
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese superindice (kg/m³)'}),
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese densidad (kg/m³)'}),
         label='ρ (kg/m³)'
     )
 
+    datos_curva = forms.CharField(widget=forms.HiddenInput(), required=False)
     class Meta:
         model = CurvaDiseno
-        fields = ['idu', 'ventilador', 'angulo', 'rpm', 'densidad']
+        fields = ['idu', 'ventilador', 'angulo', 'rpm', 'densidad', 'datos_curva']
         labels = {
             'idu': '/Nombre',
             'angulo': 'θ °',
             'rpm': 'RPM',
             'densidad': 'ρ (kg/m³)',
         }
+    def clean(self):
+        cleaned_data = super().clean()
+        post = self.data  # Contiene todos los campos POST
+        print(post)
+        # Manejo de caudal_0 y presion_0
+        caudal_0 = post.get('caudal_0')
+        presion_0 = post.get('presion_0')
+        potencia_0 = post.get('potencia_0')
 
+        # Si el valor es una lista, toma el primer elemento
+        if isinstance(caudal_0, list):
+            caudal_0 = caudal_0[0] if caudal_0 else 0.0
+        if isinstance(presion_0, list):
+            presion_0 = presion_0[0] if presion_0 else 0.0
+        if isinstance(presion_0, list):
+            potencia_0 = potencia_0[0] if potencia_0 else 0.0
+
+        # Convierte a float (maneja errores)
+        try:
+            caudal_0 = float(caudal_0)
+        except (TypeError, ValueError):
+            print(f"Error en el campo caudal_0: {caudal_0}")
+            caudal_0 = 0.0
+
+        try:
+            presion_0 = float(presion_0)
+        except (TypeError, ValueError):
+            print(f"Error en el campo presion_0: {presion_0}")
+            presion_0 = 0.0
+
+        # Inicializa las listas
+        caudal_list = [caudal_0]
+        presion_list = [presion_0]
+        potencia_list = [potencia_0]
+
+        # Manejo de los demás campos (caudal_1, presion_1, etc.)
+        i = 1
+        while True:
+            c = post.get(f'caudal_{i}')
+            p = post.get(f'presion_{i}')
+            pt = post.get(f'potencia_{i}')
+
+            # Si no hay más campos, sal del bucle
+            if c is None and p is None and pt is None:
+                break
+
+            # Convierte a float (maneja errores)
+            try:
+                c = float(c)
+            except (TypeError, ValueError):
+                print(f"Error en el campo caudal_{i}: {c}")
+                c = 0.0
+
+            try:
+                p = float(p)
+            except (TypeError, ValueError):
+                print(f"Error en el campo presion_{i}: {p}")
+                p = 0.0
+
+            try:
+                pt = float(pt)
+            except (TypeError, ValueError):
+                print(f"Error en el campo potencia_{i}: {pt}")
+                pt = 0.0
+
+            caudal_list.append(c)
+            presion_list.append(p)
+            potencia_list.append(pt)
+            i += 1
+
+        # Reconstruye el diccionario final
+        cleaned_data['datos_curva'] = {
+            "caudal": caudal_list,
+            "presion": presion_list,
+            "potencia": potencia_list,
+        }
+
+        return cleaned_data
 
 class DuctoForm(forms.ModelForm):
     DUCTO_CHOICES = [
         ('circular', 'Circular'),
         ('ovalado', 'Ovalado'),
     ]
+    
     idu = forms.CharField(
         label='ID/Nombre',
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el ID'})
@@ -142,7 +221,6 @@ class DuctoForm(forms.ModelForm):
         choices=DUCTO_CHOICES,
         widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'Ingrese el tipo de ducto'})
     )
-
     
     f_friccion = forms.FloatField(
         label='Factor de fricción (kg/m³) (opcional)',
@@ -157,6 +235,7 @@ class DuctoForm(forms.ModelForm):
         initial=0,
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el factor de fuga'})
     )
+    
     diametro = forms.FloatField(
         label='Diámetro (cm)',
         required=False,
@@ -178,10 +257,13 @@ class DuctoForm(forms.ModelForm):
         label='Largo (m)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el largo'})
     )
-    
+    Ldsf = forms.FloatField(
+        label='longitud de ducto desde el sensor 2 hasta la frente (m)',
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'longitud de ducto desde el sensor 2 hasta la frente (m)'})
+    )
     class Meta:
         model = Ducto
-        fields = ['idu', 't_ducto','diametro','area', 'f_friccion', 'f_fuga', 't_acople', 'largo']
+        fields = ['idu', 't_ducto','diametro','area', 'f_friccion', 'f_fuga', 't_acople', 'largo', 'Ldsf']
         
         labels = {
             'idu': 'ID/Nombre',
@@ -189,8 +271,11 @@ class DuctoForm(forms.ModelForm):
             'f_friccion': 'Factor de fricción(K) (opcional)',
             'f_fuga': 'Factor de fuga(L) (opcional)',
             't_acople': 'Tipo de acople',
-            'largo': 'Largo (m)'
+            'largo': 'Largo (m)',
+            'Ldsf': 'longitud de ducto desde el sensor 2 hasta la frente (m)'
+            
         }
+    
     def __init__(self, *args, **kwargs):
         ocultar = kwargs.pop('ocultar',True)
         super().__init__(*args, **kwargs)
@@ -198,10 +283,7 @@ class DuctoForm(forms.ModelForm):
             self.fields['diametro'].widget = forms.HiddenInput()
             self.fields['area'].widget = forms.HiddenInput()
 
-    
-    
 
-      
 class EquipDieselForm(forms.ModelForm):
 
     class CustomEDN(forms.ModelChoiceField):
@@ -339,7 +421,7 @@ class ProyectoForm(forms.ModelForm):
             'class': 'form-control',
             'placeholder': 'Ingrese un valor (máximo 100)',
         }),
-        label="Factor"
+        label="Factor (%)"
     )
 
     potencia = forms.FloatField(

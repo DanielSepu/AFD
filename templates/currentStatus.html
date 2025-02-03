@@ -41,16 +41,16 @@
                         <p class="text-start fs-6 ps-4 m-1">  {{project.factor}} % </p>
                      </div>
                   </div>
-                  <div class="list-group border border-3 border-warning p-3 mb-2">
+                  <!-- <div class="list-group border border-3 border-warning p-3 mb-2">
                      <div class="row">
-                        <p class="text-start fs-5 m-0">Desempeño Actual del Sistema</p>
+                        <p class="text-start fs-5 m-0">Desempeño Actual del Sistema (coming son)</p>
                      </div>
                   </div>
                   <div class="list-group border border-3 border-warning p-3 mb-2">
                      <div class="row">
                         <p class="text-start fs-5 m-0" id="desempeno">{{ data.3 }} %</p>
                      </div>
-                  </div>
+                  </div> -->
 
                   <div class="list-group border border-3 border-warning p-3 mb-2">
                      <div class="row">
@@ -149,12 +149,14 @@
 
       function updateValues(data, context) {
          // Actualiza los divs con los nuevos valores  
-         $("#q1").text(data[0]);  
-         $("#qf").text(data[1]);
-         $("#pt1").text(data[2]);
-         $("#power").text(data[3]);
+         $("#ps1").text(data.ps1);  
+         $("#q1").text(data.q1);
+         $("#pt1").text(data.pt1);
+         $("#qf").text(data.qf);
+         $("#power").text(data.powerc);
+         $("#densidad1").text(data.densidad1);
          $("#desempeno").text(`${data[3]} %`);
-         $("#fref").text(data[4]);
+         $("#fref").text(data.fref);
          $("#pe").text(context.presion_estatica);
          $("#pd").text(context.presion_dinamica);
          $("#pch").text(context.perdida_de_choque);

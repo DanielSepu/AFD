@@ -110,6 +110,7 @@ class Semaforo:
     def encender(self, project):
         self.vdfData = get_10min_vdf_data()
         self.sensorData = get_10min_sensor_data()
+        
 
         # Filtrar solo columnas numéricas antes de calcular la media
         numeric_sensor_data = self.sensorData.select_dtypes(include='number')
@@ -146,6 +147,7 @@ class Semaforo:
         
         if area_ducto == None:
             messages.warning(self.request, f"Error algunos valores para calcular el area del ducto no se han especificado, verifique: tipo ducto: {self.project.ducto.t_ducto} y sus valores")
+        area_ducto = area_ducto/4000000 
         return area_ducto
 
     def calcular_velocidad_sensor(self, tbs, hr, P, pt, ps, tipo):
@@ -178,7 +180,7 @@ class Semaforo:
 
         titulo = "Variables de entrada"
         # mostrar_reporte(titulo, Tbh2, esd, esw, Xs, Lw, S, X, e)
-
+        
         densidad_aire_frente = (P-e)/(287.04*(tbs+273.15)); #  Kg aire seco/m3
 
         # =SQRT(2*(E5-E6)/E22)
@@ -198,7 +200,6 @@ class Semaforo:
 
     def calculate_Q2(self):
         """
-            
             Crear variable Q2) Caudal sensor 2 (Q2) m3/s = velocidad sensor 2 (m/s)*Área ducto (m2)
         Returns:
             _type_: _description_
@@ -244,27 +245,19 @@ class Semaforo:
         return Q2
 
     def calculate_Q1(self):
-        #definir las variables de los sensores y el proyecto
-        # ---> sensores
-        # definir variables
+        # calcular el caudal del ventilador
         
         # comprobar si ya fue calculada
         if self.Q1 != None:
-            return self.Q1
-        
-
-        
-        
+            return self.Q1   
         try:
-            pt1 = self.sensorData["pt1"].mean()
-            ps1 = self.sensorData["ps1"].mean()
-            tbs = self.sensorData["tbs"].mean() # humedad relativa
-            hr = self.sensorData["hr"].mean() # temperatura bulbo seco
-            P1 = self.sensorData["densidad1"].mean()  #  Presión barométrica ventilador
-            tbs1 = self.sensorData["lc"].mean() # 
-            velocidad_sensor_1 = self.calcular_velocidad_sensor(tbs, hr, P1, pt1, ps1, "solicitado desde Q1" )
-            # velocidad_sensor_1 = self.calcular_velocidad_sensor1()   # 2 decimales
-
+            pt1 = self.sensorData["ps1"].mean() # Presión total sensor 1 (Pa)
+            ps1 = self.sensorData["densidad1"].mean() # Pesión estática sensor 1 (Pa)
+            tbs1 = self.sensorData["lc"].mean() # Temperatura seca sensor 1 (°C)
+            hrs1 = self.sensorData["qf"].mean() # Humedad Relativa sensor 1 (%)
+            Pbs1 = self.sensorData["q1"].mean()  #  Presión barométrica ventilador (PA)
+            #tbs1 = self.sensorData["lc"].mean() # 
+            velocidad_sensor_1 = self.calcular_velocidad_sensor(tbs1, hrs1, Pbs1, pt1, ps1, "solicitado desde Q1" )
             area_ducto = self.calcular_area_ducto()
             Q1  = velocidad_sensor_1 *area_ducto #  m3/s = (m2)*(m/s).  (Crear variable Q1) caudal_ventilador_2
         except TypeError as e: #

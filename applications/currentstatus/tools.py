@@ -7,7 +7,7 @@ import numpy as np
 
 
 def calculate_perdida_choque_codos(total_codos, mid_densidad, Q1, project, Qf):
-        """
+    """
             Calcula la perdida por choque de los codos a partir de la cantidad de codos.
             Args:
                 total_codos (int): la cantidad de codos asignada al proyecto
@@ -19,50 +19,51 @@ def calculate_perdida_choque_codos(total_codos, mid_densidad, Q1, project, Qf):
                 dict: diccionario con todas las variables calculadas
                 float: la pérdida total por choque de los codos
         """
-        # Inicializar el diccionario para almacenar todas las variables calculadas
-        variables = {}
-
-        # Cálculo de la primera sección
-        first_section = 0.5 * mid_densidad
-        variables['first_section'] = first_section
-        variables['mid_densidad'] = mid_densidad
-        variables['total_codos'] = total_codos
-        variables['Q1'] = Q1
-        variables['Qf'] = Qf
-        variables['factor_choque_codo_X'] = 0.5
-
-        sumatoria_Sl = 0
-        first_codo = 0
-        second_codo = 0
-        third_codo = 0
-
-        for num in range(total_codos):
-            num += 1
-            if num == 1:
-                first_codo = aply_first_codo(first_section, project, Q1, project.ducto.t_ducto)
-                variables['first_codo'] = first_codo
-                variables['q_codo_1'] = q_codo_1(Q1)
-            if num == 2:
-                second_codo = aply_second_codo(first_section, project, Q1, project.ducto.t_ducto, Qf)
-                sumatoria_Sl = first_codo + second_codo
-                variables['second_codo'] = second_codo
-                variables['q_codo_2'] = q_codo_2(Q1, Qf)
-                variables['sumatoria_Sl'] = sumatoria_Sl
-            if num >= 3:
-                third_codo = aply_third_codo(first_section, project, Q1, project.ducto.t_ducto, Qf)
-                sumatoria_Sl = first_codo + second_codo + (total_codos - 2) * third_codo
-                variables['third_codo'] = third_codo
-                variables['sumatoria_Sl'] = sumatoria_Sl
-                variables['q_codo_3'] = q_codo_3(Q1, Qf)
-        variables["area_ducto_circular"] = area_ducto_circular(project)
-        variables["area_ducto_ovalado"] = project.ducto.area
-        variables['final_sumatoria_Sl'] = sumatoria_Sl
-        variables['formula_parte_2_ovalado'] = formula_parte_2_ovalado(project)
-        variables['formula_parte_2_'] = formula_parte_2_circular(project)
-
-        
-        # Retornar el diccionario de variables y el resultado final
-        return variables, sumatoria_Sl
+    # Inicializar el diccionario para almacenar todas las variables calculadas
+    
+    variables = {}
+    # Cálculo de la primera sección
+    first_section = 0.5 * mid_densidad
+    variables['mid_densidad'] = mid_densidad
+    variables['first_section'] = first_section
+    
+    variables['total_codos'] = total_codos
+    variables['Q1'] = Q1
+    variables['Qf'] = Qf
+    variables['factor_choque_codo_X'] = 0.5
+    sumatoria_Sl = 0
+    first_codo = 0
+    second_codo = 0
+    third_codo = 0
+    
+    for num in range(total_codos):
+        num += 1
+        if num == 1:
+            first_codo = aply_first_codo(first_section, project, Q1, project.ducto.t_ducto)
+            print(f"first_codo: {first_codo}")
+            variables['first_codo'] = first_codo
+            variables['q_codo_1'] = q_codo_1(Q1)
+        if num == 2:
+            second_codo = aply_second_codo(first_section, project, Q1, project.ducto.t_ducto, Qf)
+            print(f"second_codo: {second_codo}")
+            sumatoria_Sl = first_codo + second_codo
+            variables['second_codo'] = second_codo
+            variables['q_codo_2'] = q_codo_2(Q1, Qf)
+            variables['sumatoria_Sl'] = sumatoria_Sl
+        if num >= 3:
+            third_codo = aply_third_codo(first_section, project, Q1, project.ducto.t_ducto, Qf)
+            print(f"third_codo: {third_codo}")
+            sumatoria_Sl = first_codo + second_codo + (total_codos - 2) * third_codo
+            variables['third_codo'] = third_codo
+            variables['sumatoria_Sl'] = sumatoria_Sl
+            variables['q_codo_3'] = q_codo_3(Q1, Qf)
+    variables["area_ducto_circular"] = area_ducto_circular(project)
+    variables["area_ducto_ovalado"] = project.ducto.area
+    variables['final_sumatoria_Sl'] = sumatoria_Sl
+    variables['formula_parte_2_ovalado'] = formula_parte_2_ovalado(project)
+    variables['formula_parte_2_'] = formula_parte_2_circular(project)
+    # Retornar el diccionario de variables y el resultado final
+    return variables, sumatoria_Sl
 
 def q_codo_1(Q1):
     return Q1**2
@@ -76,6 +77,7 @@ def aply_first_codo(first_section, project, Q1,type):
         
     if type == "circular":
         area_ducto_circular_ = area_ducto_circular(project)
+        print(f"area_ducto_circular calculada: {area_ducto_circular_}")
         formula_parte_2_ducto_circular = 1/(area_ducto_circular_*area_ducto_circular_)
         
         return first_section*formula_parte_2_ducto_circular*Q_codo_1
@@ -98,7 +100,8 @@ def aply_second_codo(first_section, project, Q1,type, Qf):
     if type == "circular":
         #area_ducto_circular_ = area_ducto_circular(project)
         formula_parte_2_ducto_circular = formula_parte_2_circular(project)
-        
+        print(f"formula_parte_2_ducto_circular: {formula_parte_2_ducto_circular} ")
+        print(f"first_section: {first_section} up_section: {up_section}")
         return  first_section*formula_parte_2_ducto_circular*up_section
 
 def formula_parte_2_ovalado(project):

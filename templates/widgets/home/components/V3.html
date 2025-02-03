@@ -102,17 +102,27 @@
           <td>Nivel de carga</td>
           <td class="text-center" id="v3_nivel_carga">{{ tgbh.nivel_carga }}</td>
         </tr>
-        <tr>
-          <td rowspan="2">Semáforo</td>
-          <td class="text-center" style="background-color: green; color: white;">
-            TGBH dentro del Rango de T°
-          </td>
-        </tr>
-        <tr>
-          <td class="text-center" style="background-color: red; color: white;">
-            TGBH fuera del Rango de T°
-          </td>
-        </tr>
+        <table style="border-collapse: collapse; width: 100%;">
+          <tr>
+            <td rowspan="3" style="text-align: center; vertical-align: middle; width: 20%; font-size: 13px; padding:5px;">
+              Semáforo
+            </td>
+            <td class="text-center" style="background-color: red; color: white; height: 30px; text-align: center; font-size: 13px;">
+              TGBH sobre el Rango de T°
+            </td>
+          </tr>
+          <tr>
+            <td class="text-center" style="background-color: rgb(236, 219, 24); color: rgb(0, 0, 0); height: 30px; text-align: center; font-size: 13px;">
+              TGBH dentro del Rango de T°
+            </td>
+          </tr>
+          <tr>
+            <td class="text-center" style="background-color: rgb(9, 103, 13); color: white; height: 30px; text-align: center; font-size: 14px;">
+              TGBH abajo del Rango de T°
+            </td>
+          </tr>
+        </table>
+        
       </tbody>
     </table>
   </div>

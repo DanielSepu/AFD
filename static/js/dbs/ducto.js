@@ -108,21 +108,18 @@ function insert_area(){
 function check_if_exist(tipo){
     if(tipo == "circular"){
         if($("#value_area").length > 0) {
-            $("#value_area").hide();
+            $("#value_area").remove();  // Eliminar el área si existe
         }
         if($("#value_diametro").length > 0) {
-            $("#value_area").hide();
             $("#value_diametro").show();
             return true;
         }
-        
     }
     if(tipo == "ovalado"){
         if($("#value_diametro").length > 0) {
-            $("#value_diametro").hide();
+            $("#value_diametro").remove();  // Eliminar el diámetro si existe
         }
         if($("#value_area").length > 0) {
-            $("#value_diametro").hide();
             $("#value_area").show();
             return true;
         }

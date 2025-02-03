@@ -2,14 +2,14 @@ from django.db import models
 
 
 # Create your models here.
-class SensorData(models.Model):  # Asegúrate de heredar de models.Model
-   id = models.AutoField(primary_key=True) 
+class SensorData(models.Model):  
    payload = models.FloatField()
    timestamp = models.DateTimeField()
    class Meta:
       db_table = "sensor_data"
 
-class VdfData(models.Model):  # Asegúrate de heredar de models.Model
+
+class VdfData(models.Model):  
    id = models.AutoField(primary_key=True) 
    ts = models.DateTimeField()
    fref = models.FloatField() 
@@ -27,22 +27,25 @@ class SensorsData(models.Model):
    # los comentarios con (-->) indica que es el nombre antes de ser renombrado
    id = models.AutoField(primary_key=True) 
    ts = models.DateTimeField()
-   pt2 = models.FloatField() 
-   ps2 = models.FloatField() 
-   densidad2 = models.FloatField() #  Presión barométrica ventilador(P2) --> densidad2
-   q2 = models.FloatField() # humedad relativa en la frente(hrf) --> (q2)
+
+   pt2 = models.FloatField(verbose_name="Presión total sensor 2 (Pa)") 
+   ps2 = models.FloatField(verbose_name="Presión estática sensor 2 (Pa)") 
+   densidad2 = models.FloatField(verbose_name="Presión barométrica sensor 2 (Pa)") #  Presión barométrica ventilador(P2) --> densidad2
+   q2 = models.FloatField(verbose_name="Temperatura seca sensor 2 (°C)") # humedad relativa en la frente(hrf) --> (q2)
    
-   pt1 = models.FloatField() 
-   ps1 = models.FloatField()
-   densidad1 = models.FloatField() # P1 --> densidad1 
-   q1 = models.FloatField()
-   lc = models.FloatField() # temperatura seca de la frente (tbs2) --> lc
-   qf = models.FloatField()
-   k = models.FloatField()
-   tbs = models.FloatField() # temperatura bulbo seco
-   hr = models.FloatField() # humedad relativa
+   pt1 = models.FloatField(verbose_name="Humedad Relativa sensor 2 (%)") 
+   ps1 = models.FloatField(verbose_name="Presión total sensor 1 (Pa)")
+   densidad1 = models.FloatField(verbose_name="Pesión estática sensor 1 (Pa)") # P1 --> densidad1 
+   q1 = models.FloatField(verbose_name="Presión barométrica sensor 1 (Pa)")
+   lc = models.FloatField(verbose_name="Temperatura seca sensor 2 (°C)") # temperatura seca de la frente (tbs2) --> lc
+   qf = models.FloatField(verbose_name="Humedad Relativa sensor 1 (%)")
+   k = models.FloatField(verbose_name="factor de fricción")
+   tbs = models.FloatField(verbose_name="temperatura seca") # temperatura bulbo seco
+   hr = models.FloatField(verbose_name="humedad relativa") # humedad relativa
    tbh = models.FloatField() # temperatura bulmo humedo
    tgbh = models.FloatField()
+
+   
    
    class Meta:
       db_table = "sensors_data"
@@ -141,6 +144,8 @@ class Ducto(models.Model):
    f_fuga = models.FloatField()
    t_acople = models.CharField()
    largo = models.FloatField()
+   Ldsf = models.IntegerField()      
+   
    class Meta:
       db_table = "ducto"
 

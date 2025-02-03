@@ -5,6 +5,8 @@ from django.views.generic import UpdateView, CreateView
 
 from applications.getdata.models import *
 from .forms import *
+import json
+
 
 def dbs(request):
    if request.method == 'GET':
@@ -124,16 +126,58 @@ class CaracteristicasVentiladorView(CreateView):
 
 
 class CurvaDisenoEditView(UpdateView):
-   model = CurvaDiseno
-   form_class = CurvaDisenoForm 
-   template_name = 'widgets/dbs/edit.html' 
-   success_url = '/'
+    model = CurvaDiseno
+    form_class = CurvaDisenoForm
+    template_name = 'widgets/dbs/curvaDiseno.html'
+    success_url = '/'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['db_type'] = 'Curva caracteristica ventilador'
+        
+        # Agregar los datos JSON al contexto
+        datos_curva = self.object.datos_curva if self.object.datos_curva else {}
+        context['datos_curva'] = datos_curva
 
-   def get_context_data(self, **kwargs):
-      context = super().get_context_data(**kwargs)
-      context['db_type'] = 'Curva caracteristica ventilador'
-      return context
-
+        return context
+     
+    def procesar_datos_curva(self, post_data):
+         def obtener_lista(prefix, data):
+            items = {}
+            for key in data:
+                  if key.startswith(f"{prefix}_"):
+                     try:
+                        index = int(key.split('_')[1])
+                        # Tomar el último valor no vacío
+                        valor = next((v for v in reversed(data.getlist(key)) if v.strip() != ''), '0.0')
+                        items[index] = float(valor)
+                     except (ValueError, IndexError):
+                        continue
+            return [items[i] for i in sorted(items)]
+         
+         return {
+            'caudal': obtener_lista('caudal', post_data),
+            'presion': obtener_lista('presion', post_data),
+            'potencia': obtener_lista('potencia', post_data)
+         }
+    def get_form_kwargs(self):
+        """Procesa los datos POST antes de crear el formulario"""
+        kwargs = super().get_form_kwargs()
+        
+        if self.request.method == 'POST':
+            # Crear copia mutable de los datos POST
+            post_data = self.request.POST.copy()
+            
+            # Procesar y generar datos_curva
+            datos_curva = self.procesar_datos_curva(post_data)
+            
+            # Actualizar datos POST con el JSON generado
+            post_data['datos_curva'] = json.dumps(datos_curva)
+            
+            # Incluir los datos modificados en el formulario
+            kwargs['data'] = post_data
+        
+        return kwargs
 
 class DuctoEditView(UpdateView):
    model = Ducto
@@ -185,7 +229,6 @@ class EquipamientoEditView(UpdateView):
       context['db_type'] = 'Equipamiento diesel'
       return context
    
-
 class SistemaPartidaCreateView(FormView):
     """
     Vista para manejar la creación de elementos del modelo Sistema_Partida.

@@ -13,6 +13,10 @@ from modules.queries import *
 from django.db.models import Max
 from applications.getdata.models import Proyecto
 
+# Constants
+rpm_del_proyecto = 3000
+rpm_model = 3000
+
 def fandesign(request):
    if request.method == 'GET':
       try:
@@ -23,13 +27,19 @@ def fandesign(request):
          max_id_sensors = latest_record_sensors['id__max']
          item_sensors = SensorsData.objects.using('sensorDB').get(id=max_id_sensors)
          mid_densidad = item_sensors.densidad1/2
+         
          #identifica id de  último proyecto guardado
          #id_proyecto = Proyecto.objects.using('sensorDB').aggregate(Max('id'))['id__max']
          proyect =  Proyecto.objects.all().order_by('id').last()
-         # datos insertados en curva de diseño, convertidos a dataframe
-         df_fan = get_fan_data(proyect, 'pt')
-         #print(df_fan)
 
+         df_fan = pd.DataFrame(dict(proyect.curva_diseno.datos_curva)).astype(float)
+         df_fan = df_fan.copy()  # Evita problemas con referencias internas
+         rpm_del_proyecto = 3000
+         rpm_model = 3000
+         df_fan['p_ajustada_rpm'] = df_fan['presion'] * (rpm_model / rpm_del_proyecto) ** 2
+
+
+         
          df_sensor1 = get_10min_sensor_data() # desde BD
          #df_sensor1 = SensorsData.objects.using('sensorDB').all().last()
          ### VDF DATA ###
@@ -37,7 +47,6 @@ def fandesign(request):
          df_vdf = get_10min_vdf_data() # desde BD
 
          # obtener datos
-         #df_vdf =  VdfData.objects.using('sensorDB').all().last()
          Q_medido = df_sensor1["q1"].mean()
          Q_medido = float(Q_medido)
          P_medido = df_sensor1["pt1"].mean()
@@ -58,7 +67,7 @@ def fandesign(request):
 
          # Y = R * X**2
          ajuste_cubico = np.polyfit(df_fan['caudal'], df_fan['presion'], 3)
-         print(f"ajuste cubico: {ajuste_cubico}")
+         #print(f"ajuste cubico: {ajuste_cubico}")
          # obtener el cociente de entre presion maxima y el caudal maximo
          # resistencia_maxima = presionMaxima/(caudalMaximo**2)
          r_max  = df_fan.loc[ind]['presion']/df_fan.loc[ind]['caudal']**2
@@ -67,25 +76,15 @@ def fandesign(request):
          # peak resistance = resistencia / resistencia maxima
          peak_resistance = round(r_actual/r_max, 2 )
 
-         # Ejemplo de uso:
-         """ 
-            flow_rate = np.array([10, 20, 30, 40, 50])  # Ejemplo de caudales
-            total_pressure = np.array([100, 400, 900, 1600, 2500])  # Ejemplo de presiones totales
-            measured_point = (35, 1225)  # Punto medido (caudal, presión total)
-
-            fan_performance = calculate_fan_performance(flow_rate, total_pressure, measured_point)
-            print(f"Rendimiento del ventilador: {fan_performance:.2f}%") 
-         """
          ecuacion1, ecuacion2, goal_seek = goal_seek_custom(ajuste_cubico, r_actual)
-
-         print(f"ecuacion 1: {ecuacion1} ecuacion 2: {ecuacion2} goal_seek: {goal_seek}")
-
          # distancia 2 = sqrt(X**2 + ecuacion 2 **2)
          distancia2 = sqrt(goal_seek**2 + ecuacion2 **2)
 
          # distancia1 = sqrt(caudal**2 + presion_total**2)
          distancia1 = sqrt((Q_medido**2)+(P_medido**2))
 
+         rotacion_actual = np.mean(df_vdf.fref)
+         print(rotacion_actual)
          # rendimiento ventilador = distancia 1 / distancia 2
          rendimiento_ventilador = round(distancia1 / distancia2, 3)
 
@@ -96,11 +95,15 @@ def fandesign(request):
          resistencia_del_sistema = 0
          df_graph = presion_total(proyect, df_vdf, df_sensor1)
          if chart_type == 'total_pressure':
-         
+            rpm_del_proyecto = 3000
+            rpm_model = 3000
+            
+            new_df = pd.DataFrame({'rpm_ajustado': [rpm_adjusted]})
+            df = pd.concat([df_fan, new_df], axis=1)
+            print(df_fan)
             densidad_fan = float(proyect.curva_diseno.densidad) 
             densidad_sensor1 = df_sensor1["densidad1"].mean()
-            
-            
+
             presion_maxima_curvaAjustada = df_graph['presion'].max()
             fila = df_graph.loc[df_graph['presion'] == presion_maxima_curvaAjustada ]
 
@@ -221,7 +224,9 @@ def fandesign(request):
                   'proyecto':proyect , 
                   'peak_resistance':peak_resistance, 
                   'peak_pressure':peak_pressure, 
-                  'rendimiento_ventilador':round(rendimiento_ventilador, 1) 
+                  'rendimiento_ventilador':round(rendimiento_ventilador, 1),
+                  'rotacion_actual':round(rotacion_actual, 1),
+
                   }
          # print(f"context: {context}")
          return render(request, 'fanDesign.html', context)

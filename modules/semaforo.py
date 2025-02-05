@@ -5,10 +5,8 @@ import pandas as pd
 from applications.fandesign.mixins import presion_total
 from applications.getdata.models import SensorsData, VdfData
 from modules.queries import get_10min_sensor_data, get_10min_vdf_data
-from IPython.display import display, Markdown
 from django.contrib import messages
 
-from IPython.display import display, HTML
 
 def mostrar_inicio_formulas_principales(str, description):
     display(HTML(f"""

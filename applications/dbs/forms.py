@@ -245,7 +245,7 @@ class DuctoForm(forms.ModelForm):
     area = forms.FloatField(
         label='Área (m²)',
         required=False,
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el área'}),
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Área calculada', 'readonly': 'true'}),
     )
 
     t_acople = forms.CharField(
@@ -273,9 +273,7 @@ class DuctoForm(forms.ModelForm):
             't_acople': 'Tipo de acople',
             'largo': 'Largo (m)',
             'Ldsf': 'longitud de ducto desde el sensor 2 hasta la frente (m)'
-            
         }
-    
     def __init__(self, *args, **kwargs):
         ocultar = kwargs.pop('ocultar',True)
         super().__init__(*args, **kwargs)

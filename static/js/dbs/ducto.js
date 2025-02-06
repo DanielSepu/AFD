@@ -7,10 +7,11 @@ $(document).ready(function() {
         valor_actual = $("#id_area").val();
         insert_area();
         
+        
     }
     if (item_initial === "circular") {
         valor_actual = $("#id_diametro").val();
-        //insertar_diametro();
+        // insertar_diametro();
     }
     //alert(valor_actual);
     
@@ -31,6 +32,8 @@ $(document).ready(function() {
             }
             
         }
+        
+
     });
 });
 
@@ -38,10 +41,11 @@ $(document).ready(function() {
 $(document).on("change","#base", function() {
     calculate_area();
 });
-$(document).on("change","#altura", function() {
 
+$(document).on("change","#altura", function() {
     calculate_area();
 });
+
 $(document).on("change", "#id_diametro", function() {
     calculate_area_from_diameter();
 });
@@ -64,8 +68,6 @@ function calculate_area_from_diameter() {
     }
 }
 
-
-
 function insertar_diametro() {
     const item_initial = $("#id_t_ducto");
 
@@ -75,6 +77,7 @@ function insertar_diametro() {
             <div id="value_diametro" class="row p-2">
                 <div id="zona_diametro" class="col">
                     <label for="id_diametro">Diámetro (mm):</label>
+                    <input class="form-control" placeholder="Ingrese el diámetro" id="id_diametro">
                 </div>
             </div>`;
         $(item_initial).after(combined_html);
@@ -118,7 +121,7 @@ function insert_area(){
         </div>`
 
     $(item_initial).after(combined_html);
-    //$("#id_area").detach().appendTo("#zona_area");
+   // $("#id_area").detach().appendTo("#zona_area");
  
 }
 

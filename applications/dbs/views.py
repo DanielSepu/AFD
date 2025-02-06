@@ -27,7 +27,7 @@ def dbs(request):
          return render(request, 'widgets/dbs/curvaDiseno.html', context)
       
       if db_type == 'ducto':
-         form = DuctoForm(ocultar=False)
+         form = DuctoForm()
          context = {'db_type': db_type, 'form': form}
          return render(request, 'widgets/dbs/ducto.html', context)
       
@@ -160,6 +160,7 @@ class CurvaDisenoEditView(UpdateView):
             'presion': obtener_lista('presion', post_data),
             'potencia': obtener_lista('potencia', post_data)
          }
+         
     def get_form_kwargs(self):
         """Procesa los datos POST antes de crear el formulario"""
         kwargs = super().get_form_kwargs()
@@ -185,17 +186,16 @@ class DuctoEditView(UpdateView):
    template_name = 'widgets/dbs/edit.html' 
    success_url = '/'
 
-   def form_valid(self, form) :
-      print(self.request.POST)
+   def form_valid(self, form):
       return super().form_valid(form)
-
-   
 
    def get_context_data(self, **kwargs):
       context = super().get_context_data(**kwargs)
       context['db_type'] = 'Ducto'
+      print(context)
       return context
-   
+
+
 class SistemaPartidaEditView(UpdateView):
    model = Sistema_Partida
    form_class = SistemaPartidaForm 

@@ -274,12 +274,7 @@ class DuctoForm(forms.ModelForm):
             'largo': 'Largo (m)',
             'Ldsf': 'longitud de ducto desde el sensor 2 hasta la frente (m)'
         }
-    def __init__(self, *args, **kwargs):
-        ocultar = kwargs.pop('ocultar',True)
-        super().__init__(*args, **kwargs)
-        if ocultar:
-            self.fields['diametro'].widget = forms.HiddenInput()
-            self.fields['area'].widget = forms.HiddenInput()
+    
 
 
 class EquipDieselForm(forms.ModelForm):

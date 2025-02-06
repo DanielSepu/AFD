@@ -81,6 +81,7 @@ def get_recent_data(request):
 
     '''
     if request.method == 'GET':
+        insert_sensor_data()
         # VARIABLES DEL SENSOR 
         latest_record_sensors = SensorsData.objects.using('sensorDB').aggregate(Max('id'))
         max_id_sensors = latest_record_sensors['id__max']

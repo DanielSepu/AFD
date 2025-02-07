@@ -7,6 +7,7 @@ import pandas as pd  # Importa pandas
 from django.contrib import messages
 
 from applications.currentstatus.tools import goal_seek_custom
+from applications.currentstatus.untils import calculo_densidad_aire_sensor
 from applications.fandesign.mixins import presion_total, presion_total_2
 from modules.graphdata import *
 from modules.queries import *
@@ -29,21 +30,12 @@ def fandesign(request):
          mid_densidad = item_sensors.densidad1/2
          
          #identifica id de  último proyecto guardado
-         #id_proyecto = Proyecto.objects.using('sensorDB').aggregate(Max('id'))['id__max']
-         proyect =  Proyecto.objects.all().order_by('id').last()
+         proyect =  Proyecto.objects.all().order_by('id').last() 
 
-         df_fan = pd.DataFrame(dict(proyect.curva_diseno.datos_curva)).astype(float)
-         df_fan = df_fan.copy()  # Evita problemas con referencias internas
-         rpm_del_proyecto = 3000
-         rpm_model = 3000
-         df_fan['p_ajustada_rpm'] = df_fan['presion'] * (rpm_model / rpm_del_proyecto) ** 2
+         df_fan = pd.DataFrame(data=dict(proyect.curva_diseno.datos_curva), dtype=float)
 
-
-         
          df_sensor1 = get_10min_sensor_data() # desde BD
-         #df_sensor1 = SensorsData.objects.using('sensorDB').all().last()
-         ### VDF DATA ###
-         # df_vdf = get_vdf_data() # desde CSVs
+
          df_vdf = get_10min_vdf_data() # desde BD
 
          # obtener datos
@@ -91,34 +83,27 @@ def fandesign(request):
          # peak_pressure = ecuacion1 /presion maxima
          peak_pressure =  int(ecuacion1/df_fan.loc[ind]['presion'] )
          scatter_data_fan_list = []
-
-         resistencia_del_sistema = 0
+         
          df_graph = presion_total(proyect, df_vdf, df_sensor1)
          if chart_type == 'total_pressure':
-            rpm_del_proyecto = 3000
-            rpm_model = 3000
+            rpm_del_proyecto = proyect.curva_diseno.rpm
             
-            new_df = pd.DataFrame({'rpm_ajustado': [rpm_adjusted]})
-            df = pd.concat([df_fan, new_df], axis=1)
-            print(df_fan)
+            rpm_model = df_vdf['rpm'].mean()
+            print(f"rpm_del_proyecto: {rpm_del_proyecto}  rpm_model: {rpm_model}")
+            densidad1 = proyect.curva_diseno.densidad
+            calculador_densidad_aire_s1 = calculo_densidad_aire_sensor(request, proyect)
+            densidad2 = calculador_densidad_aire_s1.densidad_del_aire()
+            
+            print(f"densidad calculada: {densidad2} densidad configurada en el proyecto: {densidad1}")
+            # datos de la curva ajustada por RPM 
+            curva_ajustada_x_rpm = pd.DataFrame({'presion_ajustada': df_fan['presion'].mul((rpm_model / rpm_del_proyecto) ** 2), 'caudal_ajustado': df_fan['caudal'].mul(rpm_model / rpm_del_proyecto)})
+            # datos de la curva ajustada por la densidad
+            curva_ajusta_x_densidad = pd.DataFrame({'caudal':curva_ajustada_x_rpm['caudal_ajustado'], 'presion': curva_ajustada_x_rpm['presion_ajustada'].mul((densidad2/densidad1)) })
+
             densidad_fan = float(proyect.curva_diseno.densidad) 
             densidad_sensor1 = df_sensor1["densidad1"].mean()
 
-            presion_maxima_curvaAjustada = df_graph['presion'].max()
-            fila = df_graph.loc[df_graph['presion'] == presion_maxima_curvaAjustada ]
-
-            try:
-               ps_curvaAjustada = fila.loc[0, "presion"]
-            except KeyError as e:
-               messages.warning(request, f"no se ha podido obtener los valores relacionados a la presión:{e}, la curva no se ha calculado, verifique los valores de diseño")
-               return render(request, 'fanDesign.html') 
-
-            ps_caudal_curvaAjustada = fila.loc[0, "caudal"]
-            
-            resistencia_del_sistema = (ps_curvaAjustada / ps_caudal_curvaAjustada**2)/100
-
-
-            scatter_data_fan_list = df_graph[['caudal','presion']].to_dict(orient='records')
+            scatter_data_fan_list = curva_ajusta_x_densidad[['caudal','presion']].to_dict(orient='records')
             for k,v in enumerate(scatter_data_fan_list):
                v['CAUDAL (m³/s)'] = v['caudal']
                v['PRESION (Pa)'] = v['presion']
@@ -138,19 +123,19 @@ def fandesign(request):
             new_df = pd.DataFrame({
                'caudal': df_graph['caudal'],
                'presion_total': presion_total_2(proyect.ventilador.nmm, mid_densidad, df_graph['caudal']),
-               'presion': df_graph['presion'],
+               'presion': df_fan['presion'],
                'potencia': df_fan['potencia'],
-               'presion_estatica': calculate_presion_estatica(df_graph['presion'],mid_densidad, df_graph['caudal'], area_difusor)
+               'presion_estatica': calculate_presion_estatica(df_fan['presion'],mid_densidad, df_fan['caudal'], area_difusor)
             })
             
             print(new_df)
-            scatter_data_fan_list = new_df[['caudal','presion_estatica']].to_dict(orient='records')
+            scatter_data_fan_list = new_df[['caudal','presion']].to_dict(orient='records')
 
             for k,v in enumerate(scatter_data_fan_list):
                v['CAUDAL (m³/s)'] = v['caudal']
-               v['PRESION (Pa)'] = v['presion_estatica']
+               v['PRESION (Pa)'] = v['presion']
                del v['caudal']
-               del v['presion_estatica']
+               del v['presion']
 
          elif chart_type == 'power':
             

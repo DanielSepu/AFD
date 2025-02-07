@@ -32,7 +32,7 @@ base_data_vdf = {
     'oc': 1.0,  # Corriente de operación (A)
     'power': 15.0,  # Potencia (kW)
     'powerc': 14.8,  # Potencia corregida (kW)
-    'rpm': 1500.0  # RPM base del ventilador
+    'rpm': 3000.0  # RPM base del ventilador
 }
 
 def generate_variation(base_value, variation_range=0.0001):
@@ -45,7 +45,7 @@ def insert_sensor_data(count=None):
     """
     Inserta un nuevo conjunto de datos en las tablas SensorsData y VdfData.
     """
-    print(f"-- Insertando datos SensorsData y VdfData --")
+    print(f"-- simulador Activo -- Insertando datos SensorsData y VdfData --")
     
     # Inserción de datos en SensorsData
     sensor_data = {

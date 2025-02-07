@@ -1,8 +1,12 @@
-
+from django.db.models import Max
 
 from math import sqrt
 #from scipy.optimize import curve_fit
 import numpy as np
+
+from applications.currentstatus.untils import calculo_densidad_aire_sensor
+from applications.getdata.models import SensorsData
+from modules.semaforo import Semaforo
 
 
 
@@ -40,19 +44,19 @@ def calculate_perdida_choque_codos(total_codos, mid_densidad, Q1, project, Qf):
         num += 1
         if num == 1:
             first_codo = aply_first_codo(first_section, project, Q1, project.ducto.t_ducto)
-            print(f"first_codo: {first_codo}")
+            
             variables['first_codo'] = first_codo
             variables['q_codo_1'] = q_codo_1(Q1)
         if num == 2:
             second_codo = aply_second_codo(first_section, project, Q1, project.ducto.t_ducto, Qf)
-            print(f"second_codo: {second_codo}")
+
             sumatoria_Sl = first_codo + second_codo
             variables['second_codo'] = second_codo
             variables['q_codo_2'] = q_codo_2(Q1, Qf)
             variables['sumatoria_Sl'] = sumatoria_Sl
         if num >= 3:
             third_codo = aply_third_codo(first_section, project, Q1, project.ducto.t_ducto, Qf)
-            print(f"third_codo: {third_codo}")
+
             sumatoria_Sl = first_codo + second_codo + (total_codos - 2) * third_codo
             variables['third_codo'] = third_codo
             variables['sumatoria_Sl'] = sumatoria_Sl
@@ -77,7 +81,7 @@ def aply_first_codo(first_section, project, Q1,type):
         
     if type == "circular":
         area_ducto_circular_ = area_ducto_circular(project)
-        print(f"area_ducto_circular calculada: {area_ducto_circular_}")
+        
         formula_parte_2_ducto_circular = 1/(area_ducto_circular_*area_ducto_circular_)
         
         return first_section*formula_parte_2_ducto_circular*Q_codo_1
@@ -100,8 +104,7 @@ def aply_second_codo(first_section, project, Q1,type, Qf):
     if type == "circular":
         #area_ducto_circular_ = area_ducto_circular(project)
         formula_parte_2_ducto_circular = formula_parte_2_circular(project)
-        print(f"formula_parte_2_ducto_circular: {formula_parte_2_ducto_circular} ")
-        print(f"first_section: {first_section} up_section: {up_section}")
+        
         return  first_section*formula_parte_2_ducto_circular*up_section
 
 def formula_parte_2_ovalado(project):
@@ -188,5 +191,4 @@ def goal_seek_custom(ajuste_cubico, r_actual, initial_guess=0.5, tolerance=1e-6,
         X -= goal_seek / derivative
 
     raise ValueError("Goal Seek no convergió en el número máximo de iteraciones.")
-
 

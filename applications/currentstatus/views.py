@@ -86,6 +86,8 @@ def get_recent_data(request):
         max_id_sensors = latest_record_sensors['id__max']
         item_sensors = SensorsData.objects.using('sensorDB').get(id=max_id_sensors)
         variables = {}
+        
+        # FUNCION DEL SIMULADOR PARA INSERTAR NUEVOS DATOS CADA VEZ QUE SE LLAMA ESTA FUNCION
         insert_sensor_data()
         latest_record_vdf = VdfData.objects.using('sensorDB').aggregate(Max('id'))
         max_id_vdf = latest_record_vdf['id__max']
@@ -94,34 +96,23 @@ def get_recent_data(request):
         project = Proyecto.objects.all().order_by('id').last() 
         caracteristicas = project.ventilador.accesorios.all()
 
-
         variables['vmm'] = project.ventilador.vmm
         variables['amm'] = project.ventilador.amm
         variables['nmm'] = project.ventilador.nmm
         
-        #  CALCULANDO LA DENSIDAD DEL AIRE 
-        tbs = item_sensors.lc # Tbs1
-        hr =  item_sensors.qf # HRs1
-        
-        q2 = item_sensors.q2 # Tbs2
-        pt1 = item_sensors.pt1 # HRs2
-        
-        q1 = item_sensors.q1  # Pbs1
-
-        semaforo = Semaforo(request)
-        semaforo.encender(project)
-        tbs1 = round(semaforo.calculate_tbh(tbs, hr),1)
-        tbh1 = round(semaforo.calculate_tbh(q2, pt1),1)
-        
-        calculador_densidad_aire_s1 = calculo_densidad_aire_sensor(tbs1, tbh1, q1)
-        
         item_vdf = VdfData.objects.using('sensorDB').get(id=max_id_vdf)
+        
+        # densidad configurada en el proyecto
         variables['densidad'] = item_sensors.densidad1
-        # calcular la densidad:
+        
+        # densidad calculada
+        calculador_densidad_aire_s1 = calculo_densidad_aire_sensor(request, project)
         densidad = calculador_densidad_aire_s1.densidad_del_aire()
         
         mid_densidad = densidad/2
-        # TODO estas valores son solo una prueba de las funciones
+        # CONFIGURAR EL SEMAFORO PARA OBTENER CAUDALES
+        semaforo = Semaforo(request)
+        semaforo.encender(project)
         caudal_del_ventilador = semaforo.calculate_Q1()
         Qf = caudal_de_la_frente(semaforo.calculate_Q2(), semaforo.leakage_coefficient_v4(), item_sensors.pt2, project.ducto.Ldsf )
         

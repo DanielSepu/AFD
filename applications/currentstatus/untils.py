@@ -2,7 +2,8 @@
 
 from math import sqrt
 import math
-
+from django.db.models import Max
+from applications.getdata.models import SensorsData
 from modules.semaforo import Semaforo
 
 
@@ -35,11 +36,36 @@ def ajuste_rpm():
 
 
 class calculo_densidad_aire_sensor:
-    def __init__(self, tbs1, temperatura_bh_s1, pbs1):
-        self.tbs1 = tbs1
-        self.temperatura_bh_s1 = temperatura_bh_s1
-        self.pbs1 = pbs1
-
+    def __init__(self, request, project):
+        self.project = project
+        self.request = request
+        self.semaforo = Semaforo(request)
+        self.semaforo.encender(project)
+        self.item_sensors = None
+        
+        self.tbs1 = None
+        self.temperatura_bh_s1 = None
+        self.pbs1 = None
+        
+        latest_record_sensors = SensorsData.objects.using('sensorDB').aggregate(Max('id'))
+        max_id_sensors = latest_record_sensors['id__max']
+        self.item_sensors = SensorsData.objects.using('sensorDB').get(id=max_id_sensors)
+        self.cargar_datos_iniciales()
+        
+        
+    def cargar_datos_iniciales(self):
+        tbs = self.item_sensors.lc # Tbs1
+        hr =  self.item_sensors.qf # HRs1
+        
+        q2 = self.item_sensors.q2 # Tbs2
+        pt1 = self.item_sensors.pt1 # HRs2
+        
+        self.pbs1 = self.item_sensors.q1  # Pbs1
+        semaforo = Semaforo(self.request)
+        semaforo.encender(self.project)
+        self.tbs1 = round(semaforo.calculate_tbh(tbs, hr),1)
+        self.temperatura_bh_s1 = round(semaforo.calculate_tbh(q2, pt1),1)
+        
     def esd(self):
         return round(610 * math.exp(17.27 * self.tbs1 / (237.3 + self.tbs1)), 3)
 

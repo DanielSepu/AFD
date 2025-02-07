@@ -34,12 +34,8 @@ def fandesign(request):
 
          df_fan = pd.DataFrame(dict(proyect.curva_diseno.datos_curva)).astype(float)
          df_fan = df_fan.copy()  # Evita problemas con referencias internas
-         rpm_del_proyecto = 3000
-         rpm_model = 3000
-         df_fan['p_ajustada_rpm'] = df_fan['presion'] * (rpm_model / rpm_del_proyecto) ** 2
-
-
          
+
          df_sensor1 = get_10min_sensor_data() # desde BD
          #df_sensor1 = SensorsData.objects.using('sensorDB').all().last()
          ### VDF DATA ###
@@ -95,12 +91,17 @@ def fandesign(request):
          resistencia_del_sistema = 0
          df_graph = presion_total(proyect, df_vdf, df_sensor1)
          if chart_type == 'total_pressure':
-            rpm_del_proyecto = 3000
-            rpm_model = 3000
+            rpm_del_proyecto = proyect.curva_diseno.rpm
+            rpm_model = df_vdf["rpm"].mean()
+            densidad_calculada = 6
+            densidad_curva = proyect.curva_diseno.densidad
+            df_fan['q_ajustada_rpm'] = df_fan['caudal'] * (rpm_model / rpm_del_proyecto) ** 2
+            df_fan['p_ajustada_rpm'] = df_fan['presion'] * (rpm_model / rpm_del_proyecto) ** 2
+            # df_fan['p_ajustada_densidad'] = df_fan['presion'] * (rpm_model / rpm_del_proyecto) ** 2
+            df_fan['p_ajustada_densidad'] = df_fan['p_ajustada_rpm'] * (densidad_calculada / densidad_curva) 
             
-            new_df = pd.DataFrame({'rpm_ajustado': [rpm_adjusted]})
-            df = pd.concat([df_fan, new_df], axis=1)
             print(df_fan)
+            
             densidad_fan = float(proyect.curva_diseno.densidad) 
             densidad_sensor1 = df_sensor1["densidad1"].mean()
 
@@ -118,12 +119,12 @@ def fandesign(request):
             resistencia_del_sistema = (ps_curvaAjustada / ps_caudal_curvaAjustada**2)/100
 
 
-            scatter_data_fan_list = df_graph[['caudal','presion']].to_dict(orient='records')
+            scatter_data_fan_list = df_fan[['caudal','p_ajustada_densidad']].to_dict(orient='records')
             for k,v in enumerate(scatter_data_fan_list):
                v['CAUDAL (m³/s)'] = v['caudal']
-               v['PRESION (Pa)'] = v['presion']
+               v['PRESION (Pa)'] = v['p_ajustada_densidad']
                del v['caudal']
-               del v['presion']
+               del v['p_ajustada_densidad']
 
          elif chart_type == 'static_pressure':
          

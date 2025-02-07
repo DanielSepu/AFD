@@ -198,11 +198,12 @@ def get_recent_data(request):
         perdida_choque_total_sistema_ducto = perdidas_choque_codos +sumatoria_choque_accesorios+perdida_choque_salida_ducto
 
         variables['perdida_choque_total_sistema_ducto'] = perdida_choque_total_sistema_ducto
-        #perdida_choque_total_sistema_ducto_ovalado_Pa = perdidas_choque_codos +sumatoria_choque_accesorios + perdida_choque_salida_ducto_ovalado
-        perdidas_friccionales = round(presion_estatica_ventilador - perdida_choque_total_sistema_ducto, 2)
-        variables['perdidas_friccionales'] = perdidas_friccionales
-
-        presion_dinamica = round(presion_dinamica_sensor_1(item_sensors.ps1, item_sensors.densidad1 ),0)
+       
+        presion_dinamica = item_sensors.ps1 - item_sensors.densidad1
+        
+        var_intermedia = presion_total - presion_dinamica
+        
+        perdidas_friccionales = var_intermedia - perdida_choque_total_sistema_ducto
         # calculando el caudal del aire sensor 1
         velocidad_aire_sensor1 = velocidad_aire_sensor(presion_dinamica, calculador_densidad_aire_s1.densidad_del_aire())
         
@@ -222,11 +223,11 @@ def get_recent_data(request):
         
         context = {}
         context["data"] = data
-        presion_dinamica = item_sensors.ps1 - item_sensors.densidad1
+       
         context["presion_estatica"] = round(presion_estatica_ventilador, 1)
         context["presion_dinamica"] = round(presion_dinamica, 1)
-        context["perdida_de_choque"] = round(perdida_choque_total_sistema_ducto, 1)
-        context["perdidas_friccionales"] = round(perdidas_friccionales, 1)
+        context["perdida_de_choque"] = round(perdida_choque_total_sistema_ducto, 0)
+        context["perdidas_friccionales"] = round(perdidas_friccionales, 0)
         context['variables'] = variables
         return JsonResponse(context, safe=False)
     

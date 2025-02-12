@@ -64,10 +64,10 @@
                                         <tbody>
                                             <tr>
                                                 <td>{{ Project.ventilador.modelo }}</td>
-                                                <td>{{ Project.ventilador.vmm }}</td>
-                                                <td>{{ Project.ventilador.amm }}</td>
-                                                <td>{{ Project.ventilador.nmm }}</td>
-                                                <td>{{ Project.ventilador.hp }}</td>
+                                                <td>{{ Project.ventilador.vmm|floatformat:"0" }}</td>
+                                                <td>{{ Project.ventilador.amm|floatformat:"0" }}</td>
+                                                <td>{{ Project.ventilador.nmm|floatformat:"0" }}</td>
+                                                <td>{{ Project.ventilador.hp|floatformat:"0" }}</td>
                                                 <td>{{ Project.ventilador.polos }}</td>
                                                 <td>
                                                     {% for accesorio in Project.ventilador.accesorios.all %}
@@ -163,7 +163,7 @@
                                 
                                 
                             </fieldset>
-        
+                            </fieldset>
                             <fieldset class="border border-success rounded p-2">
                                 <legend class="d-flex justify-content-between align-items-center">
                                     Equipamientos
@@ -190,7 +190,7 @@
                                                 <td>{{ eqp.modelo_diesel }}</td>
                                                 <td>{{ eqp.potencia }}</td>
                                                 <td>{{ eqp.qr_fabricante }}</td>
-                                                <td>{{ eqp.qr_calculado }}</td>
+                                                <td>{{ eqp.qr_calculado|floatformat:"2" }}</td>
                                                 <td>
                                                     <a href="{% url 'dbs:edit-equipamiento' eqp.pk %}" class="btn btn-success btn-sm">Editar</a>
                                                 </td>

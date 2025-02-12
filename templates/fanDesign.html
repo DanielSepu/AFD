@@ -86,7 +86,7 @@
                         </div>
                         <div class="flex-fill text-center py-4">
                             <p class="fs-5 fw-bold m-0">Densidad Actual</p>
-                            <p class="fs-6">{{ proyecto.curva_diseno.densidad }} kg/m<sup>3</sup></p>
+                            <p class="fs-6">{{ densidad_actual }} kg/m<sup>3</sup></p>
                         </div>
                     </div>
                 </div>
@@ -96,11 +96,11 @@
                     <div class="d-flex border border-3 border-warning">
                         <div class="flex-fill border-end border-warning text-center py-4">
                             <p class="fs-5 fw-bold m-0">Rotación de diseño</p>
-                            <p class="fs-6">{{proyecto.curva_diseno.rpm}} Hz</p>
+                            <p class="fs-6">{{proyecto.curva_diseno.rpm}} rpm</p>
                         </div>
                         <div class="flex-fill text-center py-4">
                             <p class="fs-5 fw-bold m-0">Rotación Actual</p>
-                            <p class="fs-6" id="rendimiento_ventilador">{{ rotacion_actual }} Hz</p>
+                            <p class="fs-6" id="rendimiento_ventilador">{{ rotacion_actual }} rpm</p>
                         </div>
                     </div>
                 </div>
@@ -125,7 +125,7 @@
                 <div class="col-12">
                     <div class="list-group border border-3 border-warning p-3">
                         <p class="text-start fs-5 fw-bold m-0">Presión máxima</p>
-                        <p class="text-start fs-6 ps-4 m-1">{{ peak_pressure }} %</p>
+                        <p class="text-start fs-6 ps-4 m-1">{{ presion_maxima }} %</p>
                     </div>
                 </div>
             </div>

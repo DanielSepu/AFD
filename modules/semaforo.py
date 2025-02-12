@@ -2,7 +2,9 @@ from math import atan, sqrt
 import math
 
 import pandas as pd
+
 from applications.fandesign.mixins import presion_total
+from applications.fandesign.utils import calcular_la_curva_total, calcular_la_presion_maxima
 from applications.getdata.models import SensorsData, VdfData
 from modules.queries import get_10min_sensor_data, get_10min_vdf_data
 from django.contrib import messages
@@ -86,7 +88,6 @@ def mostrar_formula(str):
     """))
 
 
-
 class Semaforo:
     """
     Clase que representa un semaforo de control de estado de la ventilacion del sistema de ventilacion de la mina,
@@ -108,7 +109,6 @@ class Semaforo:
     def encender(self, project):
         self.vdfData = get_10min_vdf_data()
         self.sensorData = get_10min_sensor_data()
-        
 
         # Filtrar solo columnas numéricas antes de calcular la media
         numeric_sensor_data = self.sensorData.select_dtypes(include='number')
@@ -294,7 +294,6 @@ class Semaforo:
             return color
         raise Exception("No se logro calcular un valor para el semaforo")
     
-
     def caudal_en_la_frente_v1(self):
         """
         Calcula el caudal en la frente del ventilador
@@ -381,9 +380,9 @@ class Semaforo:
         # Crear el DataFrame
         data = {
             "trabajo continuo": [30, 26.7, 25],
-            "75-25": [30.6, 28, 25.9],
-            "50-50": [31.4, 29.4, 27.9],
-            "25-75%": [32.2, 31.1, 30]
+            "75-25":            [30.6, 28, 25.9],
+            "50-50":            [31.4, 29.4, 27.9],
+            "25-75%":           [32.2, 31.1, 30]
         }
 
         # Definir los índices
@@ -396,14 +395,11 @@ class Semaforo:
         minimo = fila.iloc[0]
         maximo = fila.iloc[-1]
         if tgbh < minimo :
-            color = "rojo"
-            return nivel_carga, minimo, maximo, "rojo"
+            return nivel_carga, minimo, maximo, "verde"
         
         if tgbh > maximo:
-            color = "rojo"
             return nivel_carga, minimo, maximo, "rojo"
-        color = "verde"
-        return nivel_carga, minimo, maximo,"verde"
+        return nivel_carga, minimo, maximo,"amarillo"
     
     def tgbh_v3(self):
         """
@@ -417,6 +413,7 @@ class Semaforo:
         tbh = self.sensorData["tbh"].mean()
         tbs = self.sensorData["tbs"].mean()
         tgbh = (0.7 * tbh) + (0.3 * tbs)
+
         nivel_carga, min, max, color = self.calcular_estado_v3(tgbh)
         
         self.detalle['v3'] = {
@@ -429,6 +426,8 @@ class Semaforo:
             'nivel_carga': nivel_carga,
             'formula': formula,
         }
+        
+        
         self.detalle["colores"].append(color)
         return tgbh
     
@@ -479,15 +478,23 @@ class Semaforo:
 
     def punto_de_stall_v5(self):
         pt2 = self.sensorData["pt2"].mean()
-        
         presion_total_df =  presion_total(self.project, self.vdfData, self.sensorData)
         # obtener el valor maximo del dataframe que contiene la curva ajustada
         presion_maxima_curvaAjustada = presion_total_df['presion'].max()
         fila = presion_total_df.loc[presion_total_df['presion'] == presion_maxima_curvaAjustada ]
-    
-
-        
         stall = pt2 / presion_maxima_curvaAjustada * 100
+        df_fan = pd.DataFrame(data=dict(self.project.curva_diseno.datos_curva), dtype=float)
+        rpm_del_proyecto = self.project.curva_diseno.rpm
+        densidad1 = self.project.curva_diseno.densidad
+        rpm_model = df_vdf['rpm'].mean()
+        
+        # calculando la densidad
+        calculador_densidad_aire_s1 = calculo_densidad_aire_sensor(self.request, self.project)
+        densidad2 = calculador_densidad_aire_s1.densidad_del_aire()
+        df_total_pressure  = calcular_la_curva_total(df_fan, rpm_model, rpm_del_proyecto, densidad2, densidad1 )
+        indice_max = df_total_pressure["presion"].idxmax()
+        presion_maxima = calcular_la_presion_maxima(self.sensorData, df_total_pressure, indice_max)
+
         color = self.calcular_semaforo_v5(stall)
         self.detalle['v5'] = {
             'pt2': round(pt2,3),

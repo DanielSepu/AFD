@@ -44,7 +44,7 @@ class SensorsData(models.Model):
    hr = models.FloatField(verbose_name="humedad relativa") # humedad relativa
    tbh = models.FloatField() # temperatura bulmo humedo
    tgbh = models.FloatField()
-
+   
    
    
    class Meta:

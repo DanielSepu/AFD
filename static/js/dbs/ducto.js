@@ -61,7 +61,7 @@ function calculate_area_from_diameter() {
     const diametro_value = parseFloat($("#id_diametro").val());
 
     if (!isNaN(diametro_value) && diametro_value > 0) {
-        var area = (Math.PI * Math.pow(diametro_value / 100, 2)) / 4; // Convertir cm y calcular área
+        var area = (Math.PI * Math.pow(diametro_value / 1000, 2)) / 4; // Convertir cm y calcular área
         $("#id_area").val(area.toFixed(2)); // Ajuste de precisión para evitar redondeos excesivos
     } else {
         $("#id_area").val(""); // Limpiar si el valor no es válido

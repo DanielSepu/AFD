@@ -30,15 +30,15 @@ class SensorsData(models.Model):
 
    pt2 = models.FloatField(verbose_name="Presión total sensor 2 (Pa)") 
    ps2 = models.FloatField(verbose_name="Presión estática sensor 2 (Pa)") 
-   densidad2 = models.FloatField(verbose_name="Presión barométrica sensor 2 (Pa)") #  Presión barométrica ventilador(P2) --> densidad2
-   q2 = models.FloatField(verbose_name="Temperatura seca sensor 2 (°C)") # humedad relativa en la frente(hrf) --> (q2)
+   Pbs2 = models.FloatField(verbose_name="Presión barométrica sensor 2 (Pa)") #  Presión barométrica ventilador(P2) --> densidad2
+   Tbs2 = models.FloatField(verbose_name="Temperatura seca sensor 2 (°C)") # humedad relativa en la frente(hrf) --> (q2)
    
-   pt1 = models.FloatField(verbose_name="Humedad Relativa sensor 2 (%)") 
-   ps1 = models.FloatField(verbose_name="Presión total sensor 1 (Pa)")
-   densidad1 = models.FloatField(verbose_name="Pesión estática sensor 1 (Pa)") # P1 --> densidad1 
-   q1 = models.FloatField(verbose_name="Presión barométrica sensor 1 (Pa)")
-   lc = models.FloatField(verbose_name="Temperatura seca sensor 2 (°C)") # temperatura seca de la frente (tbs2) --> lc
-   qf = models.FloatField(verbose_name="Humedad Relativa sensor 1 (%)")
+   HRs2 = models.FloatField(verbose_name="Humedad Relativa sensor 2 (%)") 
+   pt1 = models.FloatField(verbose_name="Presión total sensor 1 (Pa)")
+   ps1 = models.FloatField(verbose_name="Pesión estática sensor 1 (Pa)") # P1 --> densidad1 
+   Pbs1 = models.FloatField(verbose_name="Presión barométrica sensor 1 (Pa)")
+   Tbs1 = models.FloatField(verbose_name="Temperatura seca sensor 2 (°C)") # temperatura seca de la frente (tbs2) --> lc
+   HRs1 = models.FloatField(verbose_name="Humedad Relativa sensor 1 (%)")
    k = models.FloatField(verbose_name="factor de fricción")
    tbs = models.FloatField(verbose_name="temperatura seca") # temperatura bulbo seco
    hr = models.FloatField(verbose_name="humedad relativa") # humedad relativa

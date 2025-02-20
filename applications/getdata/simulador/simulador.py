@@ -8,14 +8,14 @@ from applications.getdata.models import SensorsData, VdfData
 base_data = {
     'pt2': 488,
     'ps2': 271,
-    'densidad2': 95362,
-    'q2': 30.5,
-    'pt1': 34.5,
-    'ps1': 709,
-    'densidad1': 490,
-    'q1': 95362,
-    'lc': 30.7,
-    'qf': 37.2,
+    'Pbs2': 95362,         # ex densidad2
+    'Tbs2': 30.5,          # ex q2
+    'HRs2': 34.5,          # ex pt1
+    'pt1': 709,            # ex ps1
+    'ps1': 490,            # ex densidad1
+    'Pbs1': 95362,         # ex q1
+    'Tbs1': 30.7,          # ex lc
+    'HRs1': 37.2,          # ex qf
     'k': 0,
     'tbs': 0,
     'hr': 0,
@@ -52,14 +52,14 @@ def insert_sensor_data(count=None):
         'ts': timezone.now(),  # Marca de tiempo actual
         'pt2': generate_variation(base_data['pt2']),
         'ps2': generate_variation(base_data['ps2']),
-        'densidad2': generate_variation(base_data['densidad2']),
-        'q2': generate_variation(base_data['q2']),
-        'pt1': generate_variation(base_data['pt1']),
-        'ps1': generate_variation(base_data['ps1']),
-        'densidad1': generate_variation(base_data['densidad1']),
-        'q1': generate_variation(base_data['q1']),
-        'lc': generate_variation(base_data['lc']),
-        'qf': generate_variation(base_data['qf']),
+        'Pbs2': generate_variation(base_data['Pbs2']),  # ex densidad2
+        'Tbs2': generate_variation(base_data['Tbs2']),  # ex q2
+        'HRs2': generate_variation(base_data['HRs2']),  # ex pt1
+        'pt1': generate_variation(base_data['pt1']),    # ex ps1
+        'ps1': generate_variation(base_data['ps1']),    # ex densidad1
+        'Pbs1': generate_variation(base_data['Pbs1']),  # ex q1
+        'Tbs1': generate_variation(base_data['Tbs1']),  # ex lc
+        'HRs1': generate_variation(base_data['HRs1']),  # ex qf
         'k': generate_variation(base_data['k']),
         'tbs': generate_variation(base_data['tbs']),
         'hr': generate_variation(base_data['hr']),

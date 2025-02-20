@@ -43,6 +43,7 @@ function get_semaforo() {
     });
 }
 
+
 function actualizarV1(v1) {
     $('#v1_estado').css('background-color', v1.color === 'verde' ? 'green' : 'red');
     $('#color-caudal-frente').css('background-color', v1.color === 'verde' ? 'green' : 'red');

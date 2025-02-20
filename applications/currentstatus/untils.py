@@ -54,17 +54,17 @@ class calculo_densidad_aire_sensor:
         
         
     def cargar_datos_iniciales(self):
-        tbs = self.item_sensors.lc # Tbs1
-        hr =  self.item_sensors.qf # HRs1
+        Tbs1 = self.item_sensors.Tbs1 # Tbs1
+        HRs1 =  self.item_sensors.HRs1 # HRs1
         
-        q2 = self.item_sensors.q2 # Tbs2
-        pt1 = self.item_sensors.pt1 # HRs2
+        Tbs2 = self.item_sensors.Tbs2 # Tbs2
+        HRs2 = self.item_sensors.HRs2 # HRs2
         
-        self.pbs1 = self.item_sensors.q1  # Pbs1
+        self.pbs1 = self.item_sensors.Pbs1  # Pbs1
         semaforo = Semaforo(self.request)
         semaforo.encender(self.project)
-        self.tbs1 = round(semaforo.calculate_tbh(tbs, hr),1)
-        self.temperatura_bh_s1 = round(semaforo.calculate_tbh(q2, pt1),1)
+        self.tbs1 = round(semaforo.calculate_tbh(Tbs1, HRs1),1)
+        self.temperatura_bh_s1 = round(semaforo.calculate_tbh(Tbs2, HRs2),1)
         
     def esd(self):
         return round(610 * math.exp(17.27 * self.tbs1 / (237.3 + self.tbs1)), 3)

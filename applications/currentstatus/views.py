@@ -104,7 +104,7 @@ def get_recent_data(request):
         item_vdf = VdfData.objects.using('sensorDB').get(id=max_id_vdf)
         
         # densidad configurada en el proyecto
-        variables['densidad'] = item_sensors.densidad1
+        variables['densidad'] = item_sensors.ps1
         
         # densidad calculada
         calculador_densidad_aire_s1 = calculo_densidad_aire_sensor(request, project)
@@ -183,28 +183,27 @@ def get_recent_data(request):
         variables['perdida_choque_salida_ducto'] = perdida_choque_salida_ducto
         variables['perdida_choque_salida_ducto2'] = perdida_choque_salida_ducto
         #a -> resistencia
-        presion_total = item_sensors.ps1 
+        presion_total = item_sensors.pt1 
         presion_estatica_ventilador = round(presion_total - presion_dinamica_entrada_Pa, 0)
         # este calculo obtiene el valor  adecuado independientemente del tipo de ducto, es decir funciona para circular y ovalado
         perdida_choque_total_sistema_ducto = perdidas_choque_codos +sumatoria_choque_accesorios+perdida_choque_salida_ducto
 
         variables['perdida_choque_total_sistema_ducto'] = perdida_choque_total_sistema_ducto
        
-        presion_dinamica = item_sensors.ps1 - item_sensors.densidad1
+        presion_dinamica = item_sensors.pt1 - item_sensors.ps1
         
         var_intermedia = presion_total - presion_dinamica
         
         perdidas_friccionales = var_intermedia - perdida_choque_total_sistema_ducto
         # calculando el caudal del aire sensor 1
         velocidad_aire_sensor1 = velocidad_aire_sensor(presion_dinamica, calculador_densidad_aire_s1.densidad_del_aire())
-        
         area_ducto = project.ducto.area
         data = {
-            "ps1": round(item_sensors.ps1, 2),
-            "qf": round(item_sensors.qf, 2),
-            "q1": caudal_aire_sensor1(velocidad_aire_sensor1, area_ducto),
             "pt1": round(item_sensors.pt1, 2),
-            "densidad1": round(item_sensors.densidad1, 2),
+            "qf": round(item_sensors.HRs1, 2),
+            "q1": caudal_aire_sensor1(velocidad_aire_sensor1, area_ducto),
+            "pt1": round(item_sensors.HRs2, 2),
+            "densidad1": round(item_sensors.ps1, 2),
             "powerc": round(item_vdf.powerc, 2),
             "fref": round(item_vdf.fref, 2),
             "frequency_ratio_1": round((item_vdf.freal / item_vdf.fref) * 100, 2),
@@ -271,13 +270,13 @@ def Excel(request):
     worksheet = workbook.active
     
     # Write header row
-    header = ['pt2', 'ps2', 'densidad2','q2','pt1','ps1','densidad1','q1','lc','qf','k','tbs','hr','tbh','tgbh']
+    header = ['pt2', 'ps2', 'densidad2','q2','pt1','pt1','densidad1','q1','lc','qf','k','tbs','hr','tbh','tgbh']
     for col_num, column_title in enumerate(header, 1):
         cell = worksheet.cell(row=1, column=col_num)
         cell.value = column_title
 
     # Write data rows
-    queryset = SensorsData.objects.filter(ts__gte=now).values_list('pt2', 'ps2', 'densidad2','q2','pt1','ps1','densidad1','q1','lc','qf','k','tbs','hr','tbh','tgbh')
+    queryset = SensorsData.objects.filter(ts__gte=now).values_list('pt2', 'ps2', 'densidad2','q2','pt1','pt1','densidad1','q1','lc','qf','k','tbs','hr','tbh','tgbh')
     for row_num, row in enumerate(queryset, 1):
         for col_num, cell_value in enumerate(row, 1):
             cell = worksheet.cell(row=row_num+1, column=col_num)

@@ -26,7 +26,7 @@ def fandesign(request):
          latest_record_sensors = SensorsData.objects.using('sensorDB').aggregate(Max('id'))
          max_id_sensors = latest_record_sensors['id__max']
          item_sensors = SensorsData.objects.using('sensorDB').get(id=max_id_sensors)
-         mid_densidad = item_sensors.densidad1/2
+         mid_densidad = item_sensors.ps1/2
          
          #identifica id de  último proyecto guardado
          proyect =  Proyecto.objects.all().order_by('id').last() 
@@ -37,9 +37,9 @@ def fandesign(request):
          df_vdf = get_10min_vdf_data() # desde BD
 
          # obtener datos
-         Q_medido = df_sensor1["q1"].mean()
+         Q_medido = df_sensor1["Pbs1"].mean()
          Q_medido = float(Q_medido)
-         P_medido = df_sensor1["pt1"].mean()
+         P_medido = df_sensor1["HRs2"].mean()
          P_medido = float(P_medido)
          
          # indice del valor maximo de presion 
@@ -51,14 +51,14 @@ def fandesign(request):
          calculador_densidad_aire_s1 = calculo_densidad_aire_sensor(request, proyect)
          densidad2 = calculador_densidad_aire_s1.densidad_del_aire()
 
-         presion_dinamica = item_sensors.ps1 - item_sensors.densidad1
+         presion_dinamica = item_sensors.pt1 - item_sensors.ps1
          velocidad_aire_sensor1 = velocidad_aire_sensor(presion_dinamica, calculador_densidad_aire_s1.densidad_del_aire())
          area_ducto = proyect.ducto.area
          caudal = caudal_aire_sensor1(velocidad_aire_sensor1, area_ducto)
          # presion estatica / caudal al cuadrado
          
          try:
-            resistencia_actual = ultima_medicion.densidad1/ caudal**2
+            resistencia_actual = ultima_medicion.ps1/ caudal**2
          except AttributeError:
             resistencia_actual = 0.1
             messages.warning(request,f"Aun no hay datos del sensor")
@@ -96,7 +96,7 @@ def fandesign(request):
          
          df_total_pressure  = calcular_la_curva_total(df_fan, rpm_model, rpm_del_proyecto, densidad2, densidad1 )
          indice_max = df_total_pressure["presion"].idxmax()
-         # presion_maxima = round((item_sensors.ps1/df_total_pressure.loc[indice_max]["presion"])*100,1)
+         
          presion_maxima = calcular_la_presion_maxima(item_sensors, df_total_pressure, indice_max)
 
          if chart_type == 'total_pressure':
@@ -143,7 +143,7 @@ def fandesign(request):
             P_medido = df_vdf.power
 
             densidad_fan = proyect.curva_diseno.densidad
-            densidad_sensor1 = df_sensor1.densidad1
+            densidad_sensor1 = df_sensor1.ps1
             rpm_fan = proyect.curva_diseno.rpm
             rpm_vdf = df_vdf.rpm
 

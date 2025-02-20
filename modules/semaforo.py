@@ -209,11 +209,11 @@ class Semaforo:
         # = J22  * E24
         try:
             # calcular densidad aire en la frente
-            HRf  = self.sensorData["q2"].mean()
+            HRf  = self.sensorData["Tbs2"].mean()
             # temperatura bulbo seco
-            Tbs2 = self.sensorData["lc"].mean()
+            Tbs2 = self.sensorData["Tbs1"].mean()
             # presion barometrica en la frente
-            P2  = self.sensorData["densidad2"].mean()
+            P2  = self.sensorData["Pbs2"].mean()
             # definir variables
             pt2 = self.sensorData["pt2"].mean()
 
@@ -223,10 +223,12 @@ class Semaforo:
             area_ducto = self.calcular_area_ducto()
             Q2 = velocidad_sensor_2 * area_ducto  #  caudal sensor 2 = (m/s)/(m2)
         except TypeError as e: #
+            print(f"error en calculate_Q2: {e}")
             messages.warning(self.request, f"error al calcuar Q2: los valores no se pueden procesar: {e}, verifique los errores de: q2, lc, densidad2, pt2, ps2, area_ducto, ")
             Q2 = 0
         except KeyError as e:
             Q2 = 0
+            print(f"error en calculate_Q2: {e}")
             messages.warning(self.request, f"La base de datos del sensor aun no recibe datos")
             # calcular densidad aire en la frente
             HRf  = 0
@@ -249,11 +251,11 @@ class Semaforo:
         if self.Q1 != None:
             return self.Q1   
         try:
-            pt1 = self.sensorData["ps1"].mean() # Presión total sensor 1 (Pa)
-            ps1 = self.sensorData["densidad1"].mean() # Pesión estática sensor 1 (Pa)
-            tbs1 = self.sensorData["lc"].mean() # Temperatura seca sensor 1 (°C)
-            hrs1 = self.sensorData["qf"].mean() # Humedad Relativa sensor 1 (%)
-            Pbs1 = self.sensorData["q1"].mean()  #  Presión barométrica ventilador (PA)
+            pt1 = self.sensorData["pt1"].mean() # Presión total sensor 1 (Pa)
+            ps1 = self.sensorData["ps1"].mean() # Pesión estática sensor 1 (Pa)
+            tbs1 = self.sensorData["Tbs1"].mean() # Temperatura seca sensor 1 (°C)
+            hrs1 = self.sensorData["HRs1"].mean() # Humedad Relativa sensor 1 (%)
+            Pbs1 = self.sensorData["Pbs1"].mean()  #  Presión barométrica ventilador (PA)
             #tbs1 = self.sensorData["lc"].mean() # 
             velocidad_sensor_1 = self.calcular_velocidad_sensor(tbs1, hrs1, Pbs1, pt1, ps1, "solicitado desde Q1" )
             area_ducto = self.calcular_area_ducto()
@@ -262,6 +264,7 @@ class Semaforo:
             messages.warning(self.request, f"error al calcuar Q1: los valores no se pueden procesar: {e}, verifique los errores de: q2, lc, densidad2, pt2, ps2, area_ducto, ")
             Q1 = 0
         except KeyError as e:
+            print(f"error en calculate_Q1: {e}")
             messages.warning(self.request, f"error la base de datos del sensor aun no recibe datos")
             Q1 = 0
             pt1 = 0
@@ -613,8 +616,8 @@ class Semaforo:
 
     def calculate_k(self):
 
-        mostrar_inicio_formulas_principales("Calculando el valor de K","K (factor de fricción ducto) kg/m3 = (ps1-ps2)*(pow(Área ducto,3))/(Q1*Q2*Perímetro ducto*L)")
-        ps1 = self.sensorData['ps1'].mean()
+        mostrar_inicio_formulas_principales("Calculando el valor de K","K (factor de fricción ducto) kg/m3 = (pt1-ps2)*(pow(Área ducto,3))/(Q1*Q2*Perímetro ducto*L)")
+        pt1 = self.sensorData['pt1'].mean()
         ps2 = self.sensorData['ps2'].mean()
         area_ducto = self.calcular_area_ducto()
         Q1 = self.calculate_Q1()

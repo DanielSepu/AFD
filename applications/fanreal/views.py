@@ -29,10 +29,10 @@ def fanreal(request):
       # obtiene la ultima medicion del sensor
       ultima_medicion =  SensorsData.objects.all().order_by('id').last()  
       # presion estatica / caudal al cuadrado
-      r_actual = ultima_medicion.ps1/ ultima_medicion.q1**2
+      r_actual = ultima_medicion.pt1/ ultima_medicion.q1**2
       # porcentaje de rendimiento del ventilador 
       pr = int(r_max/r_actual *100)
-      peak_pressure =  int(ultima_medicion.ps1/df_fan.loc[ind]['presion'] *100 )
+      peak_pressure =  int(ultima_medicion.pt1/df_fan.loc[ind]['presion'] *100 )
       scatter_data_fan_list = []
       if chart_type == 'total_pressure':
       

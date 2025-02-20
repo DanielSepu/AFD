@@ -20,4 +20,4 @@ def calcular_la_curva_total(df_fan, rpm_model, rpm_del_proyecto, densidad2, dens
 
 
 def calcular_la_presion_maxima(item_sensors, df_total_pressure, indice_max):
-    return round((item_sensors.ps1/df_total_pressure.loc[indice_max]["presion"])*100,1)
+    return round((item_sensors.pt1/df_total_pressure.loc[indice_max]["presion"])*100,1)

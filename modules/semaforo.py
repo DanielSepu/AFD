@@ -489,7 +489,7 @@ class Semaforo:
         df_fan = pd.DataFrame(data=dict(self.project.curva_diseno.datos_curva), dtype=float)
         rpm_del_proyecto = self.project.curva_diseno.rpm
         densidad1 = self.project.curva_diseno.densidad
-        rpm_model = df_vdf['rpm'].mean()
+        rpm_model = self.df_vdf['rpm'].mean()
         
         # calculando la densidad
         calculador_densidad_aire_s1 = calculo_densidad_aire_sensor(self.request, self.project)

@@ -1,3 +1,4 @@
+import traceback
 from rest_framework.response import Response
 from applications.home.functions import get_last_project
 from modules.semaforo import Semaforo
@@ -21,7 +22,7 @@ class  SemaforoApiView(APIView):
             print(semaforo)
             context["detalle_semaforo"]=semaforo.detalle
         except Exception as e:
-            pass
+            traceback.print_exc()
 
         return Response(context)
     

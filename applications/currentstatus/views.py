@@ -187,7 +187,7 @@ def get_recent_data(request):
         presion_estatica_ventilador = round(presion_total - presion_dinamica_entrada_Pa, 0)
         # este calculo obtiene el valor  adecuado independientemente del tipo de ducto, es decir funciona para circular y ovalado
         perdida_choque_total_sistema_ducto = perdidas_choque_codos +sumatoria_choque_accesorios+perdida_choque_salida_ducto
-
+        
         variables['perdida_choque_total_sistema_ducto'] = perdida_choque_total_sistema_ducto
        
         presion_dinamica = item_sensors.pt1 - item_sensors.ps1

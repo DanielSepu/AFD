@@ -17,7 +17,7 @@ def presion_total(proyecto, df_vdf, df_sensor):
     rpm_fan = float(proyecto.curva_diseno.rpm)
     rpm_vdf = df_vdf["rpm"].mean()
     densidad_fan = float(proyecto.curva_diseno.densidad) 
-    densidad_sensor1 = df_sensor["densidad1"].mean()
+    densidad_sensor1 = df_sensor["ps1"].mean()
     df_fan = get_fan_data(proyecto, 'pt')
     
     #  Definición del DataFrame vacío y declaración de las columnas

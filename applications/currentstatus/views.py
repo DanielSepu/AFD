@@ -5,7 +5,7 @@ from django.http import JsonResponse
 import requests as rq
 from django.conf import settings
 from applications.currentstatus.tools import area_ducto_circular, area_inlet_bell, calculate_perdida_choque_codos
-from applications.currentstatus.untils import calculo_densidad_aire_sensor, caudal_aire_sensor1, caudal_de_la_frente, presion_dinamica_sensor_1, velocidad_aire_sensor
+from applications.currentstatus.utils import calculo_densidad_aire_sensor, caudal_aire_sensor1, caudal_de_la_frente, presion_dinamica_sensor_1, velocidad_aire_sensor
 from applications.getdata.models import Proyecto, SensorsData, VdfData
 from django.db.models import Max
 from applications.getdata.simulador.simulador import insert_sensor_data
@@ -109,7 +109,7 @@ def get_recent_data(request):
         # densidad calculada
         calculador_densidad_aire_s1 = calculo_densidad_aire_sensor(request, project)
         densidad = calculador_densidad_aire_s1.densidad_del_aire()
-        
+        print(f"densidad: {densidad}")
         mid_densidad = densidad/2
         # CONFIGURAR EL SEMAFORO PARA OBTENER CAUDALES
         semaforo = Semaforo(request)

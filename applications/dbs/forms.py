@@ -261,6 +261,14 @@ class DuctoForm(forms.ModelForm):
         label='longitud de ducto desde el sensor 2 hasta la frente (m)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'longitud de ducto desde el sensor 2 hasta la frente (m)'})
     )
+    dSensores = forms.FloatField(
+        label='Distancia entre sensores (m)',
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Distancia entre sensores (m)'})
+    )
+    dS2_F = forms.FloatField(
+        label='Distancia entre sensores 2 a la frente (m)',
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Distancia entre sensores 2 a la frente (m)'})
+    )
     class Meta:
         model = Ducto
         fields = ['idu', 't_ducto','diametro','area', 'f_friccion', 'f_fuga', 't_acople', 'largo', 'Ldsf']
@@ -425,6 +433,10 @@ class ProyectoForm(forms.ModelForm):
     dis_e_sens = forms.FloatField(
         label='Distancia entre sensores (m)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese la distancia entre sensores'})
+    )
+    dedf = forms.FloatField(
+        label='Distancia estimada del ducto a frente (m)',
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese la distancia estimada del ducto a la frente en metros'})
     )
     lf = forms.FloatField(
         label='Longitud de ducto desde el sensor 2 hasta la frente (m)',

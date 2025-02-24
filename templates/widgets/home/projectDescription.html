@@ -141,6 +141,8 @@
                                                 <th scope="col">Factor de fuga</th>
                                                 <th scope="col">Tipo de acople</th>
                                                 <th scope="col">Largo</th>
+                                                <th scope="col">Distancia entre sensores</th>
+                                                <th scope="col">Distancia sensor 2 a frente</th>
                                                 <th scope="col">Opciones</th>
                                             </tr>
                                         </thead>
@@ -151,6 +153,8 @@
                                                 <td>{{ Project.ducto.f_fuga }}</td>
                                                 <td>{{ Project.ducto.t_acople }}</td>
                                                 <td>{{ Project.ducto.largo }}</td>
+                                                <td>{{ Project.ducto.dSensores }}</td>
+                                                <td>{{ Project.ducto.dS2_F }}</td>
                                                 <td>
                                                     <a href="{% url 'dbs:edit-ducto' Project.ducto.id %}" class="btn btn-success btn-sm">
                                                         Editar

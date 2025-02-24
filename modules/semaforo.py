@@ -3,11 +3,14 @@ import math
 
 import pandas as pd
 
+from applications.currentstatus.utils import calculo_densidad_aire_sensor
 from applications.fandesign.mixins import presion_total
 from applications.fandesign.utils import calcular_la_curva_total, calcular_la_presion_maxima
 from applications.getdata.models import SensorsData, VdfData
 from modules.queries import get_10min_sensor_data, get_10min_vdf_data
 from django.contrib import messages
+
+from modules.utils import calculate_tbh
 
 
 def mostrar_inicio_formulas_principales(str, description):
@@ -337,7 +340,7 @@ class Semaforo:
         return Qf
     
     def calculate_tbh(self, tbs, hr):
-        return tbs * atan(0.151977 * sqrt(hr + 8.313659)) + atan(tbs + hr) - atan(hr - 1.6763) + 0.00391838 * pow(hr, 1.5) * atan(0.023101 * hr) - 4.686035
+        return calculate_tbh(tbs, hr)
 
     def calcular_semaforo_v2(self, velocidad_del_aire):
         if velocidad_del_aire > 0.25 and velocidad_del_aire < 2.5:
@@ -486,19 +489,20 @@ class Semaforo:
         presion_maxima_curvaAjustada = presion_total_df['presion'].max()
         fila = presion_total_df.loc[presion_total_df['presion'] == presion_maxima_curvaAjustada ]
         stall = pt2 / presion_maxima_curvaAjustada * 100
+        print(f"punto de stall: {stall}")
         df_fan = pd.DataFrame(data=dict(self.project.curva_diseno.datos_curva), dtype=float)
         rpm_del_proyecto = self.project.curva_diseno.rpm
         densidad1 = self.project.curva_diseno.densidad
-        rpm_model = self.df_vdf['rpm'].mean()
+        rpm_model = self.vdfData['rpm'].mean()
         
         # calculando la densidad
         calculador_densidad_aire_s1 = calculo_densidad_aire_sensor(self.request, self.project)
         densidad2 = calculador_densidad_aire_s1.densidad_del_aire()
         df_total_pressure  = calcular_la_curva_total(df_fan, rpm_model, rpm_del_proyecto, densidad2, densidad1 )
         indice_max = df_total_pressure["presion"].idxmax()
-        presion_maxima = calcular_la_presion_maxima(self.sensorData, df_total_pressure, indice_max)
-
-        color = self.calcular_semaforo_v5(stall)
+        presion_maxima = calcular_la_presion_maxima(self.sensorData, df_total_pressure, indice_max) 
+        print(f"presion_maxima: {type(presion_maxima)}")
+        color = self.calcular_semaforo_v5(presion_maxima)
         self.detalle['v5'] = {
             'pt2': round(pt2,3),
             'presion_maxima': round(presion_maxima_curvaAjustada,3),
@@ -507,7 +511,7 @@ class Semaforo:
             'formula': "stall = pt2 / presion_maxima_curvaAjustada * 100"
         }
         self.detalle["colores"].append(color)
-        return stall
+        return presion_maxima
 
 
     def calcular_semaforo_v6(self, porcentaje):

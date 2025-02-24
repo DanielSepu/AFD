@@ -1,10 +1,7 @@
-
-
-from math import sqrt
 import math
 from django.db.models import Max
 from applications.getdata.models import SensorsData
-from modules.semaforo import Semaforo
+from modules.utils import calculate_tbh
 
 
 def presion_dinamica_sensor_1(presion_t_s1, presion_estatica_s1):
@@ -17,32 +14,16 @@ def velocidad_aire_sensor(presion_dinamica_sensor, densidad_aire_sensor1):
 def caudal_aire_sensor1(velocidad_aire_sensor1, area_ducto):
     return round(velocidad_aire_sensor1*area_ducto,1)
 
-def velocidad_aire_para_Q(presion_total, presion_dinamica_sensor1, densidad_aire_sensor1):
-    primera_ = 2 * presion_dinamica_sensor1
-    
-    return math.sqrt(primera_/densidad_aire_sensor1)
-
-def calcular_Q(velocidad_aire_sensor, area_ducto):
-    return round(velocidad_aire_sensor1*area_ducto,1)
-
-def densidad_aire_sensor1(diccionario):
-    pass
 
 def caudal_de_la_frente(Q2, Lc, pt2, Lf):
     return Q2 - Lc*0.5*pt2*Lf /100000
-    
-def ajuste_rpm():
-    pass
 
 
 class calculo_densidad_aire_sensor:
     def __init__(self, request, project):
         self.project = project
         self.request = request
-        self.semaforo = Semaforo(request)
-        self.semaforo.encender(project)
         self.item_sensors = None
-        
         self.tbs1 = None
         self.temperatura_bh_s1 = None
         self.pbs1 = None
@@ -61,10 +42,9 @@ class calculo_densidad_aire_sensor:
         HRs2 = self.item_sensors.HRs2 # HRs2
         
         self.pbs1 = self.item_sensors.Pbs1  # Pbs1
-        semaforo = Semaforo(self.request)
-        semaforo.encender(self.project)
-        self.tbs1 = round(semaforo.calculate_tbh(Tbs1, HRs1),1)
-        self.temperatura_bh_s1 = round(semaforo.calculate_tbh(Tbs2, HRs2),1)
+        
+        self.tbs1 = round(calculate_tbh(Tbs1, HRs1),1)
+        self.temperatura_bh_s1 = round(calculate_tbh(Tbs2, HRs2),1)
         
     def esd(self):
         return round(610 * math.exp(17.27 * self.tbs1 / (237.3 + self.tbs1)), 3)

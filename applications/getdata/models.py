@@ -144,7 +144,9 @@ class Ducto(models.Model):
    f_fuga = models.FloatField()
    t_acople = models.CharField()
    largo = models.FloatField()
-   Ldsf = models.IntegerField()      
+   Ldsf = models.IntegerField() 
+   dSensores = models.FloatField(default=0)     
+   dS2_F = models.FloatField(default=0)
    
    class Meta:
       db_table = "ducto"
@@ -196,6 +198,7 @@ class Proyecto(models.Model):
    dis_e_sens = models.FloatField()
    lf = models.FloatField() # longitud de ducto desde el sensor 2 hasta la frente en metros
    s_partida = models.ForeignKey(Sistema_Partida, on_delete=models.CASCADE) 
+   dedf = models.FloatField() # distancia estimada del ducto hasta la frente
 
    class Meta:
       db_table = "proyecto"

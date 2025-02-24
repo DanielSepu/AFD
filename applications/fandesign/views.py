@@ -1,15 +1,12 @@
 from math import sqrt
-import pdb
 import traceback
-from django.forms import model_to_dict
 from django.shortcuts import render
 import numpy as np
 import pandas as pd  # Importa pandas
 from django.contrib import messages
 
 from applications.currentstatus.tools import goal_seek_custom
-from applications.currentstatus.untils import calculo_densidad_aire_sensor, caudal_aire_sensor1, velocidad_aire_sensor
-from applications.fandesign.mixins import presion_total, presion_total_2
+from applications.currentstatus.utils import calculo_densidad_aire_sensor, caudal_aire_sensor1, velocidad_aire_sensor
 from applications.fandesign.utils import calcular_la_curva_estatica, calcular_la_curva_total, calcular_la_presion_maxima
 from modules.graphdata import *
 from modules.queries import *
@@ -98,7 +95,7 @@ def fandesign(request):
          indice_max = df_total_pressure["presion"].idxmax()
          
          presion_maxima = calcular_la_presion_maxima(item_sensors, df_total_pressure, indice_max)
-
+         print(f"presion_maxima: {presion_maxima}")
          if chart_type == 'total_pressure':
             # datos de la curva ajustada por RPM 
             curva_ajustada_x_rpm = pd.DataFrame({'presion_ajustada': df_fan['presion'].mul((rpm_model / rpm_del_proyecto) ** 2), 'caudal_ajustado': df_fan['caudal'].mul(rpm_model / rpm_del_proyecto)})

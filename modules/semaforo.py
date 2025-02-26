@@ -8,6 +8,7 @@ from applications.fandesign.mixins import presion_total
 from applications.fandesign.utils import calcular_la_curva_total, calcular_la_presion_maxima
 from applications.getdata.models import SensorsData, VdfData
 from modules.queries import get_10min_sensor_data, get_10min_vdf_data
+from django.db.models import Max
 from django.contrib import messages
 
 from modules.utils import calculate_tbh
@@ -500,8 +501,10 @@ class Semaforo:
         densidad2 = calculador_densidad_aire_s1.densidad_del_aire()
         df_total_pressure  = calcular_la_curva_total(df_fan, rpm_model, rpm_del_proyecto, densidad2, densidad1 )
         indice_max = df_total_pressure["presion"].idxmax()
-        presion_maxima = calcular_la_presion_maxima(self.sensorData, df_total_pressure, indice_max) 
-        print(f"presion_maxima: {type(presion_maxima)}")
+        latest_record_sensors = SensorsData.objects.using('sensorDB').aggregate(Max('id'))
+        max_id_sensors = latest_record_sensors['id__max']
+        item_sensors = SensorsData.objects.using('sensorDB').get(id=max_id_sensors)
+        presion_maxima = calcular_la_presion_maxima(item_sensors, df_total_pressure, indice_max) 
         color = self.calcular_semaforo_v5(presion_maxima)
         self.detalle['v5'] = {
             'pt2': round(pt2,3),
@@ -512,7 +515,6 @@ class Semaforo:
         }
         self.detalle["colores"].append(color)
         return presion_maxima
-
 
     def calcular_semaforo_v6(self, porcentaje):
         if porcentaje < 0.05:
@@ -615,8 +617,6 @@ class Semaforo:
         else:
             color = "verde"
         self.detalle["color"] =color
-
-    
 
     def calculate_k(self):
 

@@ -95,8 +95,17 @@ def fandesign(request):
          indice_max = df_total_pressure["presion"].idxmax()
          
          presion_maxima = calcular_la_presion_maxima(item_sensors, df_total_pressure, indice_max)
-         print(f"presion_maxima: {presion_maxima}")
+
          if chart_type == 'total_pressure':
+            # creando curva inicial 
+            scatter_data_fan_list_inicial = df_fan[['caudal','presion']].to_dict(orient='records')
+            for k,v in enumerate(scatter_data_fan_list_inicial):
+               v['CAUDAL (m³/s)'] = v['caudal']
+               v['PRESION (Pa)'] = v['presion']
+               del v['caudal']
+               del v['presion']
+            
+            
             # datos de la curva ajustada por RPM 
             curva_ajustada_x_rpm = pd.DataFrame({'presion_ajustada': df_fan['presion'].mul((rpm_model / rpm_del_proyecto) ** 2), 'caudal_ajustado': df_fan['caudal'].mul(rpm_model / rpm_del_proyecto)})
             # datos de la curva ajustada por la densidad
@@ -111,6 +120,15 @@ def fandesign(request):
                del v['presion']
 
          elif chart_type == 'static_pressure':
+            
+            # creando curva inicial
+            scatter_data_fan_list_inicial = df_fan[['caudal','presion']].to_dict(orient='records')
+
+            for k,v in enumerate(scatter_data_fan_list):
+               v['CAUDAL (m³/s)'] = v['caudal']
+               v['PRESION (Pa)'] = v['presion']
+               del v['caudal']
+               del v['presion']
             
             ### SENSORs DATA ###  #Reemplazar con datos sensor BD
             
@@ -130,6 +148,14 @@ def fandesign(request):
 
          elif chart_type == 'power':
             
+            # creando curva inicial
+            scatter_data_fan_list_inicial = df_fan[['caudal','potencia']].to_dict(orient='records')
+            for k,v in enumerate(scatter_data_fan_list_inicial):
+               v['CAUDAL (m³/s)'] = v['caudal']
+               v['POTENCIA (kW)'] = v['potencia']
+               del v['caudal']
+               del v['potencia']
+            
             ### SENSORs DATA ###  #Reemplazar con datos sensor BD
             #df_sensor1 = get_sensor_data()
             df_sensor1 = SensorsData.objects.using('sensorDB').all().last()
@@ -139,16 +165,6 @@ def fandesign(request):
 
             P_medido = df_vdf.power
 
-            densidad_fan = proyect.curva_diseno.densidad
-            densidad_sensor1 = df_sensor1.ps1
-            rpm_fan = proyect.curva_diseno.rpm
-            rpm_vdf = df_vdf.rpm
-
-            # Calcular las columnas necesarias y asignarlas al DataFrame df_adjust
-            df_adjust = pd.DataFrame({
-               'q_rpm': rpm_adjust_caudal(df_fan['caudal'], rpm_fan, rpm_vdf),
-               'power_rpm': rpm_adjust_power(df_fan['potencia'], rpm_fan, rpm_vdf),
-            })
             # formula para caudal: B15*($G$2/$C$2)
             # formula para potencia C15*($G$2/$C$2)^3
             curva_ajustada_x_rpm = pd.DataFrame(
@@ -198,6 +214,7 @@ def fandesign(request):
 
          context = {
                   'scatter_data': scatter_data_fan_list, 
+                  'curva_inicial': scatter_data_fan_list_inicial, 
                   'scatter_data2':XY_segunda, 
                   'chart_type': chart_type, 
                   'c':[Q_medido,P_medido], 

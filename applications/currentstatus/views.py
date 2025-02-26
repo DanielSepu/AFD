@@ -202,7 +202,7 @@ def get_recent_data(request):
             "pt1": round(item_sensors.pt1, 2),
             "qf": round(item_sensors.HRs1, 2),
             "q1": caudal_aire_sensor1(velocidad_aire_sensor1, area_ducto),
-            "pt1": round(item_sensors.HRs2, 2),
+            "HRs2": round(item_sensors.HRs2, 2),
             "densidad1": round(item_sensors.ps1, 2),
             "powerc": round(item_vdf.powerc, 2),
             "fref": round(item_vdf.fref, 2),

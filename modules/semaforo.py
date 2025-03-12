@@ -490,7 +490,7 @@ class Semaforo:
         presion_maxima_curvaAjustada = presion_total_df['presion'].max()
         fila = presion_total_df.loc[presion_total_df['presion'] == presion_maxima_curvaAjustada ]
         stall = pt2 / presion_maxima_curvaAjustada * 100
-        print(f"punto de stall: {stall}")
+        
         df_fan = pd.DataFrame(data=dict(self.project.curva_diseno.datos_curva), dtype=float)
         rpm_del_proyecto = self.project.curva_diseno.rpm
         densidad1 = self.project.curva_diseno.densidad
@@ -504,12 +504,15 @@ class Semaforo:
         latest_record_sensors = SensorsData.objects.using('sensorDB').aggregate(Max('id'))
         max_id_sensors = latest_record_sensors['id__max']
         item_sensors = SensorsData.objects.using('sensorDB').get(id=max_id_sensors)
+        
+        presion_maxima_curvaAjustada = df_total_pressure["presion"].max()
         presion_maxima = calcular_la_presion_maxima(item_sensors, df_total_pressure, indice_max) 
         color = self.calcular_semaforo_v5(presion_maxima)
+        print(f"punto de stall: {presion_maxima}")
         self.detalle['v5'] = {
             'pt2': round(pt2,3),
             'presion_maxima': round(presion_maxima_curvaAjustada,3),
-            'stall': round(stall,3),
+            'stall': f"{round(stall,3)} %",
             'color': self.calcular_semaforo_v5(stall),
             'formula': "stall = pt2 / presion_maxima_curvaAjustada * 100"
         }

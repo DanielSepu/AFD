@@ -150,7 +150,7 @@ def goal_seek_custom(ajuste_cubico, r_actual, initial_guess=0.5, tolerance=1e-6,
     - ajuste_cubico: Coeficientes [a3, a2, a1, a0] del polinomio cúbico.
     - r_actual: Valor de la resistencia actual.
     - initial_guess: Valor inicial para X.
-    - tolerance: Precisión deseada (valor cercano a 0 para goal_seek).
+    - tolerance: sióPrecin deseada (valor cercano a 0 para goal_seek).
     - max_iterations: Número máximo de iteraciones permitidas.
 
     Retorna:

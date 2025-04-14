@@ -173,7 +173,7 @@ def goal_seek_custom(ajuste_cubico, r_actual, initial_guess=0.5, tolerance=1e-6,
         
         # Verificar si estamos dentro de la tolerancia
         if abs(goal_seek) < tolerance:
-            print(f"Goal Seek convergió después de {i+1} iteraciones.")
+            
             return ecuacion1, ecuacion2, X
         
         # Calcular la derivada numérica de la ecuación goal_seek

@@ -4,19 +4,43 @@
     <a class="navbar-brand" href="{% url "homepage" %}">
       <img src="{% static 'img/favicon.png' %}" alt="" width="30" height="24">
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" 
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
+      <!-- Botones alineados a la izquierda -->
+      <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="btn {% if request.resolver_match.url_name == 'fandesign' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-1" href="{% url 'fandesign:fandesign' %}?chart_type=total_pressure" role="button">Curva de diseño del ventilador</a>
-
-          <a class="btn {% if request.resolver_match.url_name == 'currentstatus' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-1" href="{% url 'currentstatus:currentstatus' %}" role="button">Estado actual</a>
-
-          <a class="btn {% if request.resolver_match.url_name == 'settings' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-1" href="{% url 'settings:settings' %}?type=current_project" role="button">Configuración</a>
+          <a class="btn {% if request.resolver_match.url_name == 'fandesign' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-1 me-2"
+             href="{% url 'fandesign:fandesign' %}?chart_type=total_pressure" role="button">
+            Curva de diseño del ventilador
+          </a>
         </li>
+        <li class="nav-item">
+          <a class="btn {% if request.resolver_match.url_name == 'currentstatus' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-1 me-2"
+             href="{% url 'currentstatus:currentstatus' %}" role="button">
+            Estado actual
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="btn {% if request.resolver_match.url_name == 'settings' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-1 me-2"
+             href="{% url 'settings:settings' %}?type=current_project" role="button">
+            Configuración
+          </a>
+        </li>
+        {% include "widgets/graphics/vars.html" %}
+        
       </ul>
+
+      <!-- Botón alineado a la derecha -->
+      <div class="ms-auto">
+        <a class="btn {% if request.resolver_match.url_name == 'admin_page' %}btn-secondary{% else %}btn-outline-secondary{% endif %} mt-1"
+           href="{% url 'settings:admin_page' %}" role="button">
+          Administración
+        </a>
+      </div>
     </div>
   </div>
 </nav>

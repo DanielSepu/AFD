@@ -45,7 +45,7 @@ def fandesign(request):
          ultima_medicion =  SensorsData.objects.using("sensorDB").all().order_by('-ts').first()  
          
          # calculando la densidad
-         calculador_densidad_aire_s1 = calculo_densidad_aire_sensor(request, proyect)
+         calculador_densidad_aire_s1 = calculo_densidad_aire_sensor( proyect)
          densidad2 = calculador_densidad_aire_s1.densidad_del_aire()
 
          presion_dinamica = item_sensors.pt1 - item_sensors.ps1
@@ -138,6 +138,8 @@ def fandesign(request):
 
             # CALCULANDO LA PRESION ESTATICA
             curva_ajusta_x_densidad = calcular_la_curva_estatica(df_fan, rpm_model, rpm_del_proyecto, densidad2, densidad1, area_difusor)
+            
+            
             scatter_data_fan_list = curva_ajusta_x_densidad[['caudal','presion']].to_dict(orient='records')
 
             for k,v in enumerate(scatter_data_fan_list):
@@ -193,7 +195,6 @@ def fandesign(request):
             return render(request, 'fanDesign.html')
          
          # Convierte los datos a una lista de diccionarios
-         # print(scatter_data_fan_list)
          # Pasa los datos a la plantilla
          XY_segunda = []
 
@@ -226,11 +227,10 @@ def fandesign(request):
                   'rotacion_actual':round(rotacion_actual, 1),
                   'presion_maxima':presion_maxima,
                   }
-         # print(f"context: {context}")
+
          return render(request, 'fanDesign.html', context)
       except Exception as e:
          traceback.print_exc()
-         print(f"error")
          messages.warning(request,f"Warning: {e}")
 
    # Si la solicitud no es un POST, simplemente renderiza la página sin datos

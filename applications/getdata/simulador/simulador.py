@@ -1,7 +1,7 @@
 import time
 import random
 from django.utils import timezone
-
+from core.logger_config import logger_AFD
 from applications.getdata.models import SensorsData, VdfData
 
 # Valores base para simular datos reales en SensorsData
@@ -45,7 +45,6 @@ def insert_sensor_data(count=None):
     """
     Inserta un nuevo conjunto de datos en las tablas SensorsData y VdfData.
     """
-    print(f"-- simulador Activo -- Insertando datos SensorsData y VdfData --")
     
     # Inserción de datos en SensorsData
     sensor_data = {

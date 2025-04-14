@@ -18,24 +18,24 @@
                             <div class="col-md-6">
                                 <h5>Codos</h5>
                                 <p>{{ Project.codos }}</p>
-                                <h5>Ancho de la galería</h5>
-                                <p>{{ Project.ancho_galeria }} (m)</p>
+                                <h5>Ancho de la galería (m)</h5>
+                                <p>{{ Project.ancho_galeria }} </p>
                                 <h5>Área de la galería</h5>
                                 <p>{{ Project.area_galeria }} (m²)</p>
-                                <h5>Distancia entre sensores</h5>
-                                <p>{{ Project.dis_e_sens }} (m)</p>
+                                <h5>Distancia entre sensores (m)</h5>
+                                <p>{{ Project.dis_e_sens }} </p>
                             </div>
                         
                             <!-- Segunda columna -->
                             <div class="col-md-6">
-                                <h5>Caudal requerido</h5>
-                                <p>{{ Project.caudal_requerido }} (m³/s)</p>
-                                <h5>Alto de galería</h5>
-                                <p>{{ Project.alto_galeria }} (m)</p>
-                                <h5>Ancho de galería</h5>
-                                <p>{{ Project.ancho_galeria }} (m)</p>
-                                <h5>Factor de corrección</h5>
-                                <p>{{ Project.factor }} (%)</p>
+                                <h5>Caudal requerido (m³/s)</h5>
+                                <p>{{ Project.caudal_requerido }} </p>
+                                <h5>Alto de galería (m)</h5>
+                                <p>{{ Project.alto_galeria }} </p>
+                                <h5>Ancho de galería (m)</h5>
+                                <p>{{ Project.ancho_galeria }} </p>
+                                <h5>Factor de corrección (%)</h5>
+                                <p>{{ Project.factor }} </p>
                             </div>
                         </div>
                         
@@ -141,8 +141,8 @@
                                                 <th scope="col">Factor de fuga</th>
                                                 <th scope="col">Tipo de acople</th>
                                                 <th scope="col">Largo</th>
-                                                <th scope="col">Distancia entre sensores</th>
-                                                <th scope="col">Distancia sensor 2 a frente</th>
+                                                <th scope="col">Distancia entre sensores (m)</th>
+                                                <th scope="col">Distancia sensor 2 a frente (m)</th>
                                                 <th scope="col">Opciones</th>
                                             </tr>
                                         </thead>
@@ -238,14 +238,4 @@
     </div>
 </div>
 
-<script>
-  $(document).ready(function() {
-      $('.toggle-button').on('click', function() {
-          // Busca el contenido a desplegar en el mismo fieldset
-          $(this).closest('fieldset').find('.toggle-content').toggle();
 
-          // Cambia el ícono de la flecha
-          $(this).find('i').toggleClass('fa-chevron-down fa-chevron-up');
-      });
-  });
-</script>

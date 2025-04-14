@@ -5,17 +5,14 @@ from django.views.generic import UpdateView, CreateView
 
 from applications.getdata.models import *
 from .forms import *
+from core.logger_config import logger_AFD
 import json
 
 
 def dbs(request):
    if request.method == 'GET':
       db_type = request.GET.get('type')
-      print(db_type)
-      #from applications.getdata.models import Ventilador
-      #v1 = Ventilador.objects.get(id=3)
-      #print(v1.accesorios.all().values())
-
+      
       if db_type == 'ventilador' or db_type is None:
          form = VentiladorForm() 
          context = {'db_type': db_type, 'form': form}
@@ -42,14 +39,7 @@ def dbs(request):
 
    if request.method == 'POST':
       db_type = request.GET.get('type')
-      #for k, v in request.POST.items():
-         #print('['+k+']: '+v)
       
-      """Obtener queryset desde el form que viene"""
-      #l = VentiladorForm(request.POST) 
-      #if l.is_valid(): #Si no se usa is valid, cleaned_data no funciona
-         #print(l.cleaned_data.get("accesorios"))
-   
       if db_type == 'ventilador' or db_type is None:
          form = VentiladorForm(request.POST) 
          context = {'db_type': db_type, 'form': form}
@@ -58,8 +48,7 @@ def dbs(request):
             #return redirect('ventilador_detail', pk=ventilador.pk)
             messages.success(request,"Se ha guardado el nuevo ventilador")
          else:
-            print(f"guardar el ventilador no es valido")
-            print(form.errors)
+            pass
       
       if db_type == 'curva_diseno':
          form = CurvaDisenoForm(request.POST) 
@@ -90,8 +79,8 @@ def dbs(request):
             curva.datos_curva = json_data
             curva.save()
          else:
-            print(f"guardar la curva de diseño no es valido")
-            print(form.errors)
+            logger_AFD.debug(f"guardar la curva de diseño no es valido")
+            logger_AFD.debug(form.errors)
       
       if db_type == 'ducto':
          form = DuctoForm(request.POST) 
@@ -99,8 +88,8 @@ def dbs(request):
          if form.is_valid():
             ducto = form.save()
          else:
-            print(f"guardar el ducto no es valido")
-            print(form.errors)
+            logger_AFD.debug(f"guardar el ducto no es valido")
+            logger_AFD.debug(form.errors)
       
       if db_type == 'equip_diesel':
          form = EquipDieselForm(request.POST) 
@@ -108,8 +97,8 @@ def dbs(request):
          if form.is_valid():
             equipod = form.save()
          else:
-            print(f"guardar el equipo diesel no es valido")
-            print(form.errors)
+            logger_AFD.debug(f"guardar el equipo diesel no es valido")
+            logger_AFD.debug(form.errors)
          
       return redirect('/dbs/?type=ventilador')
 
@@ -192,7 +181,6 @@ class DuctoEditView(UpdateView):
    def get_context_data(self, **kwargs):
       context = super().get_context_data(**kwargs)
       context['db_type'] = 'Ducto'
-      print(context)
       return context
 
 

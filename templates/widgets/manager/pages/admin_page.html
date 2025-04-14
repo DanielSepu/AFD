@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body_content %}
+<div class="container my-4">
+  <h2 class="mb-3">Panel de Administración</h2>
+  <p>Desde aquí puedes configurar el semáforo, gestionar el simulador y ajustar el rango para el historial.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <ul class="nav nav-tabs card-header-tabs" id="adminTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <a class="nav-link" id="semaforo-tab" data-bs-toggle="tab" href="#semaforo" role="tab" aria-controls="semaforo" aria-selected="false">
+            Semáforo
+          </a>
+        </li>
+        <li class="nav-item" role="presentation">
+          <a class="nav-link active" id="simulador-tab" data-bs-toggle="tab" href="#simulador" role="tab" aria-controls="simulador" aria-selected="true">
+            Simulador
+          </a>
+        </li>
+        <li class="nav-item" role="presentation">
+          <a class="nav-link" id="historial-tab" data-bs-toggle="tab" href="#historial" role="tab" aria-controls="historial" aria-selected="false">
+            Sistema
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="card-body">
+      <div class="tab-content" id="adminTabContent">
+        <!-- Pestaña Configurar Semáforo -->
+        <div class="tab-pane fade" id="semaforo" role="tabpanel" aria-labelledby="semaforo-tab">
+          <h3>Configurar Semáforo</h3>
+          <form method="post" action="{% url 'settings:config_semaforo' %}">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="semaforo_form">
+            <div class="row align-items-center">
+              <!-- Campo update_interval -->
+              <div class="col-auto">
+                <label for="{{ semaforo_form.semaforo.id_for_label }}" class="form-label">
+                  {{ semaforo_form.semaforo.label }}
+                </label>
+              </div>
+              <div class="col-auto">
+                {{ semaforo_form.semaforo }}
+              </div>
+              <!-- Campo estado como switch -->
+              <div class="col-auto">
+                <div class="form-check form-switch">
+                  {{ semaforo_form.estado }}
+                  <label class="form-check-label" for="{{ semaforo_form.estado.id_for_label }}">
+                    {{ semaforo_form.estado.label }}
+                  </label>
+                </div>
+              </div>
+              <!-- Botón de envío -->
+              <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+              </div>
+            </div>
+          </form>
+          
+        </div>
+        <!-- Pestaña Simulador -->
+        <div class="tab-pane fade show active" id="simulador" role="tabpanel" aria-labelledby="simulador-tab">
+          
+          <h2>intervalos de actualización</h2>
+          <form class="card p-3" method="post" action="{% url 'settings:admin_page' %}">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="intervalo">
+            <div class="row align-items-center">
+              <!-- Campo insert_interval -->
+              <div class="col-md-5">
+                <label for="{{ simuladorjson_form.insert_interval.id_for_label }}" class="form-label">
+                  {{ simuladorjson_form.insert_interval.label }}
+                </label>
+                {{ simuladorjson_form.insert_interval }}
+                {% if simuladorjson_form.insert_interval.errors %}
+                  <div class="invalid-feedback d-block">
+                    {{ simuladorjson_form.insert_interval.errors }}
+                  </div>
+                {% endif %}
+              </div>
+              <!-- Campo estado como switch -->
+              <div class="col-md-5">
+                <div class="form-check form-switch">
+                  {{ simuladorjson_form.estado }}
+                  <label class="form-check-label" for="{{ simuladorjson_form.estado.id_for_label }}">
+                    {{ simuladorjson_form.estado.label }}
+                  </label>
+                </div>
+                {% if simuladorjson_form.estado.errors %}
+                  <div class="invalid-feedback d-block">
+                    {{ simuladorjson_form.estado.errors }}
+                  </div>
+                {% endif %}
+              </div>
+              <!-- Botón de envío -->
+              <div class="col-md-2 text-end">
+                <button type="submit" class="btn btn-primary">Enviar Datos</button>
+              </div>
+            </div>
+          </form>
+          <hr>
+          <h3>Datos del simulador</h3>
+          <form method="post" action="{% url 'settings:admin_page' %}">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="simulador">
+            <div class="row">
+              <div class="col-md-6">
+                <fieldset class="mb-3">
+                  <legend>Datos VDF</legend>
+                  {{ vdf_form.as_p }}
+                </fieldset>
+              </div>
+              <div class="col-md-6">
+                <fieldset class="mb-3">
+                  <legend>Datos Sensores</legend>
+                  {{ sensors_form.as_p }}
+                </fieldset>
+              </div>
+            </div>
+            <div class="col-md-2 text-end">
+                <button type="submit" class="btn btn-primary">Enviar Datos</button>
+            </div>
+          </form>
+        </div>
+        <!-- Pestaña historial -->
+        <div class="tab-pane fade " id="historial" role="tabpanel" aria-labelledby="simulador-tab">
+          <h3>Configurar rangos de historial</h3>
+          <form method="post" action="{% url 'settings:admin_page' %}">
+              {% csrf_token %}
+              <input type="hidden" name="form_type" value="sistema">
+              <div class="row align-items-center">
+                <!-- Campo update_interval -->
+                <div class="col-auto">
+                  <label for="{{ sistema_form.sistema.id_for_label }}" class="form-label">
+                    {{ sistema_form.sistema.label }}
+                  </label>
+                </div>
+                <div class="col-auto">
+                  {{ sistema_form.sistema }}
+                </div>
+                <!-- Botón de envío -->
+                <div class="col-auto">
+                  <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+              </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock body_content %}

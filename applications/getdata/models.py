@@ -1,6 +1,7 @@
 from django.db import models
 
 
+
 # Create your models here.
 class SensorData(models.Model):  
    payload = models.FloatField()
@@ -202,3 +203,149 @@ class Proyecto(models.Model):
 
    class Meta:
       db_table = "proyecto"
+      
+      
+class Simulador(models.Model):
+    data = models.JSONField()
+    insert_interval = models.IntegerField(
+        help_text="Intervalo en segundos para insertar nuevos valores",
+        default=60
+    )
+    estado = models.BooleanField(default=False)
+
+    class Meta:
+         db_table="simulador"
+
+class Historial(models.Model):
+    # Pérdidas de ductos (ducto circular)
+    pc1_dc   = models.FloatField(
+        verbose_name="pérdida codo 1 ducto circular",
+        blank=True, null=True
+    )
+    pc2_dc   = models.FloatField(
+        verbose_name="pérdida codo 2 ducto circular",
+        blank=True, null=True
+    )
+    pc345_dc = models.FloatField(
+        verbose_name="pérdida codos 3,4,5 ducto circular",
+        blank=True, null=True
+    )
+    pcc_dc   = models.FloatField(
+        verbose_name="pérdida choque codos ducto",
+        blank=True, null=True
+    )
+
+    # Fórmulas
+    f1     = models.FloatField(
+        verbose_name="fórmula parte 1",
+        blank=True, null=True
+    )
+    f2_dc  = models.FloatField(
+        verbose_name="fórmula parte 2 ducto circular",
+        blank=True, null=True
+    )
+    f2_do  = models.FloatField(
+        verbose_name="fórmula parte 2 ducto ovalado",
+        blank=True, null=True
+    )
+
+    # Caudales
+    q_c1   = models.FloatField(
+        verbose_name="Q codo 1",
+        blank=True, null=True
+    )
+    q_c2   = models.FloatField(
+        verbose_name="Q codo 2",
+        blank=True, null=True
+    )
+    q_c345 = models.FloatField(
+        verbose_name="Q codos 3,4,5",
+        blank=True, null=True
+    )
+    q1     = models.FloatField(
+        verbose_name="Caudal Q1",
+        blank=True, null=True
+    )
+    qf     = models.FloatField(
+        verbose_name="Caudal de la frente",
+        blank=True, null=True
+    )
+
+    # Otras pérdidas y presiones
+    pct_sys = models.FloatField(
+        verbose_name="pérdida choque total sistema ducto circular/ovalado",
+        blank=True, null=True
+    )
+    pd_v    = models.FloatField(
+        verbose_name="presión dinámica ventilador",
+        blank=True, null=True
+    )
+    pe_v    = models.FloatField(
+        verbose_name="presión estática ventilador",
+        blank=True, null=True
+    )
+    pd_e    = models.FloatField(
+        verbose_name="presión dinámica entrada",
+        blank=True, null=True
+    )
+    pcs_dc  = models.FloatField(
+        verbose_name="pérdida choque salida ducto",
+        blank=True, null=True
+    )
+    pta_v   = models.FloatField(
+        verbose_name="pérdida total accesorios ventilador",
+        blank=True, null=True
+    )
+
+    # Temperaturas y presiones
+    tbs      = models.FloatField(
+        verbose_name="temperatura bulbo seco",
+        blank=True, null=True
+    )
+    tbh      = models.FloatField(
+        verbose_name="temperatura bulbo húmedo",
+        blank=True, null=True
+    )
+    presion_t = models.FloatField(
+        verbose_name="presión total",
+        blank=True, null=True
+    )
+    lc       = models.FloatField(
+        verbose_name="temperatura seca sensor",
+        blank=True, null=True
+    )
+    tgbh     = models.FloatField(
+        verbose_name="tgbh",  
+        blank=True, null=True
+    )
+
+    # Marca de tiempo
+    ts = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="fecha y hora de registro"
+    )
+
+    def __str__(self):
+        # Puedes personalizar qué se muestra al representar la instancia
+        return f"Historial #{self.pk} - {self.ts:%Y-%m-%d %H:%M}"
+
+    class Meta:
+        verbose_name = "Historial"
+        verbose_name_plural = "Historiales"
+
+
+    class Meta:
+         db_table = "historial"
+
+    def __str__(self):
+         return f"Historial #{self.id}"
+    
+
+
+class IntervalosDeActualizacion(models.Model):
+      semaforo = models.IntegerField(null=True, blank=True)
+      estado_semaforo = models.BooleanField(default=True)
+      sistema = models.IntegerField(null=True, blank=True)
+      estado_sistema = models.BooleanField(default=True)
+      
+      

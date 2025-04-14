@@ -129,7 +129,6 @@ class CurvaDisenoForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         post = self.data  # Contiene todos los campos POST
-        print(post)
         # Manejo de caudal_0 y presion_0
         caudal_0 = post.get('caudal_0')
         presion_0 = post.get('presion_0')
@@ -147,13 +146,11 @@ class CurvaDisenoForm(forms.ModelForm):
         try:
             caudal_0 = float(caudal_0)
         except (TypeError, ValueError):
-            print(f"Error en el campo caudal_0: {caudal_0}")
             caudal_0 = 0.0
 
         try:
             presion_0 = float(presion_0)
         except (TypeError, ValueError):
-            print(f"Error en el campo presion_0: {presion_0}")
             presion_0 = 0.0
 
         # Inicializa las listas
@@ -176,19 +173,16 @@ class CurvaDisenoForm(forms.ModelForm):
             try:
                 c = float(c)
             except (TypeError, ValueError):
-                print(f"Error en el campo caudal_{i}: {c}")
                 c = 0.0
 
             try:
                 p = float(p)
             except (TypeError, ValueError):
-                print(f"Error en el campo presion_{i}: {p}")
                 p = 0.0
 
             try:
                 pt = float(pt)
             except (TypeError, ValueError):
-                print(f"Error en el campo potencia_{i}: {pt}")
                 pt = 0.0
 
             caudal_list.append(c)

@@ -15,7 +15,7 @@ class  SemaforoApiView(APIView):
     def get(self, request, format=None):
         # Obtener el ultimo proyecto
         project = get_last_project()
-        semaforo= Semaforo(self.request)
+        semaforo= Semaforo()
         context = {}
         try:
             semaforo.calcular_estado_final(project)

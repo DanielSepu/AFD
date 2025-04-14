@@ -4,6 +4,7 @@ import pandas as pd  # Importa pandas
 from django.http import JsonResponse
 import requests as rq
 from django.conf import settings
+from applications.currentstatus.mixin import procesar_datos_sensores
 from applications.currentstatus.tools import area_ducto_circular, area_inlet_bell, calculate_perdida_choque_codos
 from applications.currentstatus.utils import calculo_densidad_aire_sensor, caudal_aire_sensor1, caudal_de_la_frente, presion_dinamica_sensor_1, velocidad_aire_sensor
 from applications.getdata.models import Proyecto, SensorsData, VdfData
@@ -32,9 +33,9 @@ class DataCurrentStatusView:
                 getattr(self, property_name)[fan_type]['data']= measurement
                 getattr(self, property_name)[fan_type]['status'] = status
             else:
-                print("Error: Fan type must be 'FanPerformance' or 'FanOperation'")
+               pass
         else:
-            print("Error: Invalid property name")
+            pass
     
     def to_dict(self):
         # Retorna un diccionario con todas las propiedades
@@ -107,12 +108,12 @@ def get_recent_data(request):
         variables['densidad'] = item_sensors.ps1
         
         # densidad calculada
-        calculador_densidad_aire_s1 = calculo_densidad_aire_sensor(request, project)
+        calculador_densidad_aire_s1 = calculo_densidad_aire_sensor(project)
         densidad = calculador_densidad_aire_s1.densidad_del_aire()
-        print(f"densidad: {densidad}")
+
         mid_densidad = densidad/2
         # CONFIGURAR EL SEMAFORO PARA OBTENER CAUDALES
-        semaforo = Semaforo(request)
+        semaforo = Semaforo()
         semaforo.encender(project)
         caudal_del_ventilador = semaforo.calculate_Q1()
         Qf = caudal_de_la_frente(semaforo.calculate_Q2(), semaforo.leakage_coefficient_v4(), item_sensors.pt2, project.ducto.Ldsf )
@@ -219,6 +220,7 @@ def get_recent_data(request):
         context["perdida_de_choque"] = round(perdida_choque_total_sistema_ducto, 0)
         context["perdidas_friccionales"] = round(perdidas_friccionales, 0)
         context['variables'] = variables
+        context = procesar_datos_sensores()
         return JsonResponse(context, safe=False)
     
 def update_frequency(request):
@@ -229,7 +231,7 @@ def update_frequency(request):
             #Enviar al endpoint del Node-Red
             response = rq.get(url)
       except rq.exceptions.RequestException as e:
-            print(f"Error updating frequency: {e}")
+            pass
 
    return JsonResponse('Frecuencia Ref Actualizada', safe=False)
 
@@ -242,7 +244,7 @@ def Excel(request):
 
     now = timezone.now() - datetime.timedelta(days=1) #Obtencion de Timezone menos 24horas
 
-    timestamp = datetime.datetime.now()
+    timestamp = now.strftime('%Y-%m-%d_%H-%M-%S')
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = f'attachment; filename="Datos_{timestamp}.xlsx"'
 
@@ -270,13 +272,13 @@ def Excel(request):
     worksheet = workbook.active
     
     # Write header row
-    header = ['pt2', 'ps2', 'densidad2','q2','pt1','pt1','densidad1','q1','lc','qf','k','tbs','hr','tbh','tgbh']
+    header = ['pt2', 'ps2', 'Pbs2','Tbs2','HRs2','pt1','ps1','Pbs1','Tbs1','HRs1','k']
     for col_num, column_title in enumerate(header, 1):
         cell = worksheet.cell(row=1, column=col_num)
         cell.value = column_title
 
     # Write data rows
-    queryset = SensorsData.objects.filter(ts__gte=now).values_list('pt2', 'ps2', 'densidad2','q2','pt1','pt1','densidad1','q1','lc','qf','k','tbs','hr','tbh','tgbh')
+    queryset = SensorsData.objects.filter(ts__gte=now).values_list('pt2', 'ps2', 'Pbs2','Tbs2','HRs2','pt1','ps1','Pbs1','Tbs1','HRs1','k')
     for row_num, row in enumerate(queryset, 1):
         for col_num, cell_value in enumerate(row, 1):
             cell = worksheet.cell(row=row_num+1, column=col_num)

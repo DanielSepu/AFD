@@ -20,9 +20,8 @@ def caudal_de_la_frente(Q2, Lc, pt2, Lf):
 
 
 class calculo_densidad_aire_sensor:
-    def __init__(self, request, project):
+    def __init__(self, project):
         self.project = project
-        self.request = request
         self.item_sensors = None
         self.tbs1 = None
         self.temperatura_bh_s1 = None
@@ -71,29 +70,6 @@ class calculo_densidad_aire_sensor:
         return round((self.pbs1 - self.e()) / (287.04 * (self.tbs1 + 273.15)), 3)
     
 if __name__ == "__main__":
-    tbs1 = 30.7
-    temperatura_bh_s1 = 20.5
-    pbs1 = 95362
-
-    calculo = calculo_densidad_aire_sensor(tbs1, temperatura_bh_s1, pbs1)
-    print(f"esd: {calculo.esd()}")
-    print(f"esw: {calculo.esw()}")
-    print(f"xs: {calculo.xs()}")
-    print(f"lw: {calculo.lw()}")
-    print(f"s: {calculo.s()}")
-    print(f"x: {calculo.x()}")
-    print(f"e: {calculo.e()}")
-    print(f"densidad del aire: {calculo.densidad_del_aire()}")
-    
-    
-    presion_dinamica = presion_dinamica_sensor_1(709, 490 )
-    print(f"presion dinamica: {presion_dinamica}")
-    print(f"densidad_del_aire: {calculo.densidad_del_aire()}")
-    velocidad_aire_sensor1 = velocidad_aire_sensor(presion_dinamica, calculo.densidad_del_aire())
-    print(f"velocidad_aire: {velocidad_aire_sensor1}")
-    area_ducto = 0.28
-    caudal_del_aire = caudal_aire_sensor1(velocidad_aire_sensor1, area_ducto)
-    
-    print(f"caudal_del_aire: {caudal_del_aire}")
+    pass
     
     

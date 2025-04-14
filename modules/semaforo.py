@@ -98,12 +98,11 @@ class Semaforo:
     el semaforo tiene  7 variables para medir, que pueden retornar verde, rojo, o amarillo cada una de sus funciones, a partir
     de la sumatoria de cada resultado de las 7 variables se pondera el estado final.
     """
-    def __init__(self, request):
+    def __init__(self):
         self.estado = 'verde'
         self.sensorData = None
         self.vdfData = None
         self.project = None
-        self.request = request
         self.Q1 = None 
         self.Q2 = None 
         self.detalle = {
@@ -169,8 +168,9 @@ class Semaforo:
 
 
         # crear un diccionario de los valores, para imprimir en la tabla dinamica
-        values_dic = {
+        self.detalle['velocidad_sensor'] = {
             'tbh2': Tbh2,
+            'tbs': tbs,
             'esd': esd,
             'esw': esw,
             'Xs': Xs,
@@ -497,7 +497,7 @@ class Semaforo:
         rpm_model = self.vdfData['rpm'].mean()
         
         # calculando la densidad
-        calculador_densidad_aire_s1 = calculo_densidad_aire_sensor(self.request, self.project)
+        calculador_densidad_aire_s1 = calculo_densidad_aire_sensor(self.project)
         densidad2 = calculador_densidad_aire_s1.densidad_del_aire()
         df_total_pressure  = calcular_la_curva_total(df_fan, rpm_model, rpm_del_proyecto, densidad2, densidad1 )
         indice_max = df_total_pressure["presion"].idxmax()

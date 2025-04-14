@@ -1,0 +1,11 @@
+<form class="dropdown-menu p-3" style="min-width: 540px; max-height: 90vh;" aria-labelledby="chartDropdown" onsubmit="return aplicarFiltro(event)">
+    <!-- Rango de fechas -->
+    {% include "widgets/rangos/rangos.html" %}
+    <!-- Tipo de gráfica con radio visual -->
+    <p class="mb-2 fw-bold">Variables</p>
+    <div id="tipoContainer" class="row g-2 mb-3 text-center" style="font-size:12px;">
+    </div>
+    <div class="col">
+      <button type="submit" class="btn btn-sm btn-outline-primary w-100">Aplicar filtro</button>
+    </div>
+</form>

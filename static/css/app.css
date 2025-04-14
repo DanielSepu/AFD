@@ -21,6 +21,17 @@ body > main.container {
 }
 
 
+#chartdiv {
+  width: 100%;
+  height: 500px;
+  max-width: 100%;
+}
+
+body.modal-open {
+  overflow: auto !important;
+}
+
+
 /* Custom page CSS
 -------------------------------------------------- */
 /* Not required for template or sticky footer method. */
@@ -77,3 +88,20 @@ code {
           transform: rotate(360deg);
         }
       }
+
+
+
+      .grafico-card {
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        user-select: none;
+      }
+      
+      input[type="radio"].btn-check:checked + .grafico-card {
+        background-color: #0d6efd;
+        color: white;
+        border-color: #0d6efd;
+      }
+
+      
+      

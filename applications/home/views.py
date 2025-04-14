@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.http import JsonResponse
+from django.shortcuts import redirect, render
 
 from django.views.generic import TemplateView
 
@@ -19,7 +20,7 @@ class HomeView(TemplateView):
         if context['Project']:
             context['Projects'] = Proyecto.objects.exclude(pk=context['Project'].pk)
         
-            semaforo= Semaforo(self.request)
+            semaforo= Semaforo()
             try:
                 semaforo.calcular_estado_final(proyecto)
                 context["detalle_semaforo"]=semaforo.detalle
@@ -27,3 +28,20 @@ class HomeView(TemplateView):
                 context["detalle_semaforo"]={}
         
         return context
+    
+    def post(self, request, *args, **kwargs):
+        """ Maneja la actualización del proyecto actual """
+        proyecto = get_last_project()
+        if not proyecto:
+            return JsonResponse({"error": "No hay un proyecto actual para actualizar"}, status=400)
+
+        nombre_nuevo = request.POST.get("nombre")
+        if not nombre_nuevo:
+            return JsonResponse({"error": "El campo 'nombre' es obligatorio"}, status=400)
+
+        # Actualizar el proyecto con el nuevo nombre
+        proyecto.dedf = nombre_nuevo
+        proyecto.save()
+
+        return redirect("/")
+

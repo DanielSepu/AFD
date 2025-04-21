@@ -1,0 +1,42 @@
+<div class="widget">
+    <div class="row g-3">
+      <!-- Sección de descarga de copia de seguridad -->
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            Descargar Copia de Seguridad
+          </div>
+          <div class="card-body">
+            <p class="card-text">Haz clic en el botón para descargar la copia de seguridad de la base de datos.</p>
+            <!-- Formulario para backup, que se envía vía GET y usa un iframe oculto -->
+            <form action="{% url 'currentstatus:Backup' %}" method="get" target="download_iframe">
+              <button type="submit" class="btn btn-primary">
+                Descargar Backup
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <!-- Sección de descarga del archivo Excel -->
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            Descargar Archivo Excel
+          </div>
+          <div class="card-body">
+            <p class="card-text">Haz clic en el botón para descargar el archivo Excel.</p>
+            <!-- Formulario para Excel con campos de rango, enviado vía GET a un iframe oculto -->
+            <form action="{% url 'currentstatus:Excel' %}" method="get" target="download_iframe">
+              {% include "widgets/rangos/rangos.html" %}
+              <button type="submit" class="btn btn-success">
+                Descargar
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Iframe oculto para que las descargas no redirijan la página -->
+    <iframe name="download_iframe" style="display: none;"></iframe>
+  </div>
+  

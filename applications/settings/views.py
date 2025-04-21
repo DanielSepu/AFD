@@ -6,8 +6,7 @@ from django.views.generic import DeleteView, TemplateView
 import json
 
 from django.utils import timezone
-from applications.currentstatus.scheduler import update_sensor_job_interval
-from applications.currentstatus.tasks import schedule_sensor_processing
+from applications.currentstatus.scheduler import update_semaforo_job_interval, update_sensor_job_interval
 from applications.getdata.forms import SemaforoForm, SensorsDataForm, SimuladorForm, SistemaForm, VdfDataForm
 from applications.getdata.models import *
 from applications.dbs.forms import *
@@ -135,7 +134,10 @@ class AdminPageView(TemplateView):
                 # Aquí se procesa y guarda la configuración del semáforo.
               
                 update_interval = semaforo_form.cleaned_data['update_interval']
-                # Lógica de guardado (por ejemplo, guardarlo en la base de datos o en settings)
+                intervalos = IntervalosDeActualizacion.objects.latest('id')
+                intervalos.sistema = update_interval
+                intervalos.save()
+                update_semaforo_job_interval(update_interval)
                 # messages.success(request, "Semáforo actualizado correctamente")
                 return redirect(reverse('settings:admin_page'))
             else:
@@ -157,7 +159,7 @@ class AdminPageView(TemplateView):
                      intervalos = IntervalosDeActualizacion.objects.create(sistema=sistema)
                
                # Reprogramar la tarea de Celery con el nuevo intervalo
-               # update_sensor_job_interval(update_interval)
+               update_sensor_job_interval(sistema)
                
                # messages.success(request, "Intervalo actualizado correctamente")
                return redirect(reverse('settings:admin_page'))

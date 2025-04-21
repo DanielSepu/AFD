@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render
 
 from django.views.generic import TemplateView
 
-from applications.getdata.models import Proyecto
+from applications.getdata.models import IntervalosDeActualizacion, Proyecto
 from applications.home.functions import get_last_project
 from modules.semaforo import Semaforo
 
@@ -26,7 +26,7 @@ class HomeView(TemplateView):
                 context["detalle_semaforo"]=semaforo.detalle
             except Exception as e:
                 context["detalle_semaforo"]={}
-        
+        context["intervalos_sistema"] = IntervalosDeActualizacion.objects.latest('id')
         return context
     
     def post(self, request, *args, **kwargs):

@@ -24,6 +24,11 @@
             Sistema
           </a>
         </li>
+        <li class="nav-item" role="presentation">
+          <a class="nav-link" id="backups-tab" data-bs-toggle="tab" href="#backups" role="tab" aria-controls="historial" aria-selected="false">
+            Backups y descargas
+          </a>
+        </li>
       </ul>
     </div>
     <div class="card-body">
@@ -148,6 +153,9 @@
               </div>
           </form>
 
+        </div>
+        <div class="tab-pane fade " id="backups" role="tabpanel" aria-labelledby="simulador-tab">
+            {% include "widgets/manager/pages/backups.html" %}
         </div>
       </div>
     </div>

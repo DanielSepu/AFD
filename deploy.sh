@@ -26,7 +26,7 @@ Restart=always
 
 [Install]
 WantedBy=multi-user.target
-
+EOL
 # Recargar systemd para aplicar los cambios
 echo "Recargando systemd y habilitando el servicio..."
 sudo systemctl daemon-reload

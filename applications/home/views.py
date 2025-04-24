@@ -26,7 +26,10 @@ class HomeView(TemplateView):
                 context["detalle_semaforo"]=semaforo.detalle
             except Exception as e:
                 context["detalle_semaforo"]={}
-        context["intervalos_sistema"] = IntervalosDeActualizacion.objects.latest('id')
+        try:
+            context["intervalos_sistema"] = IntervalosDeActualizacion.objects.latest('id')
+        except Exception as e:
+            context["intervalos_sistema"] = None
         return context
     
     def post(self, request, *args, **kwargs):

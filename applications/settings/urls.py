@@ -12,6 +12,8 @@ urlpatterns = [
   path('manager/config_semaforo/', ConfigSemaforoView.as_view(), name='config_semaforo'),
   path('manager/simulador/', SimuladorView.as_view(), name='simulador'),
   path('manager/rango_historial/', RangoHistorialView.as_view(), name='rango_historial'),
+  path("configuracion-alertas/", ConfiguracionAlertasView.as_view(), name="config_alertas"),
+  path("desbloquear-semaforo/", DesbloquearSemaforoView.as_view(), name="desbloquear_semaforo"),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

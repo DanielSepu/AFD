@@ -1,0 +1,13 @@
+<h3>Configuración de Alertas</h3>
+
+<form method="post" class="mb-4">
+  {% csrf_token %}
+  <input type="hidden" name="form_type" value="fugas">
+  <fieldset class="border p-3 mb-3">
+    <legend class="float-none w-auto px-3">Tolerancias de Fugas</legend>
+    {{ config_form.as_p }}
+    <button class="btn btn-primary" type="submit">Guardar Configuración</button>
+  </fieldset>
+</form>
+
+

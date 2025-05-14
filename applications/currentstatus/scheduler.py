@@ -40,8 +40,11 @@ def start_scheduler():
     Inicia el scheduler y programa ambas tareas con los intervalos definidos en la base de datos.
     """
     # Obtiene los intervalos más recientes
-    intervalos = IntervalosDeActualizacion.objects.latest('id')
-    
+    intervalos = None
+    try:
+        intervalos = IntervalosDeActualizacion.objects.latest('id') 
+    except Exception as e:
+        pass
     # Remover jobs existentes para evitar duplicados.
     try:
         scheduler.remove_job(SENSOR_JOB_ID)
@@ -52,7 +55,7 @@ def start_scheduler():
     except Exception:
         pass
     
-    if intervalos.sistema != None:
+    if intervalos != None:
         
         # Agregar job para sensor_job, usando el intervalo definido en intervalos.sistema
         scheduler.add_job(
@@ -65,7 +68,7 @@ def start_scheduler():
     else:
         logger_AFD.debug("el worker del sistema no esta activo")
     
-    if intervalos.semaforo != None:
+    if intervalos != None:
         # Agregar job para sistema_job, usando el intervalo definido en intervalos.semaforo
         scheduler.add_job(
             sistema_job,
@@ -73,6 +76,9 @@ def start_scheduler():
             id=SISTEMA_JOB_ID,
             replace_existing=True
         )
+        logger_AFD.debug("~~ Worker simulador activado ~~")
+        logger_AFD.info("Scheduler iniciado: sensor_job intervalos %s segundos, sistema_job intervalo %s segundos", intervalos.sistema, intervalos.semaforo)
+        logger_AFD.debug(scheduler.print_jobs())
     else:
         logger_AFD.debug("el worker simulador del sensor no esta activo")
     
@@ -80,9 +86,7 @@ def start_scheduler():
     if not scheduler.running:
         scheduler.start()
     
-    logger_AFD.debug("~~ Worker simulador activado ~~")
-    logger_AFD.info("Scheduler iniciado: sensor_job intervalos %s segundos, sistema_job intervalo %s segundos", intervalos.sistema, intervalos.semaforo)
-    logger_AFD.debug(scheduler.print_jobs())
+    
     
 
 

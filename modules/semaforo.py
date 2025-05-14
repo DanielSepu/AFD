@@ -2,6 +2,7 @@ from math import atan, sqrt
 import math
 
 import pandas as pd
+import requests
 
 from applications.currentstatus.utils import calculo_densidad_aire_sensor
 from applications.fandesign.mixins import presion_total
@@ -620,7 +621,48 @@ class Semaforo:
         else:
             color = "verde"
         self.detalle["color"] =color
+        self.informar_semaforo_fisico(color)
 
+    def informar_semaforo_fisico(self, color: str):
+        """
+        Envía un GET a http://127.0.0.1:1880/semaforo?value=<n>
+        mapeando color→número: verde→1, amarillo→2, rojo→3.
+        """
+        # 1. Mapeo color → número
+        mapa = {
+            'verde': 1,
+            'amarillo': 2,
+            'rojo': 3
+        }
+        clave = color.strip().lower()
+        if clave not in mapa:
+            raise ValueError(f"Color inválido: {color!r}. Usa 'verde', 'amarillo' o 'rojo'.")
+
+        valor = mapa[clave]
+
+        # 2. Construir la URL y parámetros
+        url = 'http://172.24.129.177:1880/semaforo'
+        params = {'value': valor}
+
+        # 3. Hacer la petición
+        #print(requests.get(url, params=params, timeout=10))
+        try:
+            resp = requests.get(url, params=params, timeout=10)
+            resp.raise_for_status()
+        except requests.RequestException as e:
+            # Manejo de errores de conexión o HTTP
+            print(f"[ERROR] No pude notificar semáforo ({color}→{valor}): {e}")
+            return False
+
+        # 4. (Opcional) procesar la respuesta
+        # si tu endpoint devuelve JSON:
+        # data = resp.json()
+        # print("Respuesta del semáforo:", data)
+
+        print(f"[OK] Semáforo '{color}' informado con value={valor}")
+        return True
+        
+        
     def calculate_k(self):
 
         mostrar_inicio_formulas_principales("Calculando el valor de K","K (factor de fricción ducto) kg/m3 = (pt1-ps2)*(pow(Área ducto,3))/(Q1*Q2*Perímetro ducto*L)")
@@ -631,5 +673,5 @@ class Semaforo:
         Q2 = self.calculate_Q2()
         #perimetro_ducto = self.
 
-        separador()
+        # separador()
         return 0

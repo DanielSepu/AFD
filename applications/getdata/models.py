@@ -1,3 +1,6 @@
+from datetime import datetime
+import django
+from django import utils
 from django.db import models
 
 
@@ -323,6 +326,11 @@ class Historial(models.Model):
     ts = models.DateTimeField(
         auto_now_add=True,
         verbose_name="fecha y hora de registro"
+    )
+    creado_en = models.DateTimeField(
+        verbose_name="fecha y hora de registro",
+        default=utils.timezone.now
+        
     )
 
     def __str__(self):

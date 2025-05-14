@@ -88,7 +88,7 @@ def get_recent_data(request):
 
     '''
     if request.method == 'GET':
-        insert_sensor_data()
+        # insert_sensor_data()
         # VARIABLES DEL SENSOR 
         latest_record_sensors = SensorsData.objects.using('sensorDB').aggregate(Max('id'))
         max_id_sensors = latest_record_sensors['id__max']
@@ -96,7 +96,7 @@ def get_recent_data(request):
         variables = {}
         
         # FUNCION DEL SIMULADOR PARA INSERTAR NUEVOS DATOS CADA VEZ QUE SE LLAMA ESTA FUNCION
-        insert_sensor_data()
+        # ()
         latest_record_vdf = VdfData.objects.using('sensorDB').aggregate(Max('id'))
         max_id_vdf = latest_record_vdf['id__max']
 

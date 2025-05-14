@@ -13,7 +13,6 @@ from applications.dbs.forms import *
 
 def settings(request):
    setting_type = request.GET.get('type')
-   print(request.method)
    if request.method == 'GET':
       if setting_type == 'new_project' or setting_type is None:
          form = ProyectoForm()
@@ -264,7 +263,6 @@ class ConfigSemaforoView(TemplateView):
     def post(self, request, *args, **kwargs):
         form = SemaforoForm(request.POST)
         if form.is_valid():
-            print(form)
             form.save()
             # puedes agregar un mensaje o redirección
         context = self.get_context_data()

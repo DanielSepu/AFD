@@ -14,6 +14,7 @@ from applications.getdata.models import Historial, Proyecto, SensorsData, VdfDat
 from applications.home.functions import get_last_project
 from core import logger_config
 from modules.semaforo import Semaforo
+from core.logger_config import logger_AFD
 
 # Función para obtener el último registro de un modelo dado
 def get_latest_record(model, using_db='sensorDB'):
@@ -139,7 +140,7 @@ def guardar_historial_detalle(detalle):
     asignando los valores correspondientes a cada campo.
     """
     
-    logger_config.logger_AFD.debug(f"v3: {detalle['v3']}")
+    # logger_config.logger_AFD.debug(f"guardando historial v3: {detalle['v3']}")
     historial = Historial.objects.create(
         # Pérdidas de ductos
         pc1_dc   = detalle.get("perdida_choque_codos", 0.0),
@@ -172,6 +173,12 @@ def guardar_historial_detalle(detalle):
         lc   = detalle.get("Lc", 0.0),
         tgbh   = detalle.get("tgbh", 0.0),
     )
+    # logger_AFD.debug("Campos guardados en el historial:")
+    for field in Historial._meta.get_fields():
+        field_name = field.name
+        if hasattr(historial, field_name):
+            field_value = getattr(historial, field_name)
+            # logger_AFD.debug(f"{field_name}: {field_value}")
     return historial
 
 # Función principal que orquesta el procesamiento, consolidación y almacenamiento.
@@ -285,4 +292,5 @@ def procesar_datos_sensores():
     
     # Guardar en Historial usando el diccionario consolidado
     guardar_historial_detalle(detalle_consolidado)
+    # logger_AFD.debug(f"se ha guardado un nuevo registro en el historial: {detalle_consolidado}")
     return context

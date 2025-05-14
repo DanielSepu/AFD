@@ -98,14 +98,8 @@ def fandesign(request):
 
          if chart_type == 'total_pressure':
             # creando curva inicial 
+
             scatter_data_fan_list_inicial = df_fan[['caudal','presion']].to_dict(orient='records')
-            for k,v in enumerate(scatter_data_fan_list_inicial):
-               v['CAUDAL (m³/s)'] = v['caudal']
-               v['PRESION (Pa)'] = v['presion']
-               del v['caudal']
-               del v['presion']
-            
-            
             # datos de la curva ajustada por RPM 
             curva_ajustada_x_rpm = pd.DataFrame({'presion_ajustada': df_fan['presion'].mul((rpm_model / rpm_del_proyecto) ** 2), 'caudal_ajustado': df_fan['caudal'].mul(rpm_model / rpm_del_proyecto)})
             # datos de la curva ajustada por la densidad

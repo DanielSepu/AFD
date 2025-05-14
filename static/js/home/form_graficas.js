@@ -10,21 +10,21 @@
   function crearOpcionRadio(name, verbose) {
     const col = document.createElement('div');
     col.className = 'col-4';
-
+    
     const input = document.createElement('input');
     input.type = 'radio';
     input.className = 'btn-check';
     input.name = 'tipo';
     input.id = `tipo_${name}`;
+    input.setAttribute('data-nombre', verbose);
     input.value = name;
+    
     input.autocomplete = 'off';
-
     const label = document.createElement('label');
     // text-nowrap evita saltos de línea
     label.className = 'grafico-card p-2 border rounded d-block text-nowrap';
     label.htmlFor = input.id;
     label.textContent = verbose;  // sin <br>, todo en la misma línea
-
     col.appendChild(input);
     col.appendChild(label);
     return col;

@@ -20,7 +20,7 @@ SISTEMA_JOB_ID = 'sistema_job'
 def sensor_job():
     # Llama a la función que procesa los datos del sensor
     resultado = procesar_datos_sensores()
-    logger_AFD.info(f"Sensor job executed at {datetime.now()}, resultado: {resultado}")
+    logger_AFD.info(f"Se actualizaron los datos del historial en {datetime.now()} ")
 
 def sistema_job():
     project = get_last_project()
@@ -28,7 +28,7 @@ def sistema_job():
     context = {}
     try:
         semaforo.calcular_estado_final(project)
-        logger_AFD.info(semaforo)
+        #logger_AFD.info(semaforo)
         context["detalle_semaforo"]=semaforo.detalle
     except Exception as e:
         traceback.print_exc()

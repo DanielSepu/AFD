@@ -2,13 +2,17 @@ from math import atan, sqrt
 import math
 
 import pandas as pd
+
+from applications.currentstatus.utils import calculo_densidad_aire_sensor
 from applications.fandesign.mixins import presion_total
+from applications.fandesign.utils import calcular_la_curva_total, calcular_la_presion_maxima
 from applications.getdata.models import SensorsData, VdfData
 from modules.queries import get_10min_sensor_data, get_10min_vdf_data
-from IPython.display import display, Markdown
+from django.db.models import Max
 from django.contrib import messages
 
-from IPython.display import display, HTML
+from modules.utils import calculate_tbh
+
 
 def mostrar_inicio_formulas_principales(str, description):
     display(HTML(f"""
@@ -88,19 +92,17 @@ def mostrar_formula(str):
     """))
 
 
-
 class Semaforo:
     """
     Clase que representa un semaforo de control de estado de la ventilacion del sistema de ventilacion de la mina,
     el semaforo tiene  7 variables para medir, que pueden retornar verde, rojo, o amarillo cada una de sus funciones, a partir
     de la sumatoria de cada resultado de las 7 variables se pondera el estado final.
     """
-    def __init__(self, request):
+    def __init__(self):
         self.estado = 'verde'
         self.sensorData = None
         self.vdfData = None
         self.project = None
-        self.request = request
         self.Q1 = None 
         self.Q2 = None 
         self.detalle = {
@@ -146,6 +148,7 @@ class Semaforo:
         
         if area_ducto == None:
             messages.warning(self.request, f"Error algunos valores para calcular el area del ducto no se han especificado, verifique: tipo ducto: {self.project.ducto.t_ducto} y sus valores")
+        area_ducto = area_ducto/4000000 
         return area_ducto
 
     def calcular_velocidad_sensor(self, tbs, hr, P, pt, ps, tipo):
@@ -165,8 +168,9 @@ class Semaforo:
 
 
         # crear un diccionario de los valores, para imprimir en la tabla dinamica
-        values_dic = {
+        self.detalle['velocidad_sensor'] = {
             'tbh2': Tbh2,
+            'tbs': tbs,
             'esd': esd,
             'esw': esw,
             'Xs': Xs,
@@ -178,7 +182,7 @@ class Semaforo:
 
         titulo = "Variables de entrada"
         # mostrar_reporte(titulo, Tbh2, esd, esw, Xs, Lw, S, X, e)
-
+        
         densidad_aire_frente = (P-e)/(287.04*(tbs+273.15)); #  Kg aire seco/m3
 
         # =SQRT(2*(E5-E6)/E22)
@@ -198,7 +202,6 @@ class Semaforo:
 
     def calculate_Q2(self):
         """
-            
             Crear variable Q2) Caudal sensor 2 (Q2) m3/s = velocidad sensor 2 (m/s)*Área ducto (m2)
         Returns:
             _type_: _description_
@@ -206,55 +209,75 @@ class Semaforo:
         if self.Q2 != None:
             return self.Q2
 
-        # calcular densidad aire en la frente
-        HRf  = self.sensorData["q2"].mean()
-        # temperatura bulbo seco
-        Tbs2 = self.sensorData["lc"].mean()
-        # presion barometrica en la frente
-        P2  = self.sensorData["densidad2"].mean()
-        # definir variables
-        pt2 = self.sensorData["pt2"].mean()
-
-        ps2 = self.sensorData["ps2"].mean()
         
-        velocidad_sensor_2 = self.calcular_velocidad_sensor(Tbs2, HRf, P2, pt2, ps2, "solicitado desde Q2" )
-        area_ducto = self.calcular_area_ducto()
         # = J22  * E24
         try:
+            # calcular densidad aire en la frente
+            HRf  = self.sensorData["Tbs2"].mean()
+            # temperatura bulbo seco
+            Tbs2 = self.sensorData["Tbs1"].mean()
+            # presion barometrica en la frente
+            P2  = self.sensorData["Pbs2"].mean()
+            # definir variables
+            pt2 = self.sensorData["pt2"].mean()
+
+            ps2 = self.sensorData["ps2"].mean()
+            
+            velocidad_sensor_2 = self.calcular_velocidad_sensor(Tbs2, HRf, P2, pt2, ps2, "solicitado desde Q2" )
+            area_ducto = self.calcular_area_ducto()
             Q2 = velocidad_sensor_2 * area_ducto  #  caudal sensor 2 = (m/s)/(m2)
         except TypeError as e: #
+            print(f"error en calculate_Q2: {e}")
             messages.warning(self.request, f"error al calcuar Q2: los valores no se pueden procesar: {e}, verifique los errores de: q2, lc, densidad2, pt2, ps2, area_ducto, ")
             Q2 = 0
+        except KeyError as e:
+            Q2 = 0
+            print(f"error en calculate_Q2: {e}")
+            messages.warning(self.request, f"La base de datos del sensor aun no recibe datos")
+            # calcular densidad aire en la frente
+            HRf  = 0
+            # temperatura bulbo seco
+            Tbs2 = 0
+            # presion barometrica en la frente
+            P2  = 0
+            # definir variables
+            pt2 = 0
+
+            ps2 = 0
         # asignar al entorno global
         self.Q2 = Q2
         return Q2
 
     def calculate_Q1(self):
-        #definir las variables de los sensores y el proyecto
-        # ---> sensores
-        # definir variables
+        # calcular el caudal del ventilador
         
         # comprobar si ya fue calculada
         if self.Q1 != None:
-            return self.Q1
-        
-
-        pt1 = self.sensorData["pt1"].mean()
-        ps1 = self.sensorData["ps1"].mean()
-        tbs = self.sensorData["tbs"].mean() # humedad relativa
-        hr = self.sensorData["hr"].mean() # temperatura bulbo seco
-        P1 = self.sensorData["densidad1"].mean()  #  Presión barométrica ventilador
-        tbs1 = self.sensorData["lc"].mean() # 
-        velocidad_sensor_1 = self.calcular_velocidad_sensor(tbs, hr, P1, pt1, ps1, "solicitado desde Q1" )
-        # velocidad_sensor_1 = self.calcular_velocidad_sensor1()   # 2 decimales
-
-        area_ducto = self.calcular_area_ducto()
-        
+            return self.Q1   
         try:
+            pt1 = self.sensorData["pt1"].mean() # Presión total sensor 1 (Pa)
+            ps1 = self.sensorData["ps1"].mean() # Pesión estática sensor 1 (Pa)
+            tbs1 = self.sensorData["Tbs1"].mean() # Temperatura seca sensor 1 (°C)
+            hrs1 = self.sensorData["HRs1"].mean() # Humedad Relativa sensor 1 (%)
+            Pbs1 = self.sensorData["Pbs1"].mean()  #  Presión barométrica ventilador (PA)
+            #tbs1 = self.sensorData["lc"].mean() # 
+            velocidad_sensor_1 = self.calcular_velocidad_sensor(tbs1, hrs1, Pbs1, pt1, ps1, "solicitado desde Q1" )
+            area_ducto = self.calcular_area_ducto()
             Q1  = velocidad_sensor_1 *area_ducto #  m3/s = (m2)*(m/s).  (Crear variable Q1) caudal_ventilador_2
         except TypeError as e: #
             messages.warning(self.request, f"error al calcuar Q1: los valores no se pueden procesar: {e}, verifique los errores de: q2, lc, densidad2, pt2, ps2, area_ducto, ")
             Q1 = 0
+        except KeyError as e:
+            print(f"error en calculate_Q1: {e}")
+            messages.warning(self.request, f"error la base de datos del sensor aun no recibe datos")
+            Q1 = 0
+            pt1 = 0
+            ps1 = 0
+            tbs = 0 # humedad relativa
+            hr = 0 # temperatura bulbo seco
+            P1 = 0  #  Presión barométrica ventilador
+            tbs1 = 0 # 
+            velocidad_sensor_1 = 0
         # asignar a las variables del entorno global 
         self.Q1 = Q1  # guardar el resultado en el entorno global para usarlo en otros metodos
         return Q1
@@ -278,7 +301,6 @@ class Semaforo:
             return color
         raise Exception("No se logro calcular un valor para el semaforo")
     
-
     def caudal_en_la_frente_v1(self):
         """
         Calcula el caudal en la frente del ventilador
@@ -319,7 +341,7 @@ class Semaforo:
         return Qf
     
     def calculate_tbh(self, tbs, hr):
-        return tbs * atan(0.151977 * sqrt(hr + 8.313659)) + atan(tbs + hr) - atan(hr - 1.6763) + 0.00391838 * pow(hr, 1.5) * atan(0.023101 * hr) - 4.686035
+        return calculate_tbh(tbs, hr)
 
     def calcular_semaforo_v2(self, velocidad_del_aire):
         if velocidad_del_aire > 0.25 and velocidad_del_aire < 2.5:
@@ -365,9 +387,9 @@ class Semaforo:
         # Crear el DataFrame
         data = {
             "trabajo continuo": [30, 26.7, 25],
-            "75-25": [30.6, 28, 25.9],
-            "50-50": [31.4, 29.4, 27.9],
-            "25-75%": [32.2, 31.1, 30]
+            "75-25":            [30.6, 28, 25.9],
+            "50-50":            [31.4, 29.4, 27.9],
+            "25-75%":           [32.2, 31.1, 30]
         }
 
         # Definir los índices
@@ -380,14 +402,11 @@ class Semaforo:
         minimo = fila.iloc[0]
         maximo = fila.iloc[-1]
         if tgbh < minimo :
-            color = "rojo"
-            return nivel_carga, minimo, maximo, "rojo"
+            return nivel_carga, minimo, maximo, "verde"
         
         if tgbh > maximo:
-            color = "rojo"
             return nivel_carga, minimo, maximo, "rojo"
-        color = "verde"
-        return nivel_carga, minimo, maximo,"verde"
+        return nivel_carga, minimo, maximo,"amarillo"
     
     def tgbh_v3(self):
         """
@@ -401,6 +420,7 @@ class Semaforo:
         tbh = self.sensorData["tbh"].mean()
         tbs = self.sensorData["tbs"].mean()
         tgbh = (0.7 * tbh) + (0.3 * tbs)
+
         nivel_carga, min, max, color = self.calcular_estado_v3(tgbh)
         
         self.detalle['v3'] = {
@@ -413,6 +433,8 @@ class Semaforo:
             'nivel_carga': nivel_carga,
             'formula': formula,
         }
+        
+        
         self.detalle["colores"].append(color)
         return tgbh
     
@@ -463,26 +485,39 @@ class Semaforo:
 
     def punto_de_stall_v5(self):
         pt2 = self.sensorData["pt2"].mean()
-        
         presion_total_df =  presion_total(self.project, self.vdfData, self.sensorData)
         # obtener el valor maximo del dataframe que contiene la curva ajustada
         presion_maxima_curvaAjustada = presion_total_df['presion'].max()
         fila = presion_total_df.loc[presion_total_df['presion'] == presion_maxima_curvaAjustada ]
-    
-
-        
         stall = pt2 / presion_maxima_curvaAjustada * 100
-        color = self.calcular_semaforo_v5(stall)
+        
+        df_fan = pd.DataFrame(data=dict(self.project.curva_diseno.datos_curva), dtype=float)
+        rpm_del_proyecto = self.project.curva_diseno.rpm
+        densidad1 = self.project.curva_diseno.densidad
+        rpm_model = self.vdfData['rpm'].mean()
+        
+        # calculando la densidad
+        calculador_densidad_aire_s1 = calculo_densidad_aire_sensor(self.project)
+        densidad2 = calculador_densidad_aire_s1.densidad_del_aire()
+        df_total_pressure  = calcular_la_curva_total(df_fan, rpm_model, rpm_del_proyecto, densidad2, densidad1 )
+        indice_max = df_total_pressure["presion"].idxmax()
+        latest_record_sensors = SensorsData.objects.using('sensorDB').aggregate(Max('id'))
+        max_id_sensors = latest_record_sensors['id__max']
+        item_sensors = SensorsData.objects.using('sensorDB').get(id=max_id_sensors)
+        
+        presion_maxima_curvaAjustada = df_total_pressure["presion"].max()
+        presion_maxima = calcular_la_presion_maxima(item_sensors, df_total_pressure, indice_max) 
+        color = self.calcular_semaforo_v5(presion_maxima)
+        print(f"punto de stall: {presion_maxima}")
         self.detalle['v5'] = {
             'pt2': round(pt2,3),
             'presion_maxima': round(presion_maxima_curvaAjustada,3),
-            'stall': round(stall,3),
+            'stall': f"{round(stall,3)} %",
             'color': self.calcular_semaforo_v5(stall),
             'formula': "stall = pt2 / presion_maxima_curvaAjustada * 100"
         }
         self.detalle["colores"].append(color)
-        return stall
-
+        return presion_maxima
 
     def calcular_semaforo_v6(self, porcentaje):
         if porcentaje < 0.05:
@@ -586,12 +621,10 @@ class Semaforo:
             color = "verde"
         self.detalle["color"] =color
 
-    
-
     def calculate_k(self):
 
-        mostrar_inicio_formulas_principales("Calculando el valor de K","K (factor de fricción ducto) kg/m3 = (ps1-ps2)*(pow(Área ducto,3))/(Q1*Q2*Perímetro ducto*L)")
-        ps1 = self.sensorData['ps1'].mean()
+        mostrar_inicio_formulas_principales("Calculando el valor de K","K (factor de fricción ducto) kg/m3 = (pt1-ps2)*(pow(Área ducto,3))/(Q1*Q2*Perímetro ducto*L)")
+        pt1 = self.sensorData['pt1'].mean()
         ps2 = self.sensorData['ps2'].mean()
         area_ducto = self.calcular_area_ducto()
         Q1 = self.calculate_Q1()

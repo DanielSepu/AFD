@@ -35,17 +35,20 @@
    <div class="container-fluid h-75 p-0">
 
       <div class="d-sm-flex flex-sm-column d-lg-flex  flex-lg-row ">
-         <div class="col-lg-8 col-sm-12  ms-0 px-n2 mb-3">
-            {% if chart_type == 'total_pressure' %}
-               {% include "widgets/fanDesignCurve/totalPreassure.html" %}
-            {% elif chart_type == 'static_pressure' %}
-               {% include "widgets/fanDesignCurve/staticPreassure.html" %}
-            {% elif chart_type == 'power' %}
-               {% include "widgets/fanDesignCurve/power.html" %}
-            {% else %}
-               {% include "widgets/fanDesignCurve/totalPreassure.html" %}
-            {% endif %}
-         </div>
+        <div class="col-lg-8 col-sm-12 ms-0 px-0 mb-3">
+            <div class="card shadow m-1 p-2 position-sticky top-0" style="z-index: 1020;">
+                {% if chart_type == 'total_pressure' %}
+                    {% include "widgets/fanDesignCurve/totalPreassure.html" %}
+                {% elif chart_type == 'static_pressure' %}
+                    {% include "widgets/fanDesignCurve/staticPreassure.html" %}
+                {% elif chart_type == 'power' %}
+                    {% include "widgets/fanDesignCurve/power.html" %}
+                {% else %}
+                    {% include "widgets/fanDesignCurve/totalPreassure.html" %}
+                {% endif %}
+            </div>
+        </div>
+        
          <div class="col-lg-3 col-sm-12 h-100">
             <div class="row g-3">
                 <!-- Modelo -->
@@ -84,7 +87,7 @@
                         </div>
                         <div class="flex-fill text-center py-4">
                             <p class="fs-5 fw-bold m-0">Densidad Actual</p>
-                            <p class="fs-6">{{ proyecto.curva_diseno.densidad }} kg/m<sup>3</sup></p>
+                            <p class="fs-6">{{ densidad_actual }} kg/m<sup>3</sup></p>
                         </div>
                     </div>
                 </div>
@@ -94,11 +97,11 @@
                     <div class="d-flex border border-3 border-warning">
                         <div class="flex-fill border-end border-warning text-center py-4">
                             <p class="fs-5 fw-bold m-0">Rotación de diseño</p>
-                            <p class="fs-6">{{proyecto.curva_diseno.rpm}} Hz</p>
+                            <p class="fs-6">{{proyecto.curva_diseno.rpm}} rpm</p>
                         </div>
                         <div class="flex-fill text-center py-4">
                             <p class="fs-5 fw-bold m-0">Rotación Actual</p>
-                            <p class="fs-6" id="rendimiento_ventilador">{{ rendimiento_ventilador }} Hz</p>
+                            <p class="fs-6" id="rendimiento_ventilador">{{ rotacion_actual }} rpm</p>
                         </div>
                     </div>
                 </div>
@@ -123,7 +126,7 @@
                 <div class="col-12">
                     <div class="list-group border border-3 border-warning p-3">
                         <p class="text-start fs-5 fw-bold m-0">Presión máxima</p>
-                        <p class="text-start fs-6 ps-4 m-1">{{ peak_pressure }} %</p>
+                        <p class="text-start fs-6 ps-4 m-1">{{ presion_maxima }} %</p>
                     </div>
                 </div>
             </div>
@@ -138,13 +141,14 @@
 {% block body_js %}
 
    <script src="{% static 'js/d3.v7.js' %}"></script>
-   {% comment %} <script src="{% static 'js/scatterplot.js' %}"></script> {% endcomment %}
+
    <script src="{% static 'js/fancurveplot.js' %}"></script>
 
 
    <script type="text/javascript">
       
       const dataV = {{ scatter_data|safe }};
+      const dataV_init = {{ curva_inicial|safe }};
       const promedios = {{ c | safe }};
       const dataV2 = {{scatter_data2|safe}};
       {% comment %} const curva_dis = {{VenCurvaDis}}; {% endcomment %}
@@ -153,17 +157,21 @@
          function() {
             if ("{{ chart_type }}" == "total_pressure"){
 
-               createFanChart(dataV, 'total_pressure', promedios, dataV2);
+               createFanChart(dataV, 'graphContainer', promedios, dataV2);
+               createFanChart(dataV_init, 'graphContainer_original', promedios, dataV2);
             } else if ("{{ chart_type }}" == "static_pressure"){
 
-               createFanChart(dataV, 'static_pressure', promedios, dataV2);
+               createFanChart(dataV, 'graphContainer', promedios, dataV2, dataV_init);
+               createFanChart(dataV_init, 'graphContainer_original', promedios, dataV2);
             } else if ("{{ chart_type }}" == "power"){
 
-               createFanChart(dataV, 'power', promedios, dataV2);
+               createFanChart(dataV, 'graphContainer', promedios, dataV2, dataV_init);
+               createFanChart(dataV_init, 'graphContainer_original', promedios, dataV2);
             }
          });
       // Call the function on window resize
       window.addEventListener("resize", function() { updateFanChart(dataV); });
+      window.addEventListener("resize", function() { updateFanChart(dataV_init); });
       // Cambiar vista
       function changeChartType(type) {
          window.location.href = "{% url 'fandesign:fandesign' %}?chart_type=" + type;

@@ -3,15 +3,12 @@
 {% block head_title %}Home{% endblock %}
 {% block body_content %}
   <div class="row">
-    
-    <h1 class="display-4 text-primary mb-4 shadows" >
-      <span class="shadows"><i class="fas fa-fan rotating-icon" ></i></span></i> Bienvenido a la plataforma AFD!
+    <h1 class="display-4 text-primary mb-4 shadows">
+      <span class="shadows"><i class="fas fa-fan rotating-icon"></i></span> Bienvenido a la plataforma AFD!
     </h1>
   </div>
   <div class="row">
-    <h3 class=" text-success mb-4">
-      Estado del semaforo
-    </h3>
+    <h3 class="text-success mb-4">Estado del semáforo</h3>
   </div>
   <div class="row">
     <div class="col-md-12">
@@ -19,17 +16,28 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-6">
-    {% include "widgets/home/projectDescription.html" %}
+    <div class="col-md-6">
+      {% include "widgets/home/projectDescription.html" %}
     </div>
-
-    <div class="col-6 text-center ">
-      <div class="card p-4 shadow-lg ">
+    <div class="col-md-6 text-center">
+      <div class="card p-4 shadow-lg">
         <img src="{{ Project.ventilador.img_ventilador.url }}" alt="Imagen del ventilador" class="img-fluid rounded" style="max-width: 100%;">
+      </div>
+      <div class="card p-4 border-secondary mt-4">
+        <h5 class="text-center text-dark">Actualizar valores del proyecto</h5>
+        <div class="border-secondary p-3">
+          <label for="nombre" class="text-dark fw-bold d-block text-start">Longitud de ducto desde el sensor 2 hasta la frente (m):</label>
+          <form method="POST">
+            {% csrf_token %}
+            <div class="mb-3 d-flex">
+              <input type="text" class="form-control me-2" value="{{ Project.dedf }}" id="nombre" name="nombre" required>
+              <button type="submit" class="btn btn-success border-secondary">Guardar</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-
   {% if Projects %}
   <div class="container-fluid">
     <div class="row mt-4">
@@ -53,7 +61,7 @@
               {% for project in Projects %}
               <tr>
                 <td>{{ project.ventilador }}</td>
-                <td>{{project.curva_diseno}}</td>
+                <td>{{ project.curva_diseno }}</td>
                 <td>{{ project.ducto }}</td>
                 <td>
                   <ul>
@@ -66,7 +74,6 @@
                 <td>{{ project.caudal_requerido }}</td>
                 <td>{{ project.s_partida }}</td>
                 <td>
-  
                   <a href="{% url 'settings:delete-project' project.id %}" class="btn btn-outline-danger">
                     <i class="fas fa-trash-alt"></i>
                   </a>
@@ -80,27 +87,22 @@
     </div>
   </div>
   {% endif %}
-
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       const fieldsets = document.querySelectorAll(".toggle-fieldset");
-      
       fieldsets.forEach(function(fieldset) {
         const legend = fieldset.querySelector("legend");
         const content = fieldset.querySelector("table, p");
-
-        // Initially hide the fieldset content
         content.style.display = "none";
-
-        // Toggle visibility when the legend is clicked
         legend.addEventListener("click", function() {
           content.style.display = content.style.display === "none" ? "block" : "none";
         });
       });
     });
-  </script> 
-
+  </script>
 {% endblock %}
 {% block body_js %}
     <script src="{% static 'js/home/semaforo.js' %}"></script>
+    <script src="{% static 'js/home/projectDescription.js' %}"></script>
+
 {% endblock body_js %}

@@ -1,14 +1,83 @@
+// Función para cambiar el color de la luz del semáforo
 $(document).ready(function() {
     
-    setInterval(get_semaforo, 30000);
+    var semaforoInterval = $('#semaforo').data('interval');
+    var semaforoIntervalmili = semaforoInterval*1000
+    
+    var countdown = semaforoInterval;
+    $('#countdownDisplay').text('Próxima actualización en ' + countdown + ' segundos.');
+    // Actualizar la cuenta regresiva cada 1 segundo
+    
+
+    // Se inicia el intervalo usando el valor obtenido
+    setInterval(get_semaforo, semaforoIntervalmili);
     
 });
+
+function cambiarSemaforo(color) {
+    // Apagar todas las luces
+    document.getElementById('luz-roja').classList.remove('bg-danger');
+    document.getElementById('luz-amarilla').classList.remove('bg-warning');
+    document.getElementById('luz-verde').classList.remove('bg-success');
+
+    // Poner en estado inactivo (gris)
+    document.getElementById('luz-roja').classList.add('bg-secondary');
+    document.getElementById('luz-amarilla').classList.add('bg-secondary');
+    document.getElementById('luz-verde').classList.add('bg-secondary');
+
+    // Encender la luz correspondiente según el color pasado
+    if (color === 'rojo') {
+      document.getElementById('luz-roja').classList.remove('bg-secondary');
+      document.getElementById('luz-roja').classList.add('bg-danger');
+    } else if (color === 'amarillo') {
+      document.getElementById('luz-amarilla').classList.remove('bg-secondary');
+      document.getElementById('luz-amarilla').classList.add('bg-warning');
+    } else if (color === 'verde') {
+      document.getElementById('luz-verde').classList.remove('bg-secondary');
+      document.getElementById('luz-verde').classList.add('bg-success');
+    }
+
+  }
+
+  // Función para mostrar el contenido adecuado en el modal
+  function mostrarContenidoModal(color) {
+    get_semaforo()
+    let contenidoModal = document.getElementById('contenidoModal');
+    let modalLabel = document.getElementById('modalSemaforoLabel');
+
+      modalLabel.textContent = 'Color ' + color;
+      
+  }
+  function actualizarColorCuadros(colorData) {
+    // colorData es un objeto con pares de id de tarjeta y color
+    for (let [elementId, color] of Object.entries(colorData)) {
+        // Obtener el elemento de cuadro de color usando el ID
+        const colorBox = document.getElementById(elementId);
+        if (!colorBox) continue;
+
+        // Asignar el color correspondiente al cuadro
+        switch (color.toLowerCase()) {
+            case 'verde':
+                colorBox.style.backgroundColor = 'green';
+                break;
+            case 'amarillo':
+                colorBox.style.backgroundColor = 'yellow';
+                break;
+            case 'rojo':
+                colorBox.style.backgroundColor = 'red';
+                break;
+            default:
+                console.error('Color no válido para el elemento con ID:', elementId);
+        }
+    }
+}
 
 function get_semaforo() {
     $.ajax({
         url:"v1/semaforo",
         type: "GET",
         success: function(data) {
+            console.log(data);
             var semaforo = data.detalle_semaforo;
             var v1 = semaforo.v1;
             cambiarSemaforo(semaforo.color)
@@ -41,6 +110,7 @@ function get_semaforo() {
         }
     });
 }
+
 
 function actualizarV1(v1) {
     $('#v1_estado').css('background-color', v1.color === 'verde' ? 'green' : 'red');
@@ -170,8 +240,6 @@ function actualizarV7(v7) {
         $semaforo.css({'background-color': '#dc3545', 'color': 'white'}).text('Potencia fuera del rango');
     }
 }
-
-
 
 
 

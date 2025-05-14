@@ -1,3 +1,4 @@
+import traceback
 from rest_framework.response import Response
 from applications.home.functions import get_last_project
 from modules.semaforo import Semaforo
@@ -10,13 +11,18 @@ class  SemaforoApiView(APIView):
     """
         Clase que representa un API para obtener el estado del semaforo de la ventilacion.
     """
+    
     def get(self, request, format=None):
         # Obtener el ultimo proyecto
         project = get_last_project()
-        semaforo= Semaforo(self.request)
-        semaforo.calcular_estado_final(project)
+        semaforo= Semaforo()
         context = {}
-        context["detalle_semaforo"]=semaforo.detalle
+        try:
+            semaforo.calcular_estado_final(project)
+            print(semaforo)
+            context["detalle_semaforo"]=semaforo.detalle
+        except Exception as e:
+            traceback.print_exc()
 
         return Response(context)
     

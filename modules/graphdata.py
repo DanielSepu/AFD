@@ -14,6 +14,7 @@ def  get_fan_data(proyect, chart_type):
    #df_fan = pd.read_csv(csv_fan_path)
    
    if proyect != None:
+      print(dict(proyect.curva_diseno.datos_curva))
       df_fan = pd.DataFrame(dict(proyect.curva_diseno.datos_curva))
    else:
       raise ValueError("No hay proyecto asignado")

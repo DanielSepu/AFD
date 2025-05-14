@@ -13,10 +13,11 @@ def presion_total(proyecto, df_vdf, df_sensor):
         df_vdf (model): datos del sensor ultimo registro
         df_sensor (_type_): _description_
     """
+    
     rpm_fan = float(proyecto.curva_diseno.rpm)
     rpm_vdf = df_vdf["rpm"].mean()
     densidad_fan = float(proyecto.curva_diseno.densidad) 
-    densidad_sensor1 = df_sensor["densidad1"].mean()
+    densidad_sensor1 = df_sensor["ps1"].mean()
     df_fan = get_fan_data(proyecto, 'pt')
     
     #  Definición del DataFrame vacío y declaración de las columnas
@@ -33,3 +34,10 @@ def presion_total(proyecto, df_vdf, df_sensor):
     df_graph = df_adjust.loc[:, ["q_rpm", "pt_dens"]].rename(columns={"q_rpm": "caudal", "pt_dens": "presion"})
 
     return df_graph
+
+
+def presion_total_2(N, mid_densidad, Q):
+    # Area difusor = 3.14159*(N(mm)/2000)^2
+    # Presión total - mid_densidad*((Q^2)/(Adifusor^2))
+    area_difusor = 3.14159 * (N/2000)**2
+    return mid_densidad*((Q**2)/area_difusor)

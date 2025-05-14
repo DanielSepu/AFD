@@ -1,13 +1,17 @@
-
+from django.db.models import Max
 
 from math import sqrt
 #from scipy.optimize import curve_fit
 import numpy as np
 
+from applications.currentstatus.utils import calculo_densidad_aire_sensor
+from applications.getdata.models import SensorsData
+from modules.semaforo import Semaforo
+
 
 
 def calculate_perdida_choque_codos(total_codos, mid_densidad, Q1, project, Qf):
-        """
+    """
             Calcula la perdida por choque de los codos a partir de la cantidad de codos.
             Args:
                 total_codos (int): la cantidad de codos asignada al proyecto
@@ -19,50 +23,51 @@ def calculate_perdida_choque_codos(total_codos, mid_densidad, Q1, project, Qf):
                 dict: diccionario con todas las variables calculadas
                 float: la pérdida total por choque de los codos
         """
-        # Inicializar el diccionario para almacenar todas las variables calculadas
-        variables = {}
+    # Inicializar el diccionario para almacenar todas las variables calculadas
+    
+    variables = {}
+    # Cálculo de la primera sección
+    first_section = 0.5 * mid_densidad
+    variables['mid_densidad'] = mid_densidad
+    variables['first_section'] = first_section
+    
+    variables['total_codos'] = total_codos
+    variables['Q1'] = Q1
+    variables['Qf'] = Qf
+    variables['factor_choque_codo_X'] = 0.5
+    sumatoria_Sl = 0
+    first_codo = 0
+    second_codo = 0
+    third_codo = 0
+    
+    for num in range(total_codos):
+        num += 1
+        if num == 1:
+            first_codo = aply_first_codo(first_section, project, Q1, project.ducto.t_ducto)
+            
+            variables['first_codo'] = first_codo
+            variables['q_codo_1'] = q_codo_1(Q1)
+        if num == 2:
+            second_codo = aply_second_codo(first_section, project, Q1, project.ducto.t_ducto, Qf)
 
-        # Cálculo de la primera sección
-        first_section = 0.5 * mid_densidad
-        variables['first_section'] = first_section
-        variables['mid_densidad'] = mid_densidad
-        variables['total_codos'] = total_codos
-        variables['Q1'] = Q1
-        variables['Qf'] = Qf
-        variables['factor_choque_codo_X'] = 0.5
+            sumatoria_Sl = first_codo + second_codo
+            variables['second_codo'] = second_codo
+            variables['q_codo_2'] = q_codo_2(Q1, Qf)
+            variables['sumatoria_Sl'] = sumatoria_Sl
+        if num >= 3:
+            third_codo = aply_third_codo(first_section, project, Q1, project.ducto.t_ducto, Qf)
 
-        sumatoria_Sl = 0
-        first_codo = 0
-        second_codo = 0
-        third_codo = 0
-
-        for num in range(total_codos):
-            num += 1
-            if num == 1:
-                first_codo = aply_first_codo(first_section, project, Q1, project.ducto.t_ducto)
-                variables['first_codo'] = first_codo
-                variables['q_codo_1'] = q_codo_1(Q1)
-            if num == 2:
-                second_codo = aply_second_codo(first_section, project, Q1, project.ducto.t_ducto, Qf)
-                sumatoria_Sl = first_codo + second_codo
-                variables['second_codo'] = second_codo
-                variables['q_codo_2'] = q_codo_2(Q1, Qf)
-                variables['sumatoria_Sl'] = sumatoria_Sl
-            if num >= 3:
-                third_codo = aply_third_codo(first_section, project, Q1, project.ducto.t_ducto, Qf)
-                sumatoria_Sl = first_codo + second_codo + (total_codos - 2) * third_codo
-                variables['third_codo'] = third_codo
-                variables['sumatoria_Sl'] = sumatoria_Sl
-                variables['q_codo_3'] = q_codo_3(Q1, Qf)
-        variables["area_ducto_circular"] = area_ducto_circular(project)
-        variables["area_ducto_ovalado"] = project.ducto.area
-        variables['final_sumatoria_Sl'] = sumatoria_Sl
-        variables['formula_parte_2_ovalado'] = formula_parte_2_ovalado(project)
-        variables['formula_parte_2_'] = formula_parte_2_circular(project)
-
-        
-        # Retornar el diccionario de variables y el resultado final
-        return variables, sumatoria_Sl
+            sumatoria_Sl = first_codo + second_codo + (total_codos - 2) * third_codo
+            variables['third_codo'] = third_codo
+            variables['sumatoria_Sl'] = sumatoria_Sl
+            variables['q_codo_3'] = q_codo_3(Q1, Qf)
+    variables["area_ducto_circular"] = area_ducto_circular(project)
+    variables["area_ducto_ovalado"] = project.ducto.area
+    variables['final_sumatoria_Sl'] = sumatoria_Sl
+    variables['formula_parte_2_ovalado'] = formula_parte_2_ovalado(project)
+    variables['formula_parte_2_'] = formula_parte_2_circular(project)
+    # Retornar el diccionario de variables y el resultado final
+    return variables, sumatoria_Sl
 
 def q_codo_1(Q1):
     return Q1**2
@@ -76,6 +81,7 @@ def aply_first_codo(first_section, project, Q1,type):
         
     if type == "circular":
         area_ducto_circular_ = area_ducto_circular(project)
+        
         formula_parte_2_ducto_circular = 1/(area_ducto_circular_*area_ducto_circular_)
         
         return first_section*formula_parte_2_ducto_circular*Q_codo_1
@@ -144,7 +150,7 @@ def goal_seek_custom(ajuste_cubico, r_actual, initial_guess=0.5, tolerance=1e-6,
     - ajuste_cubico: Coeficientes [a3, a2, a1, a0] del polinomio cúbico.
     - r_actual: Valor de la resistencia actual.
     - initial_guess: Valor inicial para X.
-    - tolerance: Precisión deseada (valor cercano a 0 para goal_seek).
+    - tolerance: sióPrecin deseada (valor cercano a 0 para goal_seek).
     - max_iterations: Número máximo de iteraciones permitidas.
 
     Retorna:
@@ -167,7 +173,7 @@ def goal_seek_custom(ajuste_cubico, r_actual, initial_guess=0.5, tolerance=1e-6,
         
         # Verificar si estamos dentro de la tolerancia
         if abs(goal_seek) < tolerance:
-            print(f"Goal Seek convergió después de {i+1} iteraciones.")
+            
             return ecuacion1, ecuacion2, X
         
         # Calcular la derivada numérica de la ecuación goal_seek
@@ -185,5 +191,4 @@ def goal_seek_custom(ajuste_cubico, r_actual, initial_guess=0.5, tolerance=1e-6,
         X -= goal_seek / derivative
 
     raise ValueError("Goal Seek no convergió en el número máximo de iteraciones.")
-
 

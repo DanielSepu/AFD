@@ -1,28 +1,27 @@
 import time
 import random
 from django.utils import timezone
-
+from core.logger_config import logger_AFD
 from applications.getdata.models import SensorsData, VdfData
 
 # Valores base para simular datos reales en SensorsData
 base_data = {
-    'pt2': 1450,
-    'ps2': 1180,
-    'densidad2': 90000,
-    'q2': 80,
-    'pt1': 1920,
-    'ps1': 1610,
-    'densidad1': 1.1,
-    'q1': 20,
-    'lc': 27,
-    'qf': 15,
+    'pt2': 488,
+    'ps2': 271,
+    'Pbs2': 95362,         # ex densidad2
+    'Tbs2': 30.5,          # ex q2
+    'HRs2': 34.5,          # ex pt1
+    'pt1': 709,            # ex ps1
+    'ps1': 490,            # ex densidad1
+    'Pbs1': 95362,         # ex q1
+    'Tbs1': 30.7,          # ex lc
+    'HRs1': 37.2,          # ex qf
     'k': 0,
-    'tbs': 29,
-    'hr': 70,
+    'tbs': 0,
+    'hr': 0,
     'tbh': 0,
-    'tgbh': 100.0
+    'tgbh': 0
 }
-
 
 
 # Valores base para simular datos reales en VdfData
@@ -33,7 +32,7 @@ base_data_vdf = {
     'oc': 1.0,  # Corriente de operación (A)
     'power': 15.0,  # Potencia (kW)
     'powerc': 14.8,  # Potencia corregida (kW)
-    'rpm': 1500.0  # RPM base del ventilador
+    'rpm': 3000.0  # RPM base del ventilador
 }
 
 def generate_variation(base_value, variation_range=0.0001):
@@ -46,21 +45,20 @@ def insert_sensor_data(count=None):
     """
     Inserta un nuevo conjunto de datos en las tablas SensorsData y VdfData.
     """
-    print(f"-- Insertando datos SensorsData y VdfData --")
     
     # Inserción de datos en SensorsData
     sensor_data = {
         'ts': timezone.now(),  # Marca de tiempo actual
         'pt2': generate_variation(base_data['pt2']),
         'ps2': generate_variation(base_data['ps2']),
-        'densidad2': generate_variation(base_data['densidad2']),
-        'q2': generate_variation(base_data['q2']),
-        'pt1': generate_variation(base_data['pt1']),
-        'ps1': generate_variation(base_data['ps1']),
-        'densidad1': generate_variation(base_data['densidad1']),
-        'q1': generate_variation(base_data['q1']),
-        'lc': generate_variation(base_data['lc']),
-        'qf': generate_variation(base_data['qf']),
+        'Pbs2': generate_variation(base_data['Pbs2']),  # ex densidad2
+        'Tbs2': generate_variation(base_data['Tbs2']),  # ex q2
+        'HRs2': generate_variation(base_data['HRs2']),  # ex pt1
+        'pt1': generate_variation(base_data['pt1']),    # ex ps1
+        'ps1': generate_variation(base_data['ps1']),    # ex densidad1
+        'Pbs1': generate_variation(base_data['Pbs1']),  # ex q1
+        'Tbs1': generate_variation(base_data['Tbs1']),  # ex lc
+        'HRs1': generate_variation(base_data['HRs1']),  # ex qf
         'k': generate_variation(base_data['k']),
         'tbs': generate_variation(base_data['tbs']),
         'hr': generate_variation(base_data['hr']),
@@ -69,7 +67,7 @@ def insert_sensor_data(count=None):
     }
     
     # Guardar la instancia de SensorsData en la base de datos
-    SensorsData.objects.using('sensorDB').create(**sensor_data)
+    # SensorsData.objects.using('sensorDB').create(**sensor_data)
 
     # Inserción de datos en VdfData
     vdf_data = {
@@ -84,7 +82,7 @@ def insert_sensor_data(count=None):
     }
 
     # Guardar la instancia de VdfData en la base de datos
-    VdfData.objects.using('sensorDB').create(**vdf_data)
+    # VdfData.objects.using('sensorDB').create(**vdf_data)
 
 if __name__ == "__main__":
     insert_sensor_data()

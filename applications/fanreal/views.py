@@ -21,7 +21,6 @@ def fanreal(request):
       proyect =  Proyecto.objects.all().order_by('id').last()
       # datos insertados en curva de diseño, convertidos a dataframe
       df_fan = get_fan_data(proyect, 'pt')
-      print(df_fan)
       # indice del valor maximo de presion 
       ind  = df_fan['presion'].idxmax()
       # obtener el cociente de entre presion maxima y el caudal maximo
@@ -29,10 +28,10 @@ def fanreal(request):
       # obtiene la ultima medicion del sensor
       ultima_medicion =  SensorsData.objects.all().order_by('id').last()  
       # presion estatica / caudal al cuadrado
-      r_actual = ultima_medicion.ps1/ ultima_medicion.q1**2
+      r_actual = ultima_medicion.pt1/ ultima_medicion.q1**2
       # porcentaje de rendimiento del ventilador 
       pr = int(r_max/r_actual *100)
-      peak_pressure =  int(ultima_medicion.ps1/df_fan.loc[ind]['presion'] *100 )
+      peak_pressure =  int(ultima_medicion.pt1/df_fan.loc[ind]['presion'] *100 )
       scatter_data_fan_list = []
       if chart_type == 'total_pressure':
       
@@ -48,7 +47,6 @@ def fanreal(request):
          P_medido = df_sensor1["pt1"].mean()
          densidad_fan = float(proyect.curva_diseno.densidad) 
          densidad_sensor1 = df_sensor1["densidad1"].mean()
-         #print(df_sensor1)
          rpm_fan = float(proyect.curva_diseno.rpm)
          rpm_vdf = df_vdf["rpm"].mean()
       
@@ -59,8 +57,7 @@ def fanreal(request):
 
          df_graph = df_adjust.loc[:, ["q_rpm", "pt_dens"]]
          scatter_data_fan_list = df_fan[['caudal','presion']].to_dict(orient='records')
-         print(f"scater data")
-         print(scatter_data_fan_list)
+
 
          for k,v in enumerate(scatter_data_fan_list):
             v['CAUDAL(m3/s)'] = v['caudal']
@@ -130,8 +127,7 @@ def fanreal(request):
       
 
       # Convierte los datos a una lista de diccionarios
-      # print(scatter_data_fan_list)
-      # Pasa los datos a la plantilla
+
       XY_segunda = []
 
       distancia_constante = Q_medido // 5
@@ -150,7 +146,7 @@ def fanreal(request):
          XY_segunda.append({'caudal':Q_curvaR[i],'presion':P_curvaR[i]})
 
       context = {'scatter_data': scatter_data_fan_list, 'scatter_data2':XY_segunda, 'chart_type': chart_type, 'c':[Q_medido,P_medido], 'proyecto':proyect , 'peak_resistance':pr, 'peak_pressure':peak_pressure }
-      # print(f"context: {context}")
+
       return render(request, 'fanReal.html', context)
 
    # Si la solicitud no es un POST, simplemente renderiza la página sin datos

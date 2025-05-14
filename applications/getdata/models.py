@@ -1,15 +1,16 @@
 from django.db import models
 
 
+
 # Create your models here.
-class SensorData(models.Model):  # Asegúrate de heredar de models.Model
-   id = models.AutoField(primary_key=True) 
+class SensorData(models.Model):  
    payload = models.FloatField()
    timestamp = models.DateTimeField()
    class Meta:
       db_table = "sensor_data"
 
-class VdfData(models.Model):  # Asegúrate de heredar de models.Model
+
+class VdfData(models.Model):  
    id = models.AutoField(primary_key=True) 
    ts = models.DateTimeField()
    fref = models.FloatField() 
@@ -27,22 +28,25 @@ class SensorsData(models.Model):
    # los comentarios con (-->) indica que es el nombre antes de ser renombrado
    id = models.AutoField(primary_key=True) 
    ts = models.DateTimeField()
-   pt2 = models.FloatField() 
-   ps2 = models.FloatField() 
-   densidad2 = models.FloatField() #  Presión barométrica ventilador(P2) --> densidad2
-   q2 = models.FloatField() # humedad relativa en la frente(hrf) --> (q2)
+
+   pt2 = models.FloatField(verbose_name="Presión total sensor 2 (Pa)") 
+   ps2 = models.FloatField(verbose_name="Presión estática sensor 2 (Pa)") 
+   Pbs2 = models.FloatField(verbose_name="Presión barométrica sensor 2 (Pa)") #  Presión barométrica ventilador(P2) --> densidad2
+   Tbs2 = models.FloatField(verbose_name="Temperatura seca sensor 2 (°C)") # humedad relativa en la frente(hrf) --> (q2)
    
-   pt1 = models.FloatField() 
-   ps1 = models.FloatField()
-   densidad1 = models.FloatField() # P1 --> densidad1 
-   q1 = models.FloatField()
-   lc = models.FloatField() # temperatura seca de la frente (tbs2) --> lc
-   qf = models.FloatField()
-   k = models.FloatField()
-   tbs = models.FloatField() # temperatura bulbo seco
-   hr = models.FloatField() # humedad relativa
+   HRs2 = models.FloatField(verbose_name="Humedad Relativa sensor 2 (%)") 
+   pt1 = models.FloatField(verbose_name="Presión total sensor 1 (Pa)")
+   ps1 = models.FloatField(verbose_name="Pesión estática sensor 1 (Pa)") # P1 --> densidad1 
+   Pbs1 = models.FloatField(verbose_name="Presión barométrica sensor 1 (Pa)")
+   Tbs1 = models.FloatField(verbose_name="Temperatura seca sensor 2 (°C)") # temperatura seca de la frente (tbs2) --> lc
+   HRs1 = models.FloatField(verbose_name="Humedad Relativa sensor 1 (%)")
+   k = models.FloatField(verbose_name="factor de fricción")
+   tbs = models.FloatField(verbose_name="temperatura seca") # temperatura bulbo seco
+   hr = models.FloatField(verbose_name="humedad relativa") # humedad relativa
    tbh = models.FloatField() # temperatura bulmo humedo
    tgbh = models.FloatField()
+   
+   
    
    class Meta:
       db_table = "sensors_data"
@@ -141,6 +145,10 @@ class Ducto(models.Model):
    f_fuga = models.FloatField()
    t_acople = models.CharField()
    largo = models.FloatField()
+   Ldsf = models.IntegerField() 
+   dSensores = models.FloatField(default=0)     
+   dS2_F = models.FloatField(default=0)
+   
    class Meta:
       db_table = "ducto"
 
@@ -191,6 +199,153 @@ class Proyecto(models.Model):
    dis_e_sens = models.FloatField()
    lf = models.FloatField() # longitud de ducto desde el sensor 2 hasta la frente en metros
    s_partida = models.ForeignKey(Sistema_Partida, on_delete=models.CASCADE) 
+   dedf = models.FloatField() # distancia estimada del ducto hasta la frente
 
    class Meta:
       db_table = "proyecto"
+      
+      
+class Simulador(models.Model):
+    data = models.JSONField()
+    insert_interval = models.IntegerField(
+        help_text="Intervalo en segundos para insertar nuevos valores",
+        default=60
+    )
+    estado = models.BooleanField(default=False)
+
+    class Meta:
+         db_table="simulador"
+
+class Historial(models.Model):
+    # Pérdidas de ductos (ducto circular)
+    pc1_dc   = models.FloatField(
+        verbose_name="pérdida codo 1 ducto circular",
+        blank=True, null=True
+    )
+    pc2_dc   = models.FloatField(
+        verbose_name="pérdida codo 2 ducto circular",
+        blank=True, null=True
+    )
+    pc345_dc = models.FloatField(
+        verbose_name="pérdida codos 3,4,5 ducto circular",
+        blank=True, null=True
+    )
+    pcc_dc   = models.FloatField(
+        verbose_name="pérdida choque codos ducto",
+        blank=True, null=True
+    )
+
+    # Fórmulas
+    f1     = models.FloatField(
+        verbose_name="fórmula parte 1",
+        blank=True, null=True
+    )
+    f2_dc  = models.FloatField(
+        verbose_name="fórmula parte 2 ducto circular",
+        blank=True, null=True
+    )
+    f2_do  = models.FloatField(
+        verbose_name="fórmula parte 2 ducto ovalado",
+        blank=True, null=True
+    )
+
+    # Caudales
+    q_c1   = models.FloatField(
+        verbose_name="Q codo 1",
+        blank=True, null=True
+    )
+    q_c2   = models.FloatField(
+        verbose_name="Q codo 2",
+        blank=True, null=True
+    )
+    q_c345 = models.FloatField(
+        verbose_name="Q codos 3,4,5",
+        blank=True, null=True
+    )
+    q1     = models.FloatField(
+        verbose_name="Caudal Q1",
+        blank=True, null=True
+    )
+    qf     = models.FloatField(
+        verbose_name="Caudal de la frente",
+        blank=True, null=True
+    )
+
+    # Otras pérdidas y presiones
+    pct_sys = models.FloatField(
+        verbose_name="pérdida choque total sistema ducto circular/ovalado",
+        blank=True, null=True
+    )
+    pd_v    = models.FloatField(
+        verbose_name="presión dinámica ventilador",
+        blank=True, null=True
+    )
+    pe_v    = models.FloatField(
+        verbose_name="presión estática ventilador",
+        blank=True, null=True
+    )
+    pd_e    = models.FloatField(
+        verbose_name="presión dinámica entrada",
+        blank=True, null=True
+    )
+    pcs_dc  = models.FloatField(
+        verbose_name="pérdida choque salida ducto",
+        blank=True, null=True
+    )
+    pta_v   = models.FloatField(
+        verbose_name="pérdida total accesorios ventilador",
+        blank=True, null=True
+    )
+
+    # Temperaturas y presiones
+    tbs      = models.FloatField(
+        verbose_name="temperatura bulbo seco",
+        blank=True, null=True
+    )
+    tbh      = models.FloatField(
+        verbose_name="temperatura bulbo húmedo",
+        blank=True, null=True
+    )
+    presion_t = models.FloatField(
+        verbose_name="presión total",
+        blank=True, null=True
+    )
+    lc       = models.FloatField(
+        verbose_name="temperatura seca sensor",
+        blank=True, null=True
+    )
+    tgbh     = models.FloatField(
+        verbose_name="tgbh",  
+        blank=True, null=True
+    )
+
+    # Marca de tiempo
+    ts = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="fecha y hora de registro"
+    )
+
+    def __str__(self):
+        # Puedes personalizar qué se muestra al representar la instancia
+        return f"Historial #{self.pk} - {self.ts:%Y-%m-%d %H:%M}"
+
+    class Meta:
+        verbose_name = "Historial"
+        verbose_name_plural = "Historiales"
+
+
+    class Meta:
+         db_table = "historial"
+
+    def __str__(self):
+         return f"Historial #{self.id}"
+    
+
+
+class IntervalosDeActualizacion(models.Model):
+      semaforo = models.IntegerField(null=True, blank=True)
+      estado_semaforo = models.BooleanField(default=True)
+      sistema = models.IntegerField(null=True, blank=True)
+      estado_sistema = models.BooleanField(default=True)
+      
+      

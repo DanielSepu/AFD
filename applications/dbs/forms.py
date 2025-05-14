@@ -1,5 +1,7 @@
 from django import forms
 from applications.getdata.models import Ventilador, CurvaDiseno, Ducto, EquipamientoDiesel, Tipo_Equipamiento_Diesel, Caracteristicas_Ventilador, Proyecto, Sistema_Partida
+from django.core.validators import MaxValueValidator
+from django.utils.safestring import mark_safe
 
 ##################### Extractores de nombres para los select, de otro modo se ven: "table object (1)"
 class CustomMMCF(forms.ModelMultipleChoiceField):
@@ -27,22 +29,23 @@ class VentiladorForm(forms.ModelForm):
         widget=forms.Select(
             choices=[(2, '2'), (4, '4'), (6, '6'), (8, '8'), (10, '10'), (12, '12')],
             attrs={'class': 'form-select'}
-        )
+        ),
+        label="Polos"
     )
 
     img_ventilador = forms.ImageField(
         label='Imagen del ventilador',
         required=False,
-        widget=forms.ClearableFileInput(attrs={'class': 'form-control-file'})
+        widget=forms.ClearableFileInput(attrs={'class': 'form-control'})
     )
 
     vmm = forms.FloatField(
-        label='V',
+        label='V (mm)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese V'})
     )
     
     amm = forms.FloatField(
-        label='A',
+        label='A (mm)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese A'})
     )
     
@@ -55,11 +58,13 @@ class VentiladorForm(forms.ModelForm):
         label='Potencia motor (kW)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese Potencia'})
     )
+    
     accesorios = CustomMMCF(
         queryset=Caracteristicas_Ventilador.objects.all(),
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-check'}),
-        label='Accesorios'
+        label="Accesorios"
     )
+    
     class Meta:
         model = Ventilador
         fields = ['modelo', 'vmm', 'amm', 'nmm', 'hp', 'polos', 'img_ventilador', 'accesorios']
@@ -70,8 +75,21 @@ class VentiladorForm(forms.ModelForm):
             'rmm': 'R',
             'hp': 'Potencia (HP)'
         }
-        field_order = ['modelo', 'vmm', 'amm', 'nmm','hp','img_ventilador', 'accesorios']
+        field_order = ['modelo', 'vmm', 'amm', 'nmm', 'hp', 'img_ventilador', 'accesorios']
+    
+    class Meta:
+        model = Ventilador
+        fields = ['modelo', 'vmm', 'amm', 'nmm', 'hp', 'polos',  'img_ventilador','accesorios']
+        labels = {
+            'modelo': 'Modelo',
+            'vmm': 'V',
+            'amm': 'A',
+            'rmm': 'R',
+            'hp': 'Potencia (HP)'
+        }
+        field_order = ['modelo', 'vmm', 'amm', 'nmm', 'hp',  'img_ventilador','accesorios']
 
+    
       
 class CurvaDisenoForm(forms.ModelForm):
     idu = forms.IntegerField(
@@ -94,26 +112,99 @@ class CurvaDisenoForm(forms.ModelForm):
     )
     
     densidad = forms.FloatField(
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese densidad (kg/m3)'}),
-        label='ρ (kg/m3)'
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese densidad (kg/m³)'}),
+        label='ρ (kg/m³)'
     )
 
+    datos_curva = forms.CharField(widget=forms.HiddenInput(), required=False)
     class Meta:
         model = CurvaDiseno
-        fields = ['idu', 'ventilador', 'angulo', 'rpm', 'densidad']
+        fields = ['idu', 'ventilador', 'angulo', 'rpm', 'densidad', 'datos_curva']
         labels = {
             'idu': '/Nombre',
             'angulo': 'θ °',
             'rpm': 'RPM',
             'densidad': 'ρ (kg/m³)',
         }
+    def clean(self):
+        cleaned_data = super().clean()
+        post = self.data  # Contiene todos los campos POST
+        # Manejo de caudal_0 y presion_0
+        caudal_0 = post.get('caudal_0')
+        presion_0 = post.get('presion_0')
+        potencia_0 = post.get('potencia_0')
 
+        # Si el valor es una lista, toma el primer elemento
+        if isinstance(caudal_0, list):
+            caudal_0 = caudal_0[0] if caudal_0 else 0.0
+        if isinstance(presion_0, list):
+            presion_0 = presion_0[0] if presion_0 else 0.0
+        if isinstance(presion_0, list):
+            potencia_0 = potencia_0[0] if potencia_0 else 0.0
+
+        # Convierte a float (maneja errores)
+        try:
+            caudal_0 = float(caudal_0)
+        except (TypeError, ValueError):
+            caudal_0 = 0.0
+
+        try:
+            presion_0 = float(presion_0)
+        except (TypeError, ValueError):
+            presion_0 = 0.0
+
+        # Inicializa las listas
+        caudal_list = [caudal_0]
+        presion_list = [presion_0]
+        potencia_list = [potencia_0]
+
+        # Manejo de los demás campos (caudal_1, presion_1, etc.)
+        i = 1
+        while True:
+            c = post.get(f'caudal_{i}')
+            p = post.get(f'presion_{i}')
+            pt = post.get(f'potencia_{i}')
+
+            # Si no hay más campos, sal del bucle
+            if c is None and p is None and pt is None:
+                break
+
+            # Convierte a float (maneja errores)
+            try:
+                c = float(c)
+            except (TypeError, ValueError):
+                c = 0.0
+
+            try:
+                p = float(p)
+            except (TypeError, ValueError):
+                p = 0.0
+
+            try:
+                pt = float(pt)
+            except (TypeError, ValueError):
+                pt = 0.0
+
+            caudal_list.append(c)
+            presion_list.append(p)
+            potencia_list.append(pt)
+            i += 1
+
+        # Reconstruye el diccionario final
+        cleaned_data['datos_curva'] = {
+            "caudal": caudal_list,
+            "presion": presion_list,
+            "potencia": potencia_list,
+        }
+
+        return cleaned_data
 
 class DuctoForm(forms.ModelForm):
     DUCTO_CHOICES = [
         ('circular', 'Circular'),
         ('ovalado', 'Ovalado'),
     ]
+    
     idu = forms.CharField(
         label='ID/Nombre',
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el ID'})
@@ -124,10 +215,9 @@ class DuctoForm(forms.ModelForm):
         choices=DUCTO_CHOICES,
         widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'Ingrese el tipo de ducto'})
     )
-
     
     f_friccion = forms.FloatField(
-        label='Factor de fricción (Kg/m²) (opcional)',
+        label='Factor de fricción (kg/m³) (opcional)',
         required=False,
         initial=0,
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el factor de fricción'})
@@ -139,6 +229,7 @@ class DuctoForm(forms.ModelForm):
         initial=0,
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el factor de fuga'})
     )
+    
     diametro = forms.FloatField(
         label='Diámetro (cm)',
         required=False,
@@ -148,7 +239,7 @@ class DuctoForm(forms.ModelForm):
     area = forms.FloatField(
         label='Área (m²)',
         required=False,
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el área'}),
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Área calculada', 'readonly': 'true'}),
     )
 
     t_acople = forms.CharField(
@@ -160,10 +251,21 @@ class DuctoForm(forms.ModelForm):
         label='Largo (m)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el largo'})
     )
-    
+    Ldsf = forms.FloatField(
+        label='longitud de ducto desde el sensor 2 hasta la frente (m)',
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'longitud de ducto desde el sensor 2 hasta la frente (m)'})
+    )
+    dSensores = forms.FloatField(
+        label='Distancia entre sensores (m)',
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Distancia entre sensores (m)'})
+    )
+    dS2_F = forms.FloatField(
+        label='Distancia entre sensores 2 a la frente (m)',
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Distancia entre sensores 2 a la frente (m)'})
+    )
     class Meta:
         model = Ducto
-        fields = ['idu', 't_ducto','diametro','area', 'f_friccion', 'f_fuga', 't_acople', 'largo']
+        fields = ['idu', 't_ducto','diametro','area', 'f_friccion', 'f_fuga', 't_acople', 'largo', 'Ldsf']
         
         labels = {
             'idu': 'ID/Nombre',
@@ -171,19 +273,12 @@ class DuctoForm(forms.ModelForm):
             'f_friccion': 'Factor de fricción(K) (opcional)',
             'f_fuga': 'Factor de fuga(L) (opcional)',
             't_acople': 'Tipo de acople',
-            'largo': 'Largo (m)'
+            'largo': 'Largo (m)',
+            'Ldsf': 'longitud de ducto desde el sensor 2 hasta la frente (m)'
         }
-    def __init__(self, *args, **kwargs):
-        ocultar = kwargs.pop('ocultar',True)
-        super().__init__(*args, **kwargs)
-        if ocultar:
-            self.fields['diametro'].widget = forms.HiddenInput()
-            self.fields['area'].widget = forms.HiddenInput()
-
-    
     
 
-      
+
 class EquipDieselForm(forms.ModelForm):
 
     class CustomEDN(forms.ModelChoiceField):
@@ -316,8 +411,12 @@ class ProyectoForm(forms.ModelForm):
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el área de la galería'})
     )
     factor = forms.FloatField(
-        label='Factor corrección (%)',
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'max': '100', 'step': '1', 'placeholder': 'Ingrese el factor de corrección'})
+        validators=[MaxValueValidator(100)],  # Limita el valor máximo a 100
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ingrese un valor (máximo 100)',
+        }),
+        label="Factor (%)"
     )
 
     potencia = forms.FloatField(
@@ -328,6 +427,10 @@ class ProyectoForm(forms.ModelForm):
     dis_e_sens = forms.FloatField(
         label='Distancia entre sensores (m)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese la distancia entre sensores'})
+    )
+    dedf = forms.FloatField(
+        label='Distancia estimada del ducto a frente (m)',
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese la distancia estimada del ducto a la frente en metros'})
     )
     lf = forms.FloatField(
         label='Longitud de ducto desde el sensor 2 hasta la frente (m)',
@@ -366,9 +469,18 @@ class SistemaPartidaForm(forms.ModelForm):
         model = Sistema_Partida
         fields = ['nombre']
 
+class TipoEquipamientodieselForm(forms.ModelForm):
+    nombre = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el nombre del equipo disel'})
+    )
+
+    class Meta:
+        model = Tipo_Equipamiento_Diesel
+        fields = ['nombre']
+
 class Caracteristicas_VentiladorForm(forms.ModelForm):
     nombre = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el nombre de la caracteristica'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el nombre del accesorio'})
     )
     factor_choque = forms.IntegerField(
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Factor de choque'}),

@@ -18,3 +18,6 @@ def getdata(request):
 
     # Si la solicitud no es un POST, simplemente renderiza la página sin datos
     return render(request, 'getdata.html')
+
+
+

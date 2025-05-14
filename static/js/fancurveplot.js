@@ -3,9 +3,14 @@
       //const containerHeight = graphContainer.clientHeight;
 
       function  createFanChart(data, chart_type, promedios, data2) { 
+         console.log(chart_type)
+         console.log(data2)
+         const graphContainer = document.getElementById(chart_type);
+         console.log(graphContainer)
          // Get the dimensions of the container
-         const containerWidth = graphContainer.clientWidth - margin.right;
-         const containerHeight = graphContainer.clientHeight;
+         const graphContainer2 = document.getElementById("graphContainer");
+         const containerWidth = graphContainer2.clientWidth - margin.right;
+         const containerHeight = graphContainer2.clientHeight;
          //const containerHeight = 500;
          const keys = Object.keys(data[0]);
          // Declare the x (horizontal position) scale for "Q1".

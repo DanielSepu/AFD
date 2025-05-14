@@ -44,8 +44,15 @@ function aplicarFiltro(event) {
   }
 
   const tipo = campoSeleccionado.value;
+  const nombreDescriptivo = campoSeleccionado.getAttribute("data-nombre");
   const inicio = document.getElementById("fechaInicio").value;
   const fin = document.getElementById("fechaFin").value;
+
+   // Actualizar el título del modal
+   const tituloModal = document.getElementById("graficoModalLabel");
+   if (tituloModal) {
+     tituloModal.textContent = `Gráfico: ${nombreDescriptivo}`;
+   }
 
   let url = `/api/grafico/?tipo=${tipo}`;
   if (inicio) url += `&inicio=${inicio}`;
@@ -106,7 +113,7 @@ am5.ready(function () {
     cursor.lineY.set("visible", false);
 
     const xAxis = chart.xAxes.push(am5xy.DateAxis.new(root, {
-      baseInterval: { timeUnit: "day", count: 1 },
+      baseInterval: { timeUnit: "minute", count: 1 },
       renderer: am5xy.AxisRendererX.new(root, { minorGridEnabled: true }),
       tooltip: am5.Tooltip.new(root, {})
     }));

@@ -1,8 +1,11 @@
+from datetime import timedelta
 from math import atan, sqrt
 import math
 
 import pandas as pd
+import requests
 
+from applications.settings.models import FugasConfig, SemaforoEstado
 from applications.currentstatus.utils import calculo_densidad_aire_sensor
 from applications.fandesign.mixins import presion_total
 from applications.fandesign.utils import calcular_la_curva_total, calcular_la_presion_maxima
@@ -10,7 +13,7 @@ from applications.getdata.models import SensorsData, VdfData
 from modules.queries import get_10min_sensor_data, get_10min_vdf_data
 from django.db.models import Max
 from django.contrib import messages
-
+from core.logger_config import logger_AFD
 from modules.utils import calculate_tbh
 
 
@@ -531,36 +534,89 @@ class Semaforo:
     
 
     def fugas_v6(self):
-        # objetivo 30 minutos 
-        media_hora_seg = 30*60
+        """
+        Evalúa posibles fugas de presión en un periodo de 30 minutos.
 
-        presion_total_ventilador = SensorsData.objects.all().last() 
-        fecha_hora = presion_total_ventilador.ts 
+        La función toma el timestamp más reciente (`ts`) del modelo SensorsData y calcula 
+        un rango de 30 minutos hacia atrás. Luego, recupera todos los registros dentro 
+        de ese intervalo y calcula la variación porcentual de la presión entre el primer 
+        y el último registro.
 
-        anterior = SensorsData.objects.exclude(id=presion_total_ventilador.id).last()
-        fecha_hora_anterior = anterior.ts
+        Si hay pérdida de presión, se calcula el porcentaje de variación y se evalúa 
+        un color de semáforo usando `self.calcular_semaforo_v6`.
 
-        diferencia = fecha_hora - fecha_hora_anterior
+        Los resultados se almacenan en `self.detalle['v6']` y el color se devuelve.
 
+        Returns:
+            str: Color del semáforo (ej. "verde", "amarillo", "rojo").
+        """
+        # Paso 1: Obtener el registro más reciente
+        '''
+        config = FugasConfig.objects.first()
+        semaforo = SemaforoEstado.objects.first()
+
+        if not config or not semaforo:
+            logger_AFD.warning("Configuración de fugas o semáforo no disponible.")
+            return None
+
+        if semaforo.esta_bloqueado:
+            logger_AFD.warning("Semáforo bloqueado. No se ejecuta análisis.")
+            self.detalle['v6'] = {"estado": "bloqueado", "color": semaforo.color_actual}
+            return semaforo.color_actual
+        '''
+        
+        registro_mas_reciente = SensorsData.objects.all().last()
+        if not registro_mas_reciente:
+            logger_AFD.warning("No hay registros en SensorsData.")
+            return None
+
+        ts_mas_reciente = registro_mas_reciente.ts
+        ts_limite = ts_mas_reciente - timedelta(minutes=30)
+
+        logger_AFD.debug(f"Buscando registros desde {ts_limite} hasta {ts_mas_reciente}")
+        
+        # Paso 2: Obtener registros de los últimos 30 minutos
+        registros = SensorsData.objects.filter(ts__range=(ts_limite, ts_mas_reciente)).order_by('ts')
+
+        if not registros.exists():
+            logger_AFD.warning("No se encontraron registros en los últimos 30 minutos.")
+            return None
+
+        primero = registros.first()
+        ultimo = registros.last()
+
+        logger_AFD.debug(f"Primer registro: {primero.ts}, Último registro: {ultimo.ts}")
+
+        # Paso 3: Cálculo de intervalo y presiones
+        diferencia = ultimo.ts - primero.ts
         segundos_diferencia = diferencia.total_seconds()
 
-        
-        if segundos_diferencia > 0:
-            unidades_faltantes = (media_hora_seg / segundos_diferencia)
-            unidades_faltantes = max(0, unidades_faltantes)
-        else:
-            unidades_faltantes = float("inf")
-        
-        ultimos_30mins = SensorsData.objects.all().order_by('-id')[:int(unidades_faltantes)+3]
-        primero = ultimos_30mins[0]
-        ultimo = ultimos_30mins[len(ultimos_30mins) - 1]
-
-        presion_actual = ultimo.pt1 
         presion_hace30m = primero.pt1
-        porcentaje = 1 - (presion_hace30m/presion_actual)
-        formula = "porcentaje = 1 - (presion_hace30m/presion_actual)"
+        presion_actual = ultimo.pt1
+
+        if presion_actual == 0:
+            logger_AFD.error("Presión actual es cero, división por cero evitada.")
+            porcentaje = float('inf')
+        else:
+            porcentaje = 1 - (presion_hace30m / presion_actual)
+
+        formula = "porcentaje = 1 - (presion_hace30m / presion_actual)"
         color = self.calcular_semaforo_v6(porcentaje)
-        self.detalle["colores"].append(color)
+        self.detalle.setdefault("colores", []).append(color)
+        '''
+        fuera_de_rango = porcentaje > config.tolerancia_maxima or porcentaje < config.tolerancia_minima
+
+        if fuera_de_rango and config.alerta_activa:
+            #self.enviar_alerta_fuga(...)
+            if porcentaje > config.tolerancia_maxima * 2:
+                semaforo.esta_bloqueado = True
+                semaforo.motivo_bloqueo = f"Fuga crítica detectada. Caída del {round(porcentaje*100,2)}%"
+                semaforo.color_actual = "rojo"
+                semaforo.save()
+
+        semaforo.color_actual = color
+        semaforo.save()
+        '''
         self.detalle['v6'] = {
             "intervalo en segundos": round(segundos_diferencia, 3),
             "presion actual": round(presion_actual, 3),
@@ -569,7 +625,15 @@ class Semaforo:
             "formula": formula,
             "color": color
         }
+
+        logger_AFD.debug(f"Resultado fugas_v6: {self.detalle['v6']}")
+
         return color
+    
+    
+
+    
+
 
     def calcular_semaforo_v7(self, potencia):
         if potencia < 95:
@@ -601,7 +665,6 @@ class Semaforo:
         }
         return potencia
     
-    
     def calcular_estado_final(self, project):
         self.encender(project)
         self.caudal_en_la_frente_v1()
@@ -620,7 +683,48 @@ class Semaforo:
         else:
             color = "verde"
         self.detalle["color"] =color
+        self.informar_semaforo_fisico(color)
 
+    def informar_semaforo_fisico(self, color: str):
+        """
+        Envía un GET a http://127.0.0.1:1880/semaforo?value=<n>
+        mapeando color→número: verde→1, amarillo→2, rojo→3.
+        """
+        # 1. Mapeo color → número
+        mapa = {
+            'verde': 1,
+            'amarillo': 2,
+            'rojo': 3
+        }
+        clave = color.strip().lower()
+        if clave not in mapa:
+            raise ValueError(f"Color inválido: {color!r}. Usa 'verde', 'amarillo' o 'rojo'.")
+
+        valor = mapa[clave]
+
+        # 2. Construir la URL y parámetros
+        url = 'http://172.24.129.177:1880/semaforo'
+        params = {'value': valor}
+
+        # 3. Hacer la petición
+        #print(requests.get(url, params=params, timeout=10))
+        try:
+            resp = requests.get(url, params=params, timeout=10)
+            resp.raise_for_status()
+        except requests.RequestException as e:
+            # Manejo de errores de conexión o HTTP
+            print(f"[ERROR] No pude notificar semáforo ({color}→{valor}): {e}")
+            return False
+
+        # 4. (Opcional) procesar la respuesta
+        # si tu endpoint devuelve JSON:
+        # data = resp.json()
+        # print("Respuesta del semáforo:", data)
+
+        print(f"[OK] Semáforo '{color}' informado con value={valor}")
+        return True
+        
+        
     def calculate_k(self):
 
         mostrar_inicio_formulas_principales("Calculando el valor de K","K (factor de fricción ducto) kg/m3 = (pt1-ps2)*(pow(Área ducto,3))/(Q1*Q2*Perímetro ducto*L)")
@@ -631,5 +735,5 @@ class Semaforo:
         Q2 = self.calculate_Q2()
         #perimetro_ducto = self.
 
-        separador()
+        # separador()
         return 0

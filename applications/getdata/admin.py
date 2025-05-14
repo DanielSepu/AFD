@@ -10,6 +10,19 @@ class SensorsDataAdmin(admin.ModelAdmin):
     list_filter = ('pt2',)                     # ¿Quieres filtrar por algún campo?
     ordering = ('ts',)                          # ¿Cuál debería ser el orden?
 
+class HistorialAdmin(admin.ModelAdmin):
+    # Mostrar timestamp y los dos primeros campos relevantes después del PK
+    list_display = ('ts', 'pc1_dc', 'pc2_dc')  # Primera fecha y dos pérdidas de ductos
+    
+    # Campos buscables (los dos primeros elementos después de PK)
+    search_fields = ('pc1_dc', 'pc2_dc')       
+    
+    # Filtro por uno de los campos principales
+    list_filter = ('ts',)                  
+    
+    # Ordenamiento por fecha
+    ordering = ('-ts',)                         
+
 
 admin.site.register(Caracteristicas_Ventilador)
 admin.site.register(Sistema_Partida)
@@ -21,7 +34,7 @@ admin.site.register(Ventilador)
 admin.site.register(VdfData) 
 admin.site.register(Ducto) 
 admin.site.register(Proyecto) 
-admin.site.register(Historial) 
+admin.site.register(Historial, HistorialAdmin)
 
 
 

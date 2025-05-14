@@ -1,0 +1,48 @@
+<fieldset class="border p-3 mb-3">
+        <legend class="float-none w-auto px-3">Configuración del intervalo de actualizacion</legend>
+          <form method="post" action="{% url 'settings:config_semaforo' %}">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="semaforo_form">
+            <div class="row align-items-center">
+              <!-- Campo update_interval -->
+              <div class="col-auto">
+                <label for="{{ semaforo_form.semaforo.id_for_label }}" class="form-label">
+                  {{ semaforo_form.semaforo.label }}
+                </label>
+              </div>
+              <div class="col-auto">
+                {{ semaforo_form.semaforo }}
+              </div>
+              <!-- Campo estado como switch -->
+              <div class="col-auto">
+                <div class="form-check form-switch">
+                  {{ semaforo_form.estado }}
+                  <label class="form-check-label" for="{{ semaforo_form.estado.id_for_label }}">
+                    {{ semaforo_form.estado.label }}
+                  </label>
+                </div>
+              </div>
+              <!-- Botón de envío -->
+              <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+              </div>
+            </div>
+          </form>
+</fieldset>
+          <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="semaforo_estado">
+            <fieldset class="border p-3 mb-3">
+              <legend class="float-none w-auto px-3">Estado del Semáforo</legend>
+              {{ semaforo_estado_form.as_p }}
+              <button class="btn btn-danger" type="submit">Actualizar Semáforo</button>
+            </fieldset>
+          </form>
+            {% if semaforo_estado_form.instance.esta_bloqueado %}
+              <form method="post" action="{% url 'settings:desbloquear_semaforo' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-warning">
+                  Desbloquear manualmente el semáforo
+                </button>
+              </form>
+            {% endif %}

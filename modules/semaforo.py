@@ -703,7 +703,7 @@ class Semaforo:
         valor = mapa[clave]
 
         # 2. Construir la URL y parámetros
-        url = 'http://172.24.129.177:1880/semaforo'
+        url = 'http://127.0.0.1:1880/semaforo'
         params = {'value': valor}
 
         # 3. Hacer la petición

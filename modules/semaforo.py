@@ -150,7 +150,8 @@ class Semaforo:
             area_ducto = self.project.ducto.area
         
         if area_ducto == None:
-            messages.warning(self.request, f"Error algunos valores para calcular el area del ducto no se han especificado, verifique: tipo ducto: {self.project.ducto.t_ducto} y sus valores")
+            pass
+            # messages.warning(self.request, f"Error algunos valores para calcular el area del ducto no se han especificado, verifique: tipo ducto: {self.project.ducto.t_ducto} y sus valores")
         area_ducto = area_ducto/4000000 
         return area_ducto
 
@@ -192,7 +193,7 @@ class Semaforo:
         try:
             velocidad_sensor = sqrt(2*(pt-ps)/densidad_aire_frente) # Densidad aire en la frente)   2 decimales >>> velocidad aire sensor frente
         except ValueError as e:
-            messages.warning(self.request, f"Error al calcular calcular_velocidad_sensor, un numero intenta realizar un calculo con un valor bajo cero: {e}, verifique densidad_aire_frente: ({densidad_aire_frente}) tbs: {tbs}, hr: {hr}, P: {P}, pt: {pt}, ps: {ps}")
+            # warning(self.request, f"Error al calcular calcular_velocidad_sensor, un numero intenta realizar un calculo con un valor bajo cero: {e}, verifique densidad_aire_frente: ({densidad_aire_frente}) tbs: {tbs}, hr: {hr}, P: {P}, pt: {pt}, ps: {ps}")
             velocidad_sensor = 0
         values_dic = {
             'densidad_aire_frente': densidad_aire_frente,
@@ -231,12 +232,12 @@ class Semaforo:
             Q2 = velocidad_sensor_2 * area_ducto  #  caudal sensor 2 = (m/s)/(m2)
         except TypeError as e: #
             print(f"error en calculate_Q2: {e}")
-            messages.warning(self.request, f"error al calcuar Q2: los valores no se pueden procesar: {e}, verifique los errores de: q2, lc, densidad2, pt2, ps2, area_ducto, ")
+            # messages.warning(self.request, f"error al calcuar Q2: los valores no se pueden procesar: {e}, verifique los errores de: q2, lc, densidad2, pt2, ps2, area_ducto, ")
             Q2 = 0
         except KeyError as e:
             Q2 = 0
             print(f"error en calculate_Q2: {e}")
-            messages.warning(self.request, f"La base de datos del sensor aun no recibe datos")
+            # messages.warning(self.request, f"La base de datos del sensor aun no recibe datos")
             # calcular densidad aire en la frente
             HRf  = 0
             # temperatura bulbo seco
@@ -268,11 +269,11 @@ class Semaforo:
             area_ducto = self.calcular_area_ducto()
             Q1  = velocidad_sensor_1 *area_ducto #  m3/s = (m2)*(m/s).  (Crear variable Q1) caudal_ventilador_2
         except TypeError as e: #
-            messages.warning(self.request, f"error al calcuar Q1: los valores no se pueden procesar: {e}, verifique los errores de: q2, lc, densidad2, pt2, ps2, area_ducto, ")
+            # messages.warning(self.request, f"error al calcuar Q1: los valores no se pueden procesar: {e}, verifique los errores de: q2, lc, densidad2, pt2, ps2, area_ducto, ")
             Q1 = 0
         except KeyError as e:
             print(f"error en calculate_Q1: {e}")
-            messages.warning(self.request, f"error la base de datos del sensor aun no recibe datos")
+            # messages.warning(self.request, f"error la base de datos del sensor aun no recibe datos")
             Q1 = 0
             pt1 = 0
             ps1 = 0

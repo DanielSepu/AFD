@@ -315,6 +315,7 @@ class Semaforo:
         """
         # definir las variables requeridas
 
+        
         Q2 = self.calculate_Q2()
         Lc = self.leakage_coefficient_v4()
         pt2 = self.sensorData["pt2"].mean()
@@ -524,13 +525,11 @@ class Semaforo:
         return presion_maxima
 
     def calcular_semaforo_v6(self, porcentaje):
-        if porcentaje < 0.05:
+        if porcentaje <= 0.05:
             return "verde"
-        
-        if porcentaje > 0.05 and porcentaje < 0.10:
+        elif porcentaje <= 0.10:
             return "amarillo"
-        
-        if porcentaje > 0.10:
+        else:
             return "rojo"
     
 

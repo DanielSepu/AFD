@@ -9,6 +9,11 @@ $(document).ready(function() {
     // Actualizar la cuenta regresiva cada 1 segundo
     
 
+    // Si el intervalo es cero, null, undefined o 'none', usar 1 minuto (60000 ms) por defecto
+    if (!semaforoInterval || semaforoInterval === 'none') {
+        semaforoInterval = 60;
+        semaforoIntervalmili = 60000;
+    }
     // Se inicia el intervalo usando el valor obtenido
     setInterval(get_semaforo, semaforoIntervalmili);
     
@@ -36,7 +41,6 @@ function cambiarSemaforo(color) {
       document.getElementById('luz-verde').classList.remove('bg-secondary');
       document.getElementById('luz-verde').classList.add('bg-success');
     }
-
   }
 
   // Función para mostrar el contenido adecuado en el modal
@@ -74,10 +78,21 @@ function cambiarSemaforo(color) {
 
 function get_semaforo() {
     $.ajax({
-        url:"v1/semaforo",
+        url: "v1/semaforo",
         type: "GET",
         success: function(data) {
-            console.log(data);
+            // Si la respuesta contiene un error, mostrar el mensaje debajo del semáforo
+            if (data && data.error) {
+                if ($('#mensaje-error-semaforo').length === 0) {
+                    $('#semaforo').after('<div id="mensaje-error-semaforo" class="text-danger mt-2">' + data.error + '</div>');
+                } else {
+                    $('#mensaje-error-semaforo').text(data.error);
+                }
+                return;
+            } else {
+                $('#mensaje-error-semaforo').remove();
+            }
+
             var semaforo = data.detalle_semaforo;
             var v1 = semaforo.v1;
             cambiarSemaforo(semaforo.color)
@@ -101,12 +116,21 @@ function get_semaforo() {
                 'color-fugas': semaforo.v6.color,
                 'color-potencia': semaforo.v7.color
             };
-            
             // Actualiza los colores de los cuadros de las tarjetas
             actualizarColorCuadros(colorData);
         },
         error: function(xhr, status, error) {
-            alert("Error: " + error);
+            let errorMsg = "Error: ";
+            if (xhr.responseJSON && xhr.responseJSON.error) {
+                errorMsg += xhr.responseJSON.error;
+            } else {
+                errorMsg += error;
+            }
+            if ($('#mensaje-error-semaforo').length === 0) {
+                $('#semaforo').after('<div id="mensaje-error-semaforo" class="text-danger mt-2">' + errorMsg + '</div>');
+            } else {
+                $('#mensaje-error-semaforo').text(errorMsg);
+            }
         }
     });
 }

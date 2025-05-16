@@ -701,8 +701,19 @@ class Semaforo:
             color = "verde"
 
         self.detalle["color"] = color
+        self.limpiar_valores_json(self.detalle)
         self.informar_semaforo_fisico(color)
 
+    def limpiar_valores_json(self, obj):
+        if isinstance(obj, dict):
+            return {k: self.limpiar_valores_json(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [self.limpiar_valores_json(i) for i in obj]
+        elif isinstance(obj, float):
+            if math.isinf(obj) or math.isnan(obj):
+                return None  # o "NaN", "∞", o 0
+            return round(obj, 3)
+        return obj
 
     def informar_semaforo_fisico(self, color: str):
         """

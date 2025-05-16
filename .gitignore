@@ -4,3 +4,4 @@ __pycache__/
 *.pyc
 applications/dbs/__pycache__/
 staticfiles
+.sql

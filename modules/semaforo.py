@@ -287,6 +287,7 @@ class Semaforo:
         return Q1
 
     def calcular_semaforo_v1(self, Qf):
+        Qf=int(Qf)
         equipamiento_diesel = self.project.equipamientos.all()
         
         caudal_requerido = 0 
@@ -303,7 +304,7 @@ class Semaforo:
         if caudal_requerido > Qf :
             color = "verde"
             return color
-        raise Exception("No se logro calcular un valor para el semaforo")
+        raise Exception(f"No se logro calcular un valor para el semaforo valor: {Qf}")
     
     def caudal_en_la_frente_v1(self):
         """

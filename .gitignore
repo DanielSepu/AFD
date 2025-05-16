@@ -139,4 +139,4 @@ venv/
 
 applications/dbs/__pycache__/
 staticfiles
-
+.sql

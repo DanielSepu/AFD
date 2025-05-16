@@ -316,6 +316,7 @@ class Semaforo:
         """
         # definir las variables requeridas
 
+        
         Q2 = self.calculate_Q2()
         Lc = self.leakage_coefficient_v4()
         pt2 = self.sensorData["pt2"].mean()
@@ -525,13 +526,11 @@ class Semaforo:
         return presion_maxima
 
     def calcular_semaforo_v6(self, porcentaje):
-        if porcentaje < 0.05:
+        if porcentaje <= 0.05:
             return "verde"
-        
-        if porcentaje > 0.05 and porcentaje < 0.10:
+        elif porcentaje <= 0.10:
             return "amarillo"
-        
-        if porcentaje > 0.10:
+        else:
             return "rojo"
     
 
@@ -669,23 +668,41 @@ class Semaforo:
     
     def calcular_estado_final(self, project):
         self.encender(project)
-        self.caudal_en_la_frente_v1()
-        self.velocidad_del_aire_v2()
-        self.tgbh_v3()
-        self.leakage_coefficient_v4()
-        self.punto_de_stall_v5()
-        self.fugas_v6()
-        self.potencia_v7()
-        color = ""
-        if "rojo" in self.detalle['colores']:
-            color = "rojo"
+        errores = []
+        self.detalle["errores"] = []
 
-        elif not "rojo" in self.detalle['colores'] and "amarillo" in self.detalle['colores']:
+        funciones = [
+            self.caudal_en_la_frente_v1,
+            self.velocidad_del_aire_v2,
+            self.tgbh_v3,
+            self.leakage_coefficient_v4,
+            self.punto_de_stall_v5,
+            self.fugas_v6,
+            self.potencia_v7
+        ]
+
+        for funcion in funciones:
+            try:
+                funcion()
+            except Exception as e:
+                error_msg = f"[ERROR] en {funcion.__name__}: {str(e)}"
+                print(error_msg)
+                errores.append(error_msg)
+
+        # Si hubo errores, forzar estado amarillo y registrarlos
+        if errores:
+            color = "amarillo"
+            self.detalle["errores"].extend(errores)
+        elif "rojo" in self.detalle['colores']:
+            color = "rojo"
+        elif "amarillo" in self.detalle['colores']:
             color = "amarillo"
         else:
             color = "verde"
-        self.detalle["color"] =color
+
+        self.detalle["color"] = color
         self.informar_semaforo_fisico(color)
+
 
     def informar_semaforo_fisico(self, color: str):
         """

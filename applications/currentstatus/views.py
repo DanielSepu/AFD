@@ -3,6 +3,7 @@ import io
 import os
 import subprocess
 from time import timezone
+import traceback
 import zipfile
 from django.shortcuts import render
 from django.views import View
@@ -161,6 +162,7 @@ def get_recent_data(request):
             variables["perdida_choque_codos"] = perdidas_choque_codos
 
         except TypeError as e:
+            traceback.print_exc()
             context = {}
             context["status"] = "error"
             context["message"] = f"No se pudo realizar el calculo de calcular choque de codos: {e}, verifique el valor de diametro del ducto"

@@ -3,8 +3,8 @@
       //const containerHeight = graphContainer.clientHeight;
 
       function  createFanChart(data, chart_type, promedios, data2) { 
-         console.log(chart_type)
-         console.log(data2)
+         console.log("createFanChart promedios")
+         console.log(promedios)
          const graphContainer = document.getElementById(chart_type);
          console.log(graphContainer)
          // Get the dimensions of the container

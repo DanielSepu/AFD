@@ -122,7 +122,20 @@ class Semaforo:
         dataframe_sensor = pd.DataFrame([dataframe_transpose])
 
         dict_sensor = dict(dataframe_sensor.iloc[0].to_dict())
-        self.detalle["sensor"] = dataframe_sensor.to_html(index=False)
+        # Excluir la columna 'id' y todas las columnas desde 'k' en adelante
+        
+        # Paso 1: obtener todas las columnas
+        todas_las_columnas = list(dataframe_sensor.columns)
+
+        # Paso 2: encontrar el índice de la columna 'k'
+        indice_k = todas_las_columnas.index('k')
+
+        # Paso 3: conservar solo las columnas antes de 'k' y que no sean 'id'
+        columnas_filtradas = [col for col in todas_las_columnas[:indice_k] if col != 'id']
+
+        # Paso 4: aplicar filtro y guardar HTML
+        self.detalle["sensor"] = dataframe_sensor[columnas_filtradas].to_html(index=False)
+
         self.project = project
 
         # Mostrar vdf
@@ -525,13 +538,36 @@ class Semaforo:
         return presion_maxima
 
     def calcular_semaforo_v6(self, porcentaje):
-        if porcentaje <= 0.05:
-            return "verde"
-        elif porcentaje <= 0.10:
-            return "amarillo"
+        config = FugasConfig.objects.first()
+        semaforo = SemaforoEstado.objects.first()
+        
+        if not config or not semaforo:
+            logger_AFD.warning("Configuración de fugas o semáforo no disponible.")
+            mensaje ="ALERTA DE SISTEMA: No podemos calcular el color del semaforo en las fugas, falta la configuración del promedio y los rangos de tolerancia de las fugas"
+            return mensaje, "amarillo"
+
+        logger_AFD.debug(f"calculando la variable 6: {porcentaje}")
+
+        # Determinar color según tolerancias dinámicas
+        tolerancia_verde = config.tolerancia_minima/100
+        tolerancia_amarillo = config.tolerancia_maxima/100
+
+        if porcentaje <= tolerancia_verde:
+            mensaje = f"El porcentaje de caída ({round(porcentaje*100, 2)}%) se encuentra dentro del rango permitido ({round(tolerancia_verde*100, 2)}% - {round(tolerancia_amarillo*100, 2)}%)."
+            
+            return mensaje, "verde"
+        elif porcentaje > tolerancia_verde and porcentaje <= tolerancia_amarillo:
+            mensaje = f"El porcentaje de caída ({round(porcentaje*100, 2)}%) esta fuera del rango normal ({round(tolerancia_verde*100, 2)}%)."
+            
+            return mensaje, "amarillo"
         else:
-            return "rojo"
-    
+            semaforo.esta_bloqueado = True
+            semaforo.motivo_bloqueo = f"Fuga crítica detectada. Caída del {round(porcentaje*100, 2)}%"
+            semaforo.color_actual = "rojo"
+            semaforo.save()
+            mensaje = f"El porcentaje de caída ({round(porcentaje*100, 2)}%) supera el máximo permitido ({round(tolerancia_amarillo*100, 2)}%)."
+            return mensaje, "rojo"
+
 
     def fugas_v6(self):
         """
@@ -551,36 +587,37 @@ class Semaforo:
             str: Color del semáforo (ej. "verde", "amarillo", "rojo").
         """
         # Paso 1: Obtener el registro más reciente
-        '''
-        config = FugasConfig.objects.first()
+        message = ""
+
         semaforo = SemaforoEstado.objects.first()
 
-        if not config or not semaforo:
-            logger_AFD.warning("Configuración de fugas o semáforo no disponible.")
-            return None
+        
 
         if semaforo.esta_bloqueado:
             logger_AFD.warning("Semáforo bloqueado. No se ejecuta análisis.")
             self.detalle['v6'] = {"estado": "bloqueado", "color": semaforo.color_actual}
-            return semaforo.color_actual
-        '''
+            message ="No hay registros almacenados para el sensor"
+            color ="rojo"
+        
         
         registro_mas_reciente = SensorsData.objects.all().last()
         if not registro_mas_reciente:
             logger_AFD.warning("No hay registros en SensorsData.")
-            return None
+            message ="No hay registros almacenados para el sensor"
+            color ="rojo"
 
         ts_mas_reciente = registro_mas_reciente.ts
         ts_limite = ts_mas_reciente - timedelta(minutes=30)
 
-        logger_AFD.debug(f"Buscando registros desde {ts_limite} hasta {ts_mas_reciente}")
+        logger_AFD.debug(f"calculado fugas con registros de {ts_limite} hasta {ts_mas_reciente}")
         
         # Paso 2: Obtener registros de los últimos 30 minutos
         registros = SensorsData.objects.filter(ts__range=(ts_limite, ts_mas_reciente)).order_by('ts')
 
         if not registros.exists():
             logger_AFD.warning("No se encontraron registros en los últimos 30 minutos.")
-            return None
+            message ="No se encontraron registros en los últimos 30 minutos."
+            color ="rojo"
 
         primero = registros.first()
         ultimo = registros.last()
@@ -594,6 +631,7 @@ class Semaforo:
         presion_hace30m = primero.pt1
         presion_actual = ultimo.pt1
 
+        
         if presion_actual == 0:
             logger_AFD.error("Presión actual es cero, división por cero evitada.")
             porcentaje = float('inf')
@@ -601,28 +639,19 @@ class Semaforo:
             porcentaje = 1 - (presion_hace30m / presion_actual)
 
         formula = "porcentaje = 1 - (presion_hace30m / presion_actual)"
-        color = self.calcular_semaforo_v6(porcentaje)
+        message, color = self.calcular_semaforo_v6(porcentaje=porcentaje)
         self.detalle.setdefault("colores", []).append(color)
-        '''
-        fuera_de_rango = porcentaje > config.tolerancia_maxima or porcentaje < config.tolerancia_minima
-
-        if fuera_de_rango and config.alerta_activa:
-            #self.enviar_alerta_fuga(...)
-            if porcentaje > config.tolerancia_maxima * 2:
-                semaforo.esta_bloqueado = True
-                semaforo.motivo_bloqueo = f"Fuga crítica detectada. Caída del {round(porcentaje*100,2)}%"
-                semaforo.color_actual = "rojo"
-                semaforo.save()
 
         semaforo.color_actual = color
         semaforo.save()
-        '''
+        
         self.detalle['v6'] = {
             "intervalo en segundos": round(segundos_diferencia, 3),
             "presion actual": round(presion_actual, 3),
             "presion hace30m": round(presion_hace30m, 3),
-            "porcentaje": round(porcentaje, 3),
+            "porcentaje": f"{int(porcentaje*100)} %",
             "formula": formula,
+            "message": message,
             "color": color
         }
 

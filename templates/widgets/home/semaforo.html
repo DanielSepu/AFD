@@ -12,60 +12,87 @@
   {% include "widgets/home/components/semaforo_animado.html" with intervalos_sistema=intervalos_sistema %}
   
 
-  <!-- Segunda columna: Card vacía con borde primary -->
-  <div class="col-md-6 ">
-    <div class="row">
-      <!-- Tarjeta 1 -->
-      <div class="col-md-4 mb-4">
-        <div class="card border border-primary h-100 d-flex align-items-center justify-content-between flex-row px-3 py-2">
-          <h6 class="mb-0">Caudal en la frente</h6>
-          <div id="color-caudal-frente" class="color-box" style="width: 20px; height: 20px; background-color: yellow;"></div>
-        </div>
+ <div class="col-md-6">
+  <div class="row">
+    <!-- Tarjeta 1 -->
+    <div class="col-md-4 mb-4">
+      <div class="card border border-primary h-100 d-flex align-items-center justify-content-between flex-row px-3 py-2">
+        <h6 class="mb-0">
+          Caudal en la frente
+          <i class="ms-2 bi bi-question-circle" data-bs-toggle="tooltip" title="Volumen de aire que fluye en la zona frontal del sistema."></i>
+        </h6>
+        <div id="color-caudal-frente" class="color-box" style="width: 20px; height: 20px; background-color: yellow;"></div>
       </div>
-      <!-- Tarjeta 2 -->
-      <div class="col-md-4 mb-4">
-        <div class="card border border-primary h-100 d-flex align-items-center justify-content-between flex-row px-3 py-2">
-          <h6 class="mb-0">Velocidad del aire</h6>
-          <div id="color-velocidad-aire" class="color-box" style="width: 20px; height: 20px; background-color: red;"></div>
-        </div>
+    </div>
+
+    <!-- Tarjeta 2 -->
+    <div class="col-md-4 mb-4">
+      <div class="card border border-primary h-100 d-flex align-items-center justify-content-between flex-row px-3 py-2">
+        <h6 class="mb-0">
+          Velocidad del aire
+          <i class="ms-2 bi bi-question-circle" data-bs-toggle="tooltip" title="Velocidad del flujo de aire en el ducto."></i>
+        </h6>
+        <div id="color-velocidad-aire" class="color-box" style="width: 20px; height: 20px; background-color: red;"></div>
       </div>
-      <!-- Tarjeta 3 -->
-      <div class="col-md-4 mb-4">
-        <div class="card border border-primary h-100 d-flex align-items-center justify-content-between flex-row px-3 py-2">
-          <h6 class="mb-0">TGBH</h6>
-          <div id="color-tgbh" class="color-box" style="width: 20px; height: 20px; background-color: green;"></div>
-        </div>
+    </div>
+
+    <!-- Tarjeta 3 -->
+    <div class="col-md-4 mb-4">
+      <div class="card border border-primary h-100 d-flex align-items-center justify-content-between flex-row px-3 py-2">
+        <h6 class="mb-0">
+          TGBH
+          <i class="ms-2 bi bi-question-circle" data-bs-toggle="tooltip" title="Temperatura de bulbo húmedo general."></i>
+        </h6>
+        <div id="color-tgbh" class="color-box" style="width: 20px; height: 20px; background-color: green;"></div>
       </div>
-      <!-- Tarjeta 4 -->
-      <div class="col-md-4 mb-4">
-        <div class="card border border-primary h-100 d-flex align-items-center justify-content-between flex-row px-3 py-2">
-          <h6 class="mb-0">Leakage Coefficient (Lc)</h6>
-          <div id="color-leakage-coefficient" class="color-box" style="width: 20px; height: 20px; background-color: yellow;"></div>
-        </div>
+    </div>
+
+    <!-- Tarjeta 4 -->
+    <div class="col-md-4 mb-4">
+      <div class="card border border-primary h-100 d-flex align-items-center justify-content-between flex-row px-3 py-2">
+        <h6 class="mb-0">
+          Leakage Coefficient (Lc)
+          <i class="ms-2 bi bi-question-circle" data-bs-toggle="tooltip" title="Coeficiente que indica el nivel de fugas en el sistema."></i>
+        </h6>
+        <div id="color-leakage-coefficient" class="color-box" style="width: 20px; height: 20px; background-color: yellow;"></div>
       </div>
-      <!-- Tarjeta 5 -->
-      <div class="col-md-4 mb-4">
-        <div class="card border border-primary h-100 d-flex align-items-center justify-content-between flex-row px-3 py-2">
-          <h6 class="mb-0">Punto de Stall</h6>
-          <div id="color-punto-stall" class="color-box" style="width: 20px; height: 20px; background-color: red;"></div>
-        </div>
+    </div>
+
+    <!-- Tarjeta 5 -->
+    <div class="col-md-4 mb-4">
+      <div class="card border border-primary h-100 d-flex align-items-center justify-content-between flex-row px-3 py-2">
+        <h6 class="mb-0">
+          Punto de Stall
+          <i class="ms-2 bi bi-question-circle" data-bs-toggle="tooltip" title="Indica la condición en la que el ventilador pierde eficiencia."></i>
+        </h6>
+        <div id="color-punto-stall" class="color-box" style="width: 20px; height: 20px; background-color: red;"></div>
       </div>
-      <!-- Tarjeta 6 -->
-      <div class="col-md-4 mb-4">
-        <div class="card border border-primary h-100 d-flex align-items-center justify-content-between flex-row px-3 py-2">
-          <h6 class="mb-0">Fugas</h6>
-          <div id="color-fugas" class="color-box" style="width: 20px; height: 20px; background-color: green;"></div>
-        </div>
+    </div>
+
+    <!-- Tarjeta 6 -->
+    <div class="col-md-4 mb-4">
+      <div class="card border border-primary h-100 d-flex align-items-center justify-content-between flex-row px-3 py-2">
+        <h6 class="mb-0">
+          Fugas
+          <i class="ms-2 bi bi-question-circle" id="tooltip-fugas" data-bs-toggle="tooltip" title="Nivel de fugas detectadas en el sistema."></i>
+        </h6>
+        <div id="color-fugas" class="color-box" style="width: 20px; height: 20px; background-color: green;"></div>
       </div>
-      <!-- Tarjeta 7 -->
-      <div class="col-md-4 mb-4">
-        <div class="card border border-primary h-100 d-flex align-items-center justify-content-between flex-row px-3 py-2">
-          <h6 class="mb-0">Potencia</h6>
-          <div id="color-potencia" class="color-box" style="width: 20px; height: 20px; background-color: yellow;"></div>
-        </div>
+    </div>
+
+    <!-- Tarjeta 7 -->
+    <div class="col-md-4 mb-4">
+      <div class="card border border-primary h-100 d-flex align-items-center justify-content-between flex-row px-3 py-2">
+        <h6 class="mb-0">
+          Potencia
+          <i class="ms-1 bi bi-question-circle" id="tooltip-potencia" style="width: 5px; height: 5px;" data-bs-toggle="tooltip" title="Potencia medida en el sistema (HP)."></i>
+        </h6>
+        <div id="color-potencia" class="color-box" style="width: 20px; height: 20px; background-color: yellow;"></div>
       </div>
     </div>
   </div>
+</div>
+
   
   
 </div>
@@ -87,6 +114,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/progressbar.js/1.0.1/progressbar.min.js"></script>
 
 <script>
-  
- 
+  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+  tooltipTriggerList.forEach(tooltipTriggerEl => {
+    new bootstrap.Tooltip(tooltipTriggerEl);
+  });
 </script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+

@@ -17,8 +17,8 @@ class SemaforoEstado(models.Model):
 class FugasConfig(models.Model):
     nombre = models.CharField(max_length=100, default="Configuración general")
     presion_promedio = models.FloatField(help_text="Promedio de presión normal del sistema (en pt1)")
-    tolerancia_minima = models.FloatField(help_text="Porcentaje mínimo tolerado de caída (ej. 0.05 = 5%)")
-    tolerancia_maxima = models.FloatField(help_text="Porcentaje máximo tolerado (ej. 0.2 = 20%)")
+    tolerancia_minima = models.FloatField(help_text="Porcentaje mínimo tolerado de caída (ej. 5 = 5%)")
+    tolerancia_maxima = models.FloatField(help_text="Porcentaje máximo tolerado (ej. 5 = 5%)")
     alerta_activa = models.BooleanField(default=True)
     sistema_bloqueado = models.BooleanField(default=False)
     ultima_actualizacion = models.DateTimeField(auto_now=True)

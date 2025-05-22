@@ -110,6 +110,7 @@ function updateFanChart(data, chart_type, promedios, data2) {
     d3.max(data, d => d[keys[1]]),
     promedios[1]
   );
+  
   const y = d3.scaleLinear()
     .domain([0, maxY])
     .range([height - margin.bottom, margin.top]);

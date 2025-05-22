@@ -66,6 +66,7 @@ class FanCalculationsMixin(SensorDataMixin, ProjectMixin):
         return sensor_item.ps1 / 2
 
     def compute_sensor_means(self, df):
+        
         Q = float(df['ps1'].mean())
         P = float(df['pt1'].mean())
         return Q, P

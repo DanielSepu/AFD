@@ -35,8 +35,7 @@ class ToleranciaGraficoView(APIView):
             return Response({"error": "Faltan datos."}, status=status.HTTP_400_BAD_REQUEST)
 
         tolerancia_obj, created = GraficoTolerancia.objects.get_or_create(
-            tipo=tipo,
-            usuario=request.user
+            tipo=tipo
         )
         tolerancia_obj.tolerancia = valor
         tolerancia_obj.save()

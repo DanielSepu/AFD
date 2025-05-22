@@ -246,24 +246,32 @@ class FanDesignView(FanCalculationsMixin, TemplateView):
         chart_type = request.GET.get('chart_type')
         context = {}
         try:
-            tolerancia = GraficoTolerancia.objects.get(tipo=chart_type).tolerancia
+            try:
+               tolerancia_obj = GraficoTolerancia.objects.get(tipo=chart_type)
+               tolerancia = tolerancia_obj.tolerancia
+            except GraficoTolerancia.DoesNotExist:
+               tolerancia = 'AN3'
 
             proyecto = self.get_proyecto()
             sensor_item = self.get_latest_sensor_item()
             ultima_med = self.get_ultima_medicion()
 
-            df_fan = pd.DataFrame(proyecto.curva_diseno.datos_curva, dtype=float)
+            df_fan = pd.DataFrame(data=proyecto.curva_diseno.datos_curva, dtype=float) # type: ignore
             df_sensor1 = get_10min_sensor_data()
             df_vdf = get_10min_vdf_data()
 
-            Q_medido, P_medido = self.compute_sensor_means(df_sensor1)
-            calculador = calculo_densidad_aire_sensor(proyecto)
+            Q_medido, P_medido = self.compute_sensor_means(df=df_sensor1)
+            logger_AFD.debug(msg=f"Q_medido: {Q_medido} P_medido: {P_medido}")
+            calculador = calculo_densidad_aire_sensor(project=proyecto)
             densidad2 = calculador.densidad_del_aire()
+            
+            
             presion_dinamica = sensor_item.pt1 - sensor_item.ps1
-            velocidad = velocidad_aire_sensor(presion_dinamica, densidad2)
-            caudal = caudal_aire_sensor1(velocidad, proyecto.ducto.area)
+            velocidad = velocidad_aire_sensor(presion_dinamica_sensor=presion_dinamica, densidad_aire_sensor1=densidad2)
+            caudal = caudal_aire_sensor1(velocidad_aire_sensor1=velocidad, area_ducto=proyecto.ducto.area) # type: ignore
 
-            resistencia = self.compute_resistencia(ultima_med, caudal)
+            resistencia = self.compute_resistencia(ultima_med=ultima_med, caudal=caudal)
+            
             if resistencia is None:
                 resistencia = 0.1
                 messages.warning(request, "Aún no hay datos del sensor")
@@ -333,11 +341,10 @@ class FanDesignView(FanCalculationsMixin, TemplateView):
                 'rendimiento_ventilador': round(rendimiento,1),
                 'rotacion_actual': round(rpm_model,1),
                 'presion_maxima': presion_maxima,
-                'promedios': [Q_medido, P_medido],
                 'tolerancia_actual': tolerancia,
                 'niveles_tolerancia': ['AN1', 'AN2', 'AN3', 'AN4'],
             })
-
+            logger_AFD.debug(context['c'])
         except Exception as e:
             import traceback; traceback.print_exc()
             messages.warning(request, f"Warning: {e}")

@@ -47,12 +47,12 @@
             return response.json();
         })
         .then(data => {
-            console.log(`✅ Tolerancia actualizada (${tipo}):`, data);
+            console.log(`Tolerancia actualizada (${tipo}):`, data);
             // Aquí podrías llamar a una función de redibujo
-            // window.dispatchEvent(new CustomEvent("toleranciaCambiada", { detail: data }));
+            window.location.reload(); 
         })
         .catch(error => {
-            console.error("❌ Error al actualizar la tolerancia:", error);
+            console.error("Error al actualizar la tolerancia:", error);
         });
     };
 })();

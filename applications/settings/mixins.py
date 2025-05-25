@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.contrib import messages
 
-from applications.currentstatus.scheduler import update_semaforo_job_interval, update_sensor_job_interval
+from applications.currentstatus.scheduler import reschedule_historiadores
 from applications.getdata.forms import SensorsDataForm, VdfDataForm
 from applications.getdata.models import IntervalosDeActualizacion, Simulador
 from applications.settings.forms import FugasConfigForm, SemaforoEstadoForm
@@ -14,27 +14,31 @@ from applications.settings.models import FugasConfig, SemaforoEstado
 
 
 class AdminFormHandlersMixin:
-    def handle_semaforo_interval(self, request):
-        from .forms import SemaforoForm
-        form = SemaforoForm(request.POST)
-        if form.is_valid():
-            update_interval = form.cleaned_data['update_interval']
-            intervalos = IntervalosDeActualizacion.objects.latest('id')
-            intervalos.sistema = update_interval
-            intervalos.save()
-            update_semaforo_job_interval(update_interval)
-        return redirect(reverse_lazy('settings:admin_page'))
-
     def handle_sistema_interval(self, request):
         try:
-            sistema = int(request.POST.get('sistema'))
-            intervalos = IntervalosDeActualizacion.objects.latest('id')
-            intervalos.sistema = sistema
-            intervalos.save()
-            update_sensor_job_interval(sistema)
+            sistema = int(request.POST["sistema"])
+            ints = IntervalosDeActualizacion.objects.latest("id")
+            ints.sistema = sistema
+            ints.save()
+
+            reschedule_historiadores()          # ← ¡un solo disparo!
+            messages.success(request, "Intervalo de sensores actualizado.")
         except Exception as e:
-            print(f"Error al actualizar el sistema: {e}")
-        return redirect(reverse_lazy('settings:admin_page'))
+            messages.error(request, f"Error: {e}")
+        return redirect(reverse_lazy("settings:admin_page"))
+
+    def handle_semaforo_interval(self, request):
+        try:
+            semaforo = int(request.POST["semaforo"])
+            ints = IntervalosDeActualizacion.objects.latest("id")
+            ints.semaforo = semaforo
+            ints.save()
+
+            reschedule_historiadores()          # ← idem
+            messages.success(request, "Intervalo del semáforo actualizado.")
+        except Exception as e:
+            messages.error(request, f"Error: {e}")
+        return redirect(reverse_lazy("settings:admin_page"))
 
     def handle_semaforo_form_interval(self, request):
         try:
@@ -42,7 +46,7 @@ class AdminFormHandlersMixin:
             intervalos = IntervalosDeActualizacion.objects.latest('id')
             intervalos.semaforo = semaforo
             intervalos.save()
-            update_sensor_job_interval(semaforo)
+            reschedule_historiadores(semaforo)
         except Exception as e:
             print(f"Error al actualizar semáforo: {e}")
         return redirect(reverse_lazy('settings:admin_page'))
@@ -55,10 +59,19 @@ class AdminFormHandlersMixin:
             vdf_data = {"ts": str(timezone.now()), **vdf_form.cleaned_data}
             sensors_data = {"ts": str(timezone.now()), **sensors_form.cleaned_data}
 
-            Simulador.objects.create(data={
-                "vdf_data": vdf_data,
-                "sensors_data": sensors_data
-            })
+            simulador = Simulador.objects.order_by('-id').first()
+
+            if simulador:
+                # Actualizar los campos necesarios
+                simulador.vdf_data = vdf_data
+                simulador.sensors_data = sensors_data
+                simulador.save()
+            else:
+                # Si no existe ningún registro, crearlo
+                Simulador.objects.create(
+                    vdf_data=vdf_data,
+                    sensors_data=sensors_data
+                )
             return redirect(reverse_lazy('settings:simulador'))
         else:
             context = self.get_context_data(

@@ -10,6 +10,7 @@ from applications.currentstatus.utils import calculo_densidad_aire_sensor, cauda
 from applications.fandesign.mixins import FanCalculationsMixin
 from applications.fandesign.models import GraficoTolerancia
 from applications.fandesign.utils import calcular_la_curva_estatica, calcular_la_curva_total, calcular_la_presion_maxima
+from applications.fanreal.fanAdministrator import FanAdministrator
 from modules.graphdata import *
 from modules.queries import *
 from django.db.models import Max
@@ -261,9 +262,11 @@ class FanDesignView(FanCalculationsMixin, TemplateView):
             df_vdf = get_10min_vdf_data()
 
             Q_medido, P_medido = self.compute_sensor_means(df=df_sensor1)
+            
+            
             logger_AFD.debug(msg=f"Q_medido: {Q_medido} P_medido: {P_medido}")
             calculador = calculo_densidad_aire_sensor(project=proyecto)
-            densidad2 = calculador.densidad_del_aire()
+            densidad2 = calculador.densidad_del_aire_s1()
             
             
             presion_dinamica = sensor_item.pt1 - sensor_item.ps1
@@ -304,24 +307,25 @@ class FanDesignView(FanCalculationsMixin, TemplateView):
             presion_maxima = calcular_la_presion_maxima(sensor_item, df_total, idx_tp)
 
             if chart_type == 'total_pressure':
-                context['curva_inicial'] = df_fan[['caudal','presion']].to_dict('records')
-                context['scatter_data'] = self.build_scatter_records(
-                    df_total, 'caudal', 'presion', 'CAUDAL (m³/s)', 'PRESION (Pa)'
-                )
+               context['curva_inicial'] = df_fan[['caudal','presion']].to_dict('records')
+               context['scatter_data'] = self.build_scatter_records(
+                  df_total, 'caudal', 'presion', 'caudal', 'presion'
+               )
             elif chart_type == 'static_pressure':
-                context['curva_inicial'] = df_fan[['caudal','presion']].to_dict('records')
-                context['scatter_data'] = self.build_scatter_records(
-                    curva_est, 'caudal', 'presion', 'CAUDAL (m³/s)', 'PRESION (Pa)'
-                )
+               context['curva_inicial'] = df_fan[['caudal','presion']].to_dict('records')
+               context['scatter_data'] = self.build_scatter_records(
+                  curva_est, 'caudal', 'presion', 'caudal', 'presion'
+               )
             elif chart_type == 'power':
-                context['curva_inicial'] = df_fan[['caudal','potencia']].to_dict('records')
-                adjusted = pd.DataFrame({
-                    'caudal': df_fan['caudal'] * (rpm_model/proyecto.curva_diseno.rpm),
-                    'potencia': df_fan['potencia'] * (rpm_model/proyecto.curva_diseno.rpm)**3 * (densidad2/proyecto.curva_diseno.densidad)
-                })
-                context['scatter_data'] = self.build_scatter_records(
-                    adjusted, 'caudal', 'potencia', 'CAUDAL (m³/s)', 'POTENCIA (kW)'
-                )
+               context['curva_inicial'] = df_fan[['caudal','potencia']].to_dict('records')
+               adjusted = pd.DataFrame({
+                  'caudal': df_fan['caudal'] * (rpm_model/proyecto.curva_diseno.rpm),
+                  'potencia': df_fan['potencia'] * (rpm_model/proyecto.curva_diseno.rpm)**3 * (densidad2/proyecto.curva_diseno.densidad)
+               })
+               context['scatter_data'] = self.build_scatter_records(
+                  adjusted, 'caudal', 'potencia', 'caudal', 'potencia'
+               )
+
             else:
                 return self.render_to_response(context)
 
@@ -330,10 +334,17 @@ class FanDesignView(FanCalculationsMixin, TemplateView):
             Qs = [i*(Q_medido//5) for i in range(6)] + [Q_medido]
             Ys = [R * q**2 for q in Qs]
             context['scatter_data2'] = [{'caudal': Qs[i], 'presion': Ys[i]} for i in range(6)]
-
+            
+            fan = FanAdministrator(project=proyecto)
+            
+            
+            
+            q1 = fan.velocidad_aire_sensores['sensor1']
+            
+            print(f"{fan.velocidad_aire_sensores['sensor1']}  -- {fan.caudal_aire_sensores['sensor1']}")
             context.update({
                 'chart_type': chart_type,
-                'c': [Q_medido, P_medido],
+                'c': [fan.caudal_aire_sensores['sensor1'], sensor_item.pt1],
                 'proyecto': proyecto,
                 'peak_resistance': peak_resistance,
                 'peak_pressure': peak_pressure,

@@ -33,6 +33,7 @@ admin.site.register(CurvaDiseno)
 admin.site.register(Ventilador)
 admin.site.register(VdfData) 
 admin.site.register(Ducto) 
+admin.site.register(Simulador) 
 admin.site.register(Proyecto) 
 admin.site.register(Historial, HistorialAdmin)
 

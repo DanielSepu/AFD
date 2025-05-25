@@ -51,32 +51,7 @@
             {% csrf_token %}
             <input type="hidden" name="form_type" value="intervalo">
             <div class="row align-items-center">
-              <!-- Campo insert_interval -->
-              <div class="col-md-5">
-                <label for="{{ simuladorjson_form.insert_interval.id_for_label }}" class="form-label">
-                  {{ simuladorjson_form.insert_interval.label }}
-                </label>
-                {{ simuladorjson_form.insert_interval }}
-                {% if simuladorjson_form.insert_interval.errors %}
-                  <div class="invalid-feedback d-block">
-                    {{ simuladorjson_form.insert_interval.errors }}
-                  </div>
-                {% endif %}
-              </div>
-              <!-- Campo estado como switch -->
-              <div class="col-md-5">
-                <div class="form-check form-switch">
-                  {{ simuladorjson_form.estado }}
-                  <label class="form-check-label" for="{{ simuladorjson_form.estado.id_for_label }}">
-                    {{ simuladorjson_form.estado.label }}
-                  </label>
-                </div>
-                {% if simuladorjson_form.estado.errors %}
-                  <div class="invalid-feedback d-block">
-                    {{ simuladorjson_form.estado.errors }}
-                  </div>
-                {% endif %}
-              </div>
+              {{simuladorjson_form}}
               <!-- Botón de envío -->
               <div class="col-md-2 text-end">
                 <button type="submit" class="btn btn-primary">Enviar Datos</button>

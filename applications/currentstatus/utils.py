@@ -24,8 +24,10 @@ class calculo_densidad_aire_sensor:
         self.project = project
         self.item_sensors = None
         self.tbs1 = None
+        self.tbs2 = None
         self.temperatura_bh_s1 = None
         self.pbs1 = None
+        self.pbs2 = None
         
         latest_record_sensors = SensorsData.objects.using('sensorDB').aggregate(Max('id'))
         max_id_sensors = latest_record_sensors['id__max']
@@ -38,9 +40,11 @@ class calculo_densidad_aire_sensor:
         HRs1 =  self.item_sensors.HRs1 # HRs1
         
         Tbs2 = self.item_sensors.Tbs2 # Tbs2
+        self.tbs2 = self.item_sensors.Tbs2 # Tbs2
         HRs2 = self.item_sensors.HRs2 # HRs2
         
         self.pbs1 = self.item_sensors.Pbs1  # Pbs1
+        self.pbs2 = self.item_sensors.Pbs2  # Pbs2
         
         self.tbs1 = round(calculate_tbh(Tbs1, HRs1),1)
         self.temperatura_bh_s1 = round(calculate_tbh(Tbs2, HRs2),1)
@@ -66,8 +70,11 @@ class calculo_densidad_aire_sensor:
     def e(self):
         return round((self.pbs1 * self.x()) / (0.622 + self.x()), 3)
 
-    def densidad_del_aire(self):
+    def densidad_del_aire_s1(self):
         return round((self.pbs1 - self.e()) / (287.04 * (self.tbs1 + 273.15)), 3)
+    
+    def densidad_del_aire_s2(self):
+        return round((self.pbs2 - self.e()) / (287.04 * (self.tbs2 + 273.15)), 3)
     
 if __name__ == "__main__":
     pass

@@ -10,6 +10,7 @@ from applications.currentstatus.utils import (
     caudal_de_la_frente, 
     velocidad_aire_sensor
 )
+from applications.fanreal.fanAdministrator import FanAdministrator
 from applications.getdata.models import Historial, Proyecto, SensorsData, VdfData
 from applications.home.functions import get_last_project
 from core import logger_config
@@ -29,13 +30,14 @@ def get_current_project():
 # Calcula la densidad y devuelve la densidad configurada, la calculada y su mitad
 def compute_density(project, sensor_data):
     dens_configurada = sensor_data.ps1
-    dens_calculada = calculo_densidad_aire_sensor(project=project).densidad_del_aire()
+    dens_calculada = calculo_densidad_aire_sensor(project=project).densidad_del_aire_s1()
     mid_densidad = dens_calculada / 2
     return dens_configurada, mid_densidad, dens_calculada
 
 # Configura el semáforo y calcula caudales
 def setup_semaforo(project, sensor_data):
-    semaforo = Semaforo()
+    fan = FanAdministrator(project)
+    semaforo = Semaforo(fan=fan)
     semaforo.encender(project)
     Q1 = semaforo.calculate_Q1()
     Q2 = semaforo.calculate_Q2()
@@ -95,7 +97,7 @@ def build_data_dict(item_sensors, item_vdf, project, calculador_densidad):
         "pt1": round(item_sensors.pt1, 2),
         "qf": round(item_sensors.HRs1, 2),
         "q1": caudal_aire_sensor1(
-                velocidad_aire_sensor(item_sensors.pt1 - item_sensors.ps1, calculador_densidad.densidad_del_aire()),
+                velocidad_aire_sensor(item_sensors.pt1 - item_sensors.ps1, calculador_densidad.densidad_del_aire_s1()),
                 project.ducto.area
             ),
         "HRs2": round(item_sensors.HRs2, 2),
@@ -281,13 +283,14 @@ def procesar_datos_sensores():
     semaforo.calcular_estado_final(proyecto)
     # Se obtiene el detalle del semáforo y se fusiona en el contexto
     detalle_semaforo = semaforo.detalle
+    # print(f"semaforo: {detalle_semaforo}")
     context = {**context, **detalle_semaforo}
     # Consolidar el diccionario final eliminando claves innecesarias
     
     detalle_consolidado = merge_detalle_semaforo(context)
-    detalle_consolidado['velocidad_sensor'] = context['velocidad_sensor']
-    detalle_consolidado['v5'] = context['v5']
-    detalle_consolidado['v3'] = context['v3']
+    detalle_consolidado['velocidad_sensor'] = semaforo.fan.densidad_aire_sensores
+    detalle_consolidado['v5'] = context.get('v5', None)
+    detalle_consolidado['v3'] = context.get('v3', None)
 
     
     # Guardar en Historial usando el diccionario consolidado

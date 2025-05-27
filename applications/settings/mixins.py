@@ -89,6 +89,7 @@ class AdminFormHandlersMixin:
         return redirect(reverse_lazy('settings:admin_page'))
 
     def handle_semaforo_estado(self, request):
+        print(f"estados del semaforo actualizados")
         semaforo = SemaforoEstado.objects.first()
         form = SemaforoEstadoForm(request.POST, instance=semaforo)
         if form.is_valid():

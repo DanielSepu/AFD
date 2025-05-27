@@ -6,15 +6,12 @@ import pandas as pd
 import requests
 
 from applications.settings.models import FugasConfig, SemaforoEstado
-from applications.currentstatus.utils import calculo_densidad_aire_sensor
 from applications.fandesign.mixins import presion_total
 from applications.fandesign.utils import calcular_la_curva_total, calcular_la_presion_maxima
 from applications.getdata.models import SensorsData, VdfData
 from modules.queries import get_10min_sensor_data, get_10min_vdf_data
 from django.db.models import Max
-from django.contrib import messages
 from core.logger_config import logger_AFD
-from modules.utils import calculate_tbh
 
 
 def mostrar_inicio_formulas_principales(str, description):
@@ -101,7 +98,7 @@ class Semaforo:
     el semaforo tiene  7 variables para medir, que pueden retornar verde, rojo, o amarillo cada una de sus funciones, a partir
     de la sumatoria de cada resultado de las 7 variables se pondera el estado final.
     """
-    def __init__(self, fan=None):
+    def __init__(self, fan):
         self.estado = 'verde'
         self.sensorData = None
         self.fan = fan
@@ -150,12 +147,6 @@ class Semaforo:
         dataframe_vdf = pd.DataFrame([dataframe_transpose_vdf])
         self.detalle["vdf"] = dataframe_vdf.to_html(index=False)
 
-    def calculate_tbh(self, tbs, hr):
-        # tbh1 =E13*ATAN(0.151977*  SQRT(E8+8.313659))+     ATAN(E13+E8)-   ATAN(E8-1.6763)+    0.00391838*     POWER(E8,1.5)*ATAN(0.023101*E8)-4.686
-        #  = E16 *ATAN(0.151977* SQRT(E17+8.313659))+    ATAN(E16+E17)-  ATAN(E17-1.6763)+   0.00391838*     POWER(E17,1.5)*ATAN(0.023101*E17)-4.686
-        
-        return tbs * atan(0.151977 * sqrt(hr + 8.313659)) + atan(tbs + hr) - atan(hr - 1.6763) + 0.00391838 * pow(hr, 1.5) * atan(0.023101 * hr) - 4.686035
-
     def calcular_area_ducto(self):
         
         area_ducto = None
@@ -177,8 +168,6 @@ class Semaforo:
             if self.project.ducto.t_ducto == "ovalado":
                 raise Exception(f"Los valores actuales no son adecuados para calcular el ducto circular")
         return area_ducto
-
-    
 
     def calculate_Q2(self):
         """
@@ -307,11 +296,14 @@ class Semaforo:
             'formula': formula,
             'color': color
         }
-        logger_AFD.debug(f"---> caudal: {Lc} Qf: {Qf} Q2: {Q2} pt2: {pt2} lf: {lf}")
+        logger_AFD.debug(f"---> caudal: Lc: {Lc} Qf: {Qf} Q2: {Q2} pt2: {pt2} lf: {lf}")
         return Qf
     
     def calculate_tbh(self, tbs, hr):
-        return calculate_tbh(tbs, hr)
+        # tbh1 =E13*ATAN(0.151977*  SQRT(E8+8.313659))+     ATAN(E13+E8)-   ATAN(E8-1.6763)+    0.00391838*     POWER(E8,1.5)*ATAN(0.023101*E8)-4.686
+        #  = E16 *ATAN(0.151977* SQRT(E17+8.313659))+    ATAN(E16+E17)-  ATAN(E17-1.6763)+   0.00391838*     POWER(E17,1.5)*ATAN(0.023101*E17)-4.686
+        
+        return tbs * atan(0.151977 * sqrt(hr + 8.313659)) + atan(tbs + hr) - atan(hr - 1.6763) + 0.00391838 * pow(hr, 1.5) * atan(0.023101 * hr) - 4.686035
 
     def calcular_semaforo_v2(self, velocidad_del_aire):
         if velocidad_del_aire > 0.25 and velocidad_del_aire < 2.5:
@@ -389,7 +381,9 @@ class Semaforo:
         formula = f'''tgbh = (0.7 * tbh + (0.3 * tbs'''
         tbs = self.sensorData["tbs"].mean()
         Tbs2  = self.sensorData["Tbs2"].mean()
-        tbh = self.calculate_tbh(Tbs2)
+        
+        humedad_relativa_s1 = self.sensorData['HRs1']
+        tbh = self.calculate_tbh(Tbs2, humedad_relativa_s1)
         
         tgbh = (0.7 * tbh) + (0.3 * tbs)
 
@@ -429,10 +423,10 @@ class Semaforo:
 
         pt1 = self.sensorData["pt1"].mean() 
         pt2 = self.sensorData["pt2"].mean()
-         
+        
         L = self.project.dis_e_sens
-
         Lc = 3*(Q1-Q2)*(pt1-pt2)/(2*L*(pow(pt1,1.5)-pow(pt2,1.5)))*100*pow(1000,0.5)
+        logger_AFD.info(f"----> LC: {Lc} Q1: {Q1}  Q2: {Q2} pt1: {pt1} pt2: {pt2} L: {L}")
         formula = "Lc = 3 * (Q1-Q2) * (pt1-pt2) / ( 2 * L *(pow(pt1,1.5)  - pow(pt2,1.5) )) * 100 * pow(1000,0.5)"
         color = self.calcular_semaforo_v4(Lc)
         self.detalle['v4'] = {
@@ -469,8 +463,7 @@ class Semaforo:
         rpm_model = self.vdfData['rpm'].mean()
         
         # calculando la densidad
-        calculador_densidad_aire_s1 = calculo_densidad_aire_sensor(self.project)
-        densidad2 = calculador_densidad_aire_s1.densidad_del_aire_s1()
+        densidad2 = self.fan.densidad_del_aire_s1()
         df_total_pressure  = calcular_la_curva_total(df_fan, rpm_model, rpm_del_proyecto, densidad2, densidad1 )
         indice_max = df_total_pressure["presion"].idxmax()
         latest_record_sensors = SensorsData.objects.using('sensorDB').aggregate(Max('id'))

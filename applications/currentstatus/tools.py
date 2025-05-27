@@ -1,12 +1,5 @@
-from django.db.models import Max
-
 from math import sqrt
-#from scipy.optimize import curve_fit
-import numpy as np
 
-from applications.currentstatus.utils import calculo_densidad_aire_sensor
-from applications.getdata.models import SensorsData
-from modules.semaforo import Semaforo
 
 
 

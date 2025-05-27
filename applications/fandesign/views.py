@@ -6,7 +6,7 @@ import pandas as pd  # Importa pandas
 from django.contrib import messages
 
 from applications.currentstatus.tools import goal_seek_custom
-from applications.currentstatus.utils import calculo_densidad_aire_sensor, caudal_aire_sensor1, velocidad_aire_sensor
+from applications.currentstatus.utils import caudal_aire_sensor1, velocidad_aire_sensor
 from applications.fandesign.mixins import FanCalculationsMixin
 from applications.fandesign.models import GraficoTolerancia
 from applications.fandesign.utils import calcular_la_curva_estatica, calcular_la_curva_total, calcular_la_presion_maxima
@@ -265,8 +265,8 @@ class FanDesignView(FanCalculationsMixin, TemplateView):
             
             
             logger_AFD.debug(msg=f"Q_medido: {Q_medido} P_medido: {P_medido}")
-            calculador = calculo_densidad_aire_sensor(project=proyecto)
-            densidad2 = calculador.densidad_del_aire_s1()
+            Fan = FanAdministrator(project=proyecto)
+            densidad2 = Fan.densidad_del_aire_s1()
             
             
             presion_dinamica = sensor_item.pt1 - sensor_item.ps1
@@ -336,11 +336,8 @@ class FanDesignView(FanCalculationsMixin, TemplateView):
             context['scatter_data2'] = [{'caudal': Qs[i], 'presion': Ys[i]} for i in range(6)]
             
             fan = FanAdministrator(project=proyecto)
-            
-            
-            
             q1 = fan.velocidad_aire_sensores['sensor1']
-            
+            logger_AFD.info(context)
             print(f"{fan.velocidad_aire_sensores['sensor1']}  -- {fan.caudal_aire_sensores['sensor1']}")
             context.update({
                 'chart_type': chart_type,

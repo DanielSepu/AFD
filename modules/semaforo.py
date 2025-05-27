@@ -702,6 +702,7 @@ class Semaforo:
 
         self.detalle["color"] = color
         self.limpiar_valores_json(self.detalle)
+        logger_AFD.info(self.detalle)
         self.informar_semaforo_fisico(color)
 
     def limpiar_valores_json(self, obj):
@@ -710,10 +711,11 @@ class Semaforo:
         elif isinstance(obj, list):
             return [self.limpiar_valores_json(i) for i in obj]
         elif isinstance(obj, float):
-            if math.isinf(obj) or math.isnan(obj):
-                return None  # o "NaN", "∞", o 0
+            if math.isnan(obj) or math.isinf(obj):
+                return None  # o "NaN", o 0.0, según prefieras
             return round(obj, 3)
         return obj
+
 
     def informar_semaforo_fisico(self, color: str):
         """

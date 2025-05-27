@@ -1,5 +1,6 @@
 import traceback
 from rest_framework.response import Response
+from applications.fanreal.fanAdministrator import FanAdministrator
 from applications.home.functions import get_last_project
 from modules.semaforo import Semaforo
 
@@ -21,7 +22,8 @@ class  SemaforoApiView(APIView):
             context["error"] = "No se encontró un proyecto válido."
             return Response(context, status=404)
 
-        semaforo = Semaforo()
+        fan = FanAdministrator(project)
+        semaforo = Semaforo(fan=fan)
         try:
             semaforo.calcular_estado_final(project)
             context["detalle_semaforo"] = semaforo.detalle

@@ -5,16 +5,16 @@ from applications.currentstatus.tools import (
     calculate_perdida_choque_codos
 )
 from applications.currentstatus.utils import (
-    calculo_densidad_aire_sensor, 
     caudal_aire_sensor1, 
     caudal_de_la_frente, 
     velocidad_aire_sensor
 )
+from applications.fanreal.fanAdministrator import FanAdministrator
 from applications.getdata.models import Historial, Proyecto, SensorsData, VdfData
 from applications.home.functions import get_last_project
-from core import logger_config
 from modules.semaforo import Semaforo
 from core.logger_config import logger_AFD
+
 
 # Función para obtener el último registro de un modelo dado
 def get_latest_record(model, using_db='sensorDB'):
@@ -29,13 +29,14 @@ def get_current_project():
 # Calcula la densidad y devuelve la densidad configurada, la calculada y su mitad
 def compute_density(project, sensor_data):
     dens_configurada = sensor_data.ps1
-    dens_calculada = calculo_densidad_aire_sensor(project=project).densidad_del_aire()
+    dens_calculada = FanAdministrator(project=project).densidad_del_aire_s1()
     mid_densidad = dens_calculada / 2
     return dens_configurada, mid_densidad, dens_calculada
 
 # Configura el semáforo y calcula caudales
 def setup_semaforo(project, sensor_data):
-    semaforo = Semaforo()
+    fan = FanAdministrator(project)
+    semaforo = Semaforo(fan=fan)
     semaforo.encender(project)
     Q1 = semaforo.calculate_Q1()
     Q2 = semaforo.calculate_Q2()
@@ -91,11 +92,12 @@ def compute_static_and_friction(item_sensors, presion_dinamica_entrada, perdida_
 
 # Construye el diccionario de datos para la respuesta
 def build_data_dict(item_sensors, item_vdf, project, calculador_densidad):
+    fan = FanAdministrator(project=project)
     data = {
         "pt1": round(item_sensors.pt1, 2),
         "qf": round(item_sensors.HRs1, 2),
         "q1": caudal_aire_sensor1(
-                velocidad_aire_sensor(item_sensors.pt1 - item_sensors.ps1, calculador_densidad.densidad_del_aire()),
+                velocidad_aire_sensor(item_sensors.pt1 - item_sensors.ps1, fan.densidad_del_aire_s1()),
                 project.ducto.area
             ),
         "HRs2": round(item_sensors.HRs2, 2),
@@ -139,7 +141,7 @@ def guardar_historial_detalle(detalle):
     Recibe el diccionario consolidado 'detalle' y crea una nueva instancia de Historial
     asignando los valores correspondientes a cada campo.
     """
-    
+    logger_AFD.debug(detalle['v5'])
     # logger_config.logger_AFD.debug(f"guardando historial v3: {detalle['v3']}")
     historial = Historial.objects.create(
         # Pérdidas de ductos
@@ -257,13 +259,13 @@ def procesar_datos_sensores():
     presion_estatica, presion_dinamica, perdidas_friccionales = compute_static_and_friction(
         item_sensors, presion_dinamica_entrada, perdida_total
     )
-    
+    fan = FanAdministrator(project=project)
     # Calcular velocidad y caudal a partir de sensores
     velocidad_sensor = velocidad_aire_sensor(item_sensors.pt1 - item_sensors.ps1, dens_calculada)
     q1_sensor = caudal_aire_sensor1(velocidad_sensor, project.ducto.area)
     
     data = build_data_dict(
-        item_sensors, item_vdf, project, calculo_densidad_aire_sensor(project=project)
+        item_sensors, item_vdf, project, fan.densidad_del_aire_s1()
     )
     
     # Se arma el contexto principal
@@ -281,15 +283,15 @@ def procesar_datos_sensores():
     semaforo.calcular_estado_final(proyecto)
     # Se obtiene el detalle del semáforo y se fusiona en el contexto
     detalle_semaforo = semaforo.detalle
+    # print(f"semaforo: {detalle_semaforo}")
     context = {**context, **detalle_semaforo}
     # Consolidar el diccionario final eliminando claves innecesarias
     
     detalle_consolidado = merge_detalle_semaforo(context)
-    detalle_consolidado['velocidad_sensor'] = context['velocidad_sensor']
-    detalle_consolidado['v5'] = context['v5']
-    detalle_consolidado['v3'] = context['v3']
+    detalle_consolidado['velocidad_sensor'] = semaforo.fan.densidad_aire_sensores
+    detalle_consolidado['v5'] = context.get('v5', None)
+    detalle_consolidado['v3'] = context.get('v3', None)
 
-    
     # Guardar en Historial usando el diccionario consolidado
     guardar_historial_detalle(detalle_consolidado)
     # logger_AFD.debug(f"se ha guardado un nuevo registro en el historial: {detalle_consolidado}")

@@ -43,11 +43,11 @@ class SensorsData(models.Model):
    Pbs1 = models.FloatField(verbose_name="Presión barométrica sensor 1 (Pa)")
    Tbs1 = models.FloatField(verbose_name="Temperatura seca sensor 2 (°C)") # temperatura seca de la frente (tbs2) --> lc
    HRs1 = models.FloatField(verbose_name="Humedad Relativa sensor 1 (%)")
-   k = models.FloatField(verbose_name="factor de fricción")
-   tbs = models.FloatField(verbose_name="temperatura seca") # temperatura bulbo seco
-   hr = models.FloatField(verbose_name="humedad relativa") # humedad relativa
-   tbh = models.FloatField() # temperatura bulmo humedo
-   tgbh = models.FloatField()
+   k = models.FloatField(verbose_name="factor de fricción", null=True, blank=True)
+   tbs = models.FloatField(verbose_name="temperatura seca", null=True, blank=True) # temperatura bulbo seco
+   hr = models.FloatField(verbose_name="humedad relativa", null=True, blank=True) # humedad relativa
+   tbh = models.FloatField(null=True, blank=True) # temperatura bulmo humedo
+   tgbh = models.FloatField(null=True, blank=True)
    
    
    

@@ -6,12 +6,18 @@ import pandas as pd  # Importa pandas
 from django.contrib import messages
 
 from applications.currentstatus.tools import goal_seek_custom
-from applications.currentstatus.utils import calculo_densidad_aire_sensor, caudal_aire_sensor1, velocidad_aire_sensor
+from applications.currentstatus.utils import caudal_aire_sensor1, velocidad_aire_sensor
+from applications.fandesign.mixins import FanCalculationsMixin
+from applications.fandesign.models import GraficoTolerancia
 from applications.fandesign.utils import calcular_la_curva_estatica, calcular_la_curva_total, calcular_la_presion_maxima
+from applications.fanreal.fanAdministrator import FanAdministrator
 from modules.graphdata import *
 from modules.queries import *
 from django.db.models import Max
 from applications.getdata.models import Proyecto
+from core.logger_config import logger_AFD
+
+from django.views.generic import TemplateView
 
 
 def fandesign(request):
@@ -34,11 +40,12 @@ def fandesign(request):
          df_vdf = get_10min_vdf_data() # desde BD
 
          # obtener datos
-         Q_medido = df_sensor1["Pbs1"].mean()
+         Q_medido = df_sensor1["ps1"].mean()
          Q_medido = float(Q_medido)
-         P_medido = df_sensor1["HRs2"].mean()
+         P_medido = df_sensor1["pt1"].mean()
          P_medido = float(P_medido)
          
+         logger_AFD.debug(f"Q_medido: {Q_medido}  P_medido: {P_medido}")
          # indice del valor maximo de presion 
          ind  = df_fan['presion'].idxmax()
          # obtiene la ultima medicion del sensor
@@ -220,8 +227,8 @@ def fandesign(request):
                   'rendimiento_ventilador':round(rendimiento_ventilador, 1),
                   'rotacion_actual':round(rotacion_actual, 1),
                   'presion_maxima':presion_maxima,
+                  'promedios': [Q_medido, P_medido]
                   }
-
          return render(request, 'fanDesign.html', context)
       except Exception as e:
          traceback.print_exc()
@@ -230,3 +237,126 @@ def fandesign(request):
    # Si la solicitud no es un POST, simplemente renderiza la página sin datos
    return render(request, 'fanDesign.html')
 
+
+
+TEMPLATE_NAME = 'fanDesign.html'
+class FanDesignView(FanCalculationsMixin, TemplateView):
+    template_name = TEMPLATE_NAME
+
+    def get(self, request, *args, **kwargs):
+        chart_type = request.GET.get('chart_type')
+        context = {}
+        try:
+            try:
+               tolerancia_obj = GraficoTolerancia.objects.get(tipo=chart_type)
+               tolerancia = tolerancia_obj.tolerancia
+            except GraficoTolerancia.DoesNotExist:
+               tolerancia = 'AN3'
+
+            proyecto = self.get_proyecto()
+            sensor_item = self.get_latest_sensor_item()
+            ultima_med = self.get_ultima_medicion()
+
+            df_fan = pd.DataFrame(data=proyecto.curva_diseno.datos_curva, dtype=float) # type: ignore
+            df_sensor1 = get_10min_sensor_data()
+            df_vdf = get_10min_vdf_data()
+
+            Q_medido, P_medido = self.compute_sensor_means(df=df_sensor1)
+            
+            
+            logger_AFD.debug(msg=f"Q_medido: {Q_medido} P_medido: {P_medido}")
+            Fan = FanAdministrator(project=proyecto)
+            densidad2 = Fan.densidad_del_aire_s1()
+            
+            
+            presion_dinamica = sensor_item.pt1 - sensor_item.ps1
+            velocidad = velocidad_aire_sensor(presion_dinamica_sensor=presion_dinamica, densidad_aire_sensor1=densidad2)
+            caudal = caudal_aire_sensor1(velocidad_aire_sensor1=velocidad, area_ducto=proyecto.ducto.area) # type: ignore
+
+            resistencia = self.compute_resistencia(ultima_med=ultima_med, caudal=caudal)
+            
+            if resistencia is None:
+                resistencia = 0.1
+                messages.warning(request, "Aún no hay datos del sensor")
+
+            ajuste = np.polyfit(df_fan['caudal'], df_fan['presion'], 3)
+            ecu1, ecu2, goal_seek = goal_seek_custom(ajuste, resistencia)
+
+            distancia2 = sqrt(goal_seek**2 + ecu2**2)
+            distancia1 = sqrt(Q_medido**2 + P_medido**2)
+            rendimiento = round(distancia1 / distancia2, 3)
+
+            ind = df_fan['presion'].idxmax()
+            peak_pressure = int(ecu1 / df_fan.loc[ind]['presion'])
+
+            rpm_model = df_vdf['rpm'].mean()
+            curva_est = calcular_la_curva_estatica(
+                df_fan, rpm_model, proyecto.curva_diseno.rpm,
+                densidad2, proyecto.curva_diseno.densidad,
+                3.14159 * (proyecto.ventilador.nmm/2000)**2
+            )
+            idx_max = curva_est['presion'].idxmax()
+            r_max = curva_est.loc[idx_max]['presion'] / curva_est.loc[idx_max]['caudal']**2
+            peak_resistance = round(resistencia / r_max, 2) * 100
+
+            df_total = calcular_la_curva_total(
+                df_fan, rpm_model, proyecto.curva_diseno.rpm,
+                densidad2, proyecto.curva_diseno.densidad
+            )
+            idx_tp = df_total['presion'].idxmax()
+            presion_maxima = calcular_la_presion_maxima(sensor_item, df_total, idx_tp)
+
+            if chart_type == 'total_pressure':
+               context['curva_inicial'] = df_fan[['caudal','presion']].to_dict('records')
+               context['scatter_data'] = self.build_scatter_records(
+                  df_total, 'caudal', 'presion', 'caudal', 'presion'
+               )
+            elif chart_type == 'static_pressure':
+               context['curva_inicial'] = df_fan[['caudal','presion']].to_dict('records')
+               context['scatter_data'] = self.build_scatter_records(
+                  curva_est, 'caudal', 'presion', 'caudal', 'presion'
+               )
+            elif chart_type == 'power':
+               context['curva_inicial'] = df_fan[['caudal','potencia']].to_dict('records')
+               adjusted = pd.DataFrame({
+                  'caudal': df_fan['caudal'] * (rpm_model/proyecto.curva_diseno.rpm),
+                  'potencia': df_fan['potencia'] * (rpm_model/proyecto.curva_diseno.rpm)**3 * (densidad2/proyecto.curva_diseno.densidad)
+               })
+               context['scatter_data'] = self.build_scatter_records(
+                  adjusted, 'caudal', 'potencia', 'caudal', 'potencia'
+               )
+
+            else:
+                return self.render_to_response(context)
+
+            # Secondary curve
+            R = P_medido / Q_medido**2
+            Qs = [i*(Q_medido//5) for i in range(6)] + [Q_medido]
+            Ys = [R * q**2 for q in Qs]
+            context['scatter_data2'] = [{'caudal': Qs[i], 'presion': Ys[i]} for i in range(6)]
+            
+            fan = FanAdministrator(project=proyecto)
+            q1 = fan.velocidad_aire_sensores['sensor1']
+            logger_AFD.info(context)
+            print(f"{fan.velocidad_aire_sensores['sensor1']}  -- {fan.caudal_aire_sensores['sensor1']}")
+            context.update({
+                'chart_type': chart_type,
+                'c': [fan.caudal_aire_sensores['sensor1'], sensor_item.pt1],
+                'proyecto': proyecto,
+                'peak_resistance': peak_resistance,
+                'peak_pressure': peak_pressure,
+                'densidad_actual': round(densidad2,2),
+                'rendimiento_ventilador': round(rendimiento,1),
+                'rotacion_actual': round(rpm_model,1),
+                'presion_maxima': presion_maxima,
+                'tolerancia_actual': tolerancia,
+                'niveles_tolerancia': ['AN1', 'AN2', 'AN3', 'AN4'],
+            })
+            logger_AFD.debug(context['c'])
+        except Exception as e:
+            import traceback; traceback.print_exc()
+            messages.warning(request, f"Warning: {e}")
+
+        return self.render_to_response(context)
+  
+     

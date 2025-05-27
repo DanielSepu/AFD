@@ -116,8 +116,18 @@ function get_semaforo() {
                 'color-fugas': semaforo.v6.color,
                 'color-potencia': semaforo.v7.color
             };
+            const tooltipValues = {
+                'tooltip-caudal-frente': v1.message,
+                'tooltip-velocidad-aire': semaforo.v2.message,
+                'tooltip-tgbh': semaforo.v3.message,
+                'tooltip-leakage-coefficient': semaforo.v4.message,
+                'tooltip-punto-stall': semaforo.v5.message,
+                'tooltip-fugas': semaforo.v6.message,
+                'tooltip-potencia': semaforo.v7.message
+            };
             // Actualiza los colores de los cuadros de las tarjetas
             actualizarColorCuadros(colorData);
+            aplicarTooltips(tooltipValues);
         },
         error: function(xhr, status, error) {
             let errorMsg = "Error: ";
@@ -133,6 +143,17 @@ function get_semaforo() {
             }
         }
     });
+}
+
+function aplicarTooltips(tooltipValues) {
+    for (const [id, tooltip] of Object.entries(tooltipValues)) {
+        const elemento = document.getElementById(id);
+        if (elemento) {
+            elemento.title = tooltip;
+        } else {
+            console.warn(`Elemento con id "${id}" no encontrado para tooltip.`);
+        }
+    }
 }
 
 
@@ -223,12 +244,29 @@ function actualizarV5(v5) {
 function actualizarV6(v6) {
     // console.log(v6);
     // Actualizar el estado del semáforo según el color recibido
+    
     if (v6.color === "verde") {
         $('#v6_estado').css('background-color', 'green');
+        $('#semaforo_messages')
+            .text("")
+            .removeClass('text-success text-danger text-warning');
     } else if (v6.color === "amarillo") {
         $('#v6_estado').css('background-color', 'yellow');
+        $('#v6_message').text(v6["message"]);
+        $('#semaforo_messages')
+            .text(v6["message"])
+            .removeClass('text-success text-danger text-warning')
+            .addClass('text-warning');
+
     } else if (v6.color === "rojo") {
         $('#v6_estado').css('background-color', 'red');
+
+        $('#v6_message').text(v6["message"]);
+        $('#semaforo_messages')
+            .text(v6["message"])
+            .removeClass('text-success text-danger text-warning')
+            .addClass('text-danger');
+
     }
     
     // Actualizar los valores recibidos en la interfaz
@@ -237,6 +275,7 @@ function actualizarV6(v6) {
     $('#v6_presion_hace30m').text(v6["presion hace30m"]);
     $('#v6_porcentaje').text(v6["porcentaje"]);
     $('#v6_porcentaje2').text(v6["porcentaje"]);
+    
 
 }
 

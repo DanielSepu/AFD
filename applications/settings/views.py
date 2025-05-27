@@ -7,8 +7,6 @@ from django.views.generic import DeleteView, TemplateView
 from django.contrib import messages
 import json
 
-from django.utils import timezone
-from applications.currentstatus.scheduler import update_semaforo_job_interval, update_sensor_job_interval
 from applications.getdata.forms import SemaforoForm, SensorsDataForm, SimuladorForm, SistemaForm, VdfDataForm
 from applications.getdata.models import *
 from applications.dbs.forms import *
@@ -100,7 +98,7 @@ class AdminPageView(TemplateView, AdminFormHandlersMixin):
         context = super().get_context_data(**kwargs)
 
         try:
-            simulador_json = Simulador.objects.latest('id')
+            simulador_json = Simulador.objects.latest('-id')
         except Simulador.DoesNotExist:
             simulador_json = None
 

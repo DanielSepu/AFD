@@ -6,15 +6,12 @@ import pandas as pd
 import requests
 
 from applications.settings.models import FugasConfig, SemaforoEstado
-from applications.currentstatus.utils import calculo_densidad_aire_sensor
 from applications.fandesign.mixins import presion_total
 from applications.fandesign.utils import calcular_la_curva_total, calcular_la_presion_maxima
 from applications.getdata.models import SensorsData, VdfData
 from modules.queries import get_10min_sensor_data, get_10min_vdf_data
 from django.db.models import Max
-from django.contrib import messages
 from core.logger_config import logger_AFD
-from modules.utils import calculate_tbh
 
 
 def mostrar_inicio_formulas_principales(str, description):
@@ -101,9 +98,10 @@ class Semaforo:
     el semaforo tiene  7 variables para medir, que pueden retornar verde, rojo, o amarillo cada una de sus funciones, a partir
     de la sumatoria de cada resultado de las 7 variables se pondera el estado final.
     """
-    def __init__(self):
+    def __init__(self, fan):
         self.estado = 'verde'
         self.sensorData = None
+        self.fan = fan
         self.vdfData = None
         self.project = None
         self.Q1 = None 
@@ -111,6 +109,7 @@ class Semaforo:
         self.detalle = {
             "colores": [],
         }
+
     
     def encender(self, project):
         self.vdfData = get_10min_vdf_data()
@@ -122,7 +121,20 @@ class Semaforo:
         dataframe_sensor = pd.DataFrame([dataframe_transpose])
 
         dict_sensor = dict(dataframe_sensor.iloc[0].to_dict())
-        self.detalle["sensor"] = dataframe_sensor.to_html(index=False)
+        # Excluir la columna 'id' y todas las columnas desde 'k' en adelante
+        
+        # Paso 1: obtener todas las columnas
+        todas_las_columnas = list(dataframe_sensor.columns)
+
+        # Paso 2: encontrar el índice de la columna 'k'
+        # indice_k = todas_las_columnas.index('k')
+
+        # Paso 3: conservar solo las columnas antes de 'k' y que no sean 'id'
+        #columnas_filtradas = [col for col in todas_las_columnas[:indice_k] if col != 'id']
+
+        # Paso 4: aplicar filtro y guardar HTML
+        self.detalle["sensor"] = dataframe_sensor[todas_las_columnas].to_html(index=False)
+
         self.project = project
 
         # Mostrar vdf
@@ -135,74 +147,27 @@ class Semaforo:
         dataframe_vdf = pd.DataFrame([dataframe_transpose_vdf])
         self.detalle["vdf"] = dataframe_vdf.to_html(index=False)
 
-    def calculate_tbh(self, tbs, hr):
-        # tbh1 =E13*ATAN(0.151977*  SQRT(E8+8.313659))+     ATAN(E13+E8)-   ATAN(E8-1.6763)+    0.00391838*     POWER(E8,1.5)*ATAN(0.023101*E8)-4.686
-        #  = E16 *ATAN(0.151977* SQRT(E17+8.313659))+    ATAN(E16+E17)-  ATAN(E17-1.6763)+   0.00391838*     POWER(E17,1.5)*ATAN(0.023101*E17)-4.686
-        
-        return tbs * atan(0.151977 * sqrt(hr + 8.313659)) + atan(tbs + hr) - atan(hr - 1.6763) + 0.00391838 * pow(hr, 1.5) * atan(0.023101 * hr) - 4.686035
-
     def calcular_area_ducto(self):
+        
         area_ducto = None
-        if self.project.ducto.t_ducto == "circular":
-            area_ducto = 3.14159 * self.project.ducto.diametro**2
-
-        if self.project.ducto.t_ducto == "ovalado":
-            area_ducto = self.project.ducto.area
-        
-        if area_ducto == None:
-            pass
-            # messages.warning(self.request, f"Error algunos valores para calcular el area del ducto no se han especificado, verifique: tipo ducto: {self.project.ducto.t_ducto} y sus valores")
-        area_ducto = area_ducto/4000000 
-        return area_ducto
-
-    def calcular_velocidad_sensor(self, tbs, hr, P, pt, ps, tipo):
-
-        # set de operaciones
-        Tbh2 = self.calculate_tbh(tbs, hr)
-        # =616.6*   EXP(17.27*E13/(237.3+E13))
-
-        esd =  616.6*math.exp((17.27 * tbs) / (237.3 + tbs)) # Calcula la presión de vapor del agua a temperatura seca
-        # =616.6    *   EXP(17.27*J6/(237.3+J6))
-        esw = 616.6*math.exp((17.27 * Tbh2) / (237.3 + Tbh2)) # Calcula la presión de vapor del agua a temperatura húmeda
-        Xs = 0.622*esw/(P-esw) # humedad absoluta en kg vapor de agua por kg aire seco
-        Lw = (2502.5-2.386*Tbh2)*1000 # J/kg 
-        S = Lw*Xs + 1005*Tbh2; # J/kg
-        X = (S-1005*tbs)/(Lw+1884*(tbs-Tbh2))
-        e = P*X/(0.622+X); #  Pa 
-
-
-        # crear un diccionario de los valores, para imprimir en la tabla dinamica
-        self.detalle['velocidad_sensor'] = {
-            'tbh2': Tbh2,
-            'tbs': tbs,
-            'esd': esd,
-            'esw': esw,
-            'Xs': Xs,
-            'Lw': Lw,
-            'S': S,
-            'X': X,
-            'e': e
-        }
-
-        titulo = "Variables de entrada"
-        # mostrar_reporte(titulo, Tbh2, esd, esw, Xs, Lw, S, X, e)
-        
-        densidad_aire_frente = (P-e)/(287.04*(tbs+273.15)); #  Kg aire seco/m3
-
-        # =SQRT(2*(E5-E6)/E22)
         try:
-            velocidad_sensor = sqrt(2*(pt-ps)/densidad_aire_frente) # Densidad aire en la frente)   2 decimales >>> velocidad aire sensor frente
-        except ValueError as e:
-            # warning(self.request, f"Error al calcular calcular_velocidad_sensor, un numero intenta realizar un calculo con un valor bajo cero: {e}, verifique densidad_aire_frente: ({densidad_aire_frente}) tbs: {tbs}, hr: {hr}, P: {P}, pt: {pt}, ps: {ps}")
-            velocidad_sensor = 0
-        values_dic = {
-            'densidad_aire_frente': densidad_aire_frente,
-            'pt': pt,
-            'ps': ps,
-            'velocidad_sensor': velocidad_sensor
-        }
-        titulo = "Resultados"
-        return velocidad_sensor
+            if self.project.ducto.t_ducto == "circular":
+                area_ducto = 3.14159 * self.project.ducto.diametro**2
+
+            if self.project.ducto.t_ducto == "ovalado":
+                area_ducto = self.project.ducto.area
+            
+            if area_ducto == None:
+                pass
+                # messages.warning(self.request, f"Error algunos valores para calcular el area del ducto no se han especificado, verifique: tipo ducto: {self.project.ducto.t_ducto} y sus valores")
+            area_ducto = area_ducto/4000000 
+        except Exception as e:
+            if self.project.ducto.t_ducto == "circular":
+                raise Exception(f"Los valores actuales no son adecuados para calcular el ducto circular")
+
+            if self.project.ducto.t_ducto == "ovalado":
+                raise Exception(f"Los valores actuales no son adecuados para calcular el ducto circular")
+        return area_ducto
 
     def calculate_Q2(self):
         """
@@ -227,16 +192,16 @@ class Semaforo:
 
             ps2 = self.sensorData["ps2"].mean()
             
-            velocidad_sensor_2 = self.calcular_velocidad_sensor(Tbs2, HRf, P2, pt2, ps2, "solicitado desde Q2" )
+            velocidad_sensor_2 = self.fan.velocidad_aire_sensores['sensor2']
             area_ducto = self.calcular_area_ducto()
             Q2 = velocidad_sensor_2 * area_ducto  #  caudal sensor 2 = (m/s)/(m2)
         except TypeError as e: #
-            print(f"error en calculate_Q2: {e}")
+            raise Exception(f"error en calculate_Q2: {e} {self.calcular_area_ducto()}")
             # messages.warning(self.request, f"error al calcuar Q2: los valores no se pueden procesar: {e}, verifique los errores de: q2, lc, densidad2, pt2, ps2, area_ducto, ")
             Q2 = 0
         except KeyError as e:
             Q2 = 0
-            print(f"error en calculate_Q2: {e}")
+            raise Exception(f"error en calculate_Q2: {e}")
             # messages.warning(self.request, f"La base de datos del sensor aun no recibe datos")
             # calcular densidad aire en la frente
             HRf  = 0
@@ -259,13 +224,8 @@ class Semaforo:
         if self.Q1 != None:
             return self.Q1   
         try:
-            pt1 = self.sensorData["pt1"].mean() # Presión total sensor 1 (Pa)
-            ps1 = self.sensorData["ps1"].mean() # Pesión estática sensor 1 (Pa)
-            tbs1 = self.sensorData["Tbs1"].mean() # Temperatura seca sensor 1 (°C)
-            hrs1 = self.sensorData["HRs1"].mean() # Humedad Relativa sensor 1 (%)
-            Pbs1 = self.sensorData["Pbs1"].mean()  #  Presión barométrica ventilador (PA)
-            #tbs1 = self.sensorData["lc"].mean() # 
-            velocidad_sensor_1 = self.calcular_velocidad_sensor(tbs1, hrs1, Pbs1, pt1, ps1, "solicitado desde Q1" )
+            velocidad_sensor_1 = self.fan.densidad_aire_sensores['sensor1']
+            logger_AFD.info(f"velocidad_sensor_1: {velocidad_sensor_1}")
             area_ducto = self.calcular_area_ducto()
             Q1  = velocidad_sensor_1 *area_ducto #  m3/s = (m2)*(m/s).  (Crear variable Q1) caudal_ventilador_2
         except TypeError as e: #
@@ -273,14 +233,7 @@ class Semaforo:
             Q1 = 0
         except KeyError as e:
             print(f"error en calculate_Q1: {e}")
-            # messages.warning(self.request, f"error la base de datos del sensor aun no recibe datos")
-            Q1 = 0
-            pt1 = 0
-            ps1 = 0
-            tbs = 0 # humedad relativa
-            hr = 0 # temperatura bulbo seco
-            P1 = 0  #  Presión barométrica ventilador
-            tbs1 = 0 # 
+
             velocidad_sensor_1 = 0
         # asignar a las variables del entorno global 
         self.Q1 = Q1  # guardar el resultado en el entorno global para usarlo en otros metodos
@@ -320,7 +273,7 @@ class Semaforo:
         Q2 = self.calculate_Q2()
         Lc = self.leakage_coefficient_v4()
         pt2 = self.sensorData["pt2"].mean()
-        lf = self.project.lf
+        lf = self.project.ducto.dS2_F
 
         Qf = Q2 - Lc*0.5*pt2*(lf/100000)
         formula = "Qf = Q2 - Lc*0.5*pt2*(lf/100000)"
@@ -344,10 +297,14 @@ class Semaforo:
             'formula': formula,
             'color': color
         }
+        logger_AFD.debug(f"---> caudal: Lc: {Lc} Qf: {Qf} Q2: {Q2} pt2: {pt2} lf: {lf}")
         return Qf
     
     def calculate_tbh(self, tbs, hr):
-        return calculate_tbh(tbs, hr)
+        # tbh1 =E13*ATAN(0.151977*  SQRT(E8+8.313659))+     ATAN(E13+E8)-   ATAN(E8-1.6763)+    0.00391838*     POWER(E8,1.5)*ATAN(0.023101*E8)-4.686
+        #  = E16 *ATAN(0.151977* SQRT(E17+8.313659))+    ATAN(E16+E17)-  ATAN(E17-1.6763)+   0.00391838*     POWER(E17,1.5)*ATAN(0.023101*E17)-4.686
+        
+        return tbs * atan(0.151977 * sqrt(hr + 8.313659)) + atan(tbs + hr) - atan(hr - 1.6763) + 0.00391838 * pow(hr, 1.5) * atan(0.023101 * hr) - 4.686035
 
     def calcular_semaforo_v2(self, velocidad_del_aire):
         if velocidad_del_aire > 0.25 and velocidad_del_aire < 2.5:
@@ -423,8 +380,12 @@ class Semaforo:
             TGBH (float): resultado de la formulat TBGH
         """
         formula = f'''tgbh = (0.7 * tbh + (0.3 * tbs'''
-        tbh = self.sensorData["tbh"].mean()
         tbs = self.sensorData["tbs"].mean()
+        Tbs2  = self.sensorData["Tbs2"].mean()
+        
+        humedad_relativa_s1 = self.sensorData['HRs1']
+        tbh = self.calculate_tbh(Tbs2, humedad_relativa_s1)
+        
         tgbh = (0.7 * tbh) + (0.3 * tbs)
 
         nivel_carga, min, max, color = self.calcular_estado_v3(tgbh)
@@ -463,10 +424,10 @@ class Semaforo:
 
         pt1 = self.sensorData["pt1"].mean() 
         pt2 = self.sensorData["pt2"].mean()
-         
+        
         L = self.project.dis_e_sens
-
         Lc = 3*(Q1-Q2)*(pt1-pt2)/(2*L*(pow(pt1,1.5)-pow(pt2,1.5)))*100*pow(1000,0.5)
+        logger_AFD.info(f"----> LC: {Lc} Q1: {Q1}  Q2: {Q2} pt1: {pt1} pt2: {pt2} L: {L}")
         formula = "Lc = 3 * (Q1-Q2) * (pt1-pt2) / ( 2 * L *(pow(pt1,1.5)  - pow(pt2,1.5) )) * 100 * pow(1000,0.5)"
         color = self.calcular_semaforo_v4(Lc)
         self.detalle['v4'] = {
@@ -503,8 +464,7 @@ class Semaforo:
         rpm_model = self.vdfData['rpm'].mean()
         
         # calculando la densidad
-        calculador_densidad_aire_s1 = calculo_densidad_aire_sensor(self.project)
-        densidad2 = calculador_densidad_aire_s1.densidad_del_aire()
+        densidad2 = self.fan.densidad_del_aire_s1()
         df_total_pressure  = calcular_la_curva_total(df_fan, rpm_model, rpm_del_proyecto, densidad2, densidad1 )
         indice_max = df_total_pressure["presion"].idxmax()
         latest_record_sensors = SensorsData.objects.using('sensorDB').aggregate(Max('id'))
@@ -526,13 +486,36 @@ class Semaforo:
         return presion_maxima
 
     def calcular_semaforo_v6(self, porcentaje):
-        if porcentaje <= 0.05:
-            return "verde"
-        elif porcentaje <= 0.10:
-            return "amarillo"
+        config = FugasConfig.objects.first()
+        semaforo = SemaforoEstado.objects.first()
+        
+        if not config or not semaforo:
+            logger_AFD.warning("Configuración de fugas o semáforo no disponible.")
+            mensaje ="ALERTA DE SISTEMA: No podemos calcular el color del semaforo en las fugas, falta la configuración del promedio y los rangos de tolerancia de las fugas"
+            return mensaje, "amarillo"
+
+        logger_AFD.debug(f"calculando la variable 6: {porcentaje}")
+
+        # Determinar color según tolerancias dinámicas
+        tolerancia_verde = config.tolerancia_minima/100
+        tolerancia_amarillo = config.tolerancia_maxima/100
+
+        if porcentaje <= tolerancia_verde:
+            mensaje = f"El porcentaje de caída ({round(porcentaje*100, 2)}%) se encuentra dentro del rango permitido ({round(tolerancia_verde*100, 2)}% - {round(tolerancia_amarillo*100, 2)}%)."
+            
+            return mensaje, "verde"
+        elif porcentaje > tolerancia_verde and porcentaje <= tolerancia_amarillo:
+            mensaje = f"El porcentaje de caída ({round(porcentaje*100, 2)}%) esta fuera del rango normal ({round(tolerancia_verde*100, 2)}%)."
+            
+            return mensaje, "amarillo"
         else:
-            return "rojo"
-    
+            semaforo.esta_bloqueado = True
+            semaforo.motivo_bloqueo = f"Fuga crítica detectada. Caída del {round(porcentaje*100, 2)}%"
+            semaforo.color_actual = "rojo"
+            semaforo.save()
+            mensaje = f"El porcentaje de caída ({round(porcentaje*100, 2)}%) supera el máximo permitido ({round(tolerancia_amarillo*100, 2)}%)."
+            return mensaje, "rojo"
+
 
     def fugas_v6(self):
         """
@@ -552,41 +535,42 @@ class Semaforo:
             str: Color del semáforo (ej. "verde", "amarillo", "rojo").
         """
         # Paso 1: Obtener el registro más reciente
-        '''
-        config = FugasConfig.objects.first()
+        message = ""
+
         semaforo = SemaforoEstado.objects.first()
 
-        if not config or not semaforo:
-            logger_AFD.warning("Configuración de fugas o semáforo no disponible.")
-            return None
+        
 
         if semaforo.esta_bloqueado:
             logger_AFD.warning("Semáforo bloqueado. No se ejecuta análisis.")
             self.detalle['v6'] = {"estado": "bloqueado", "color": semaforo.color_actual}
-            return semaforo.color_actual
-        '''
+            message ="No hay registros almacenados para el sensor"
+            color ="rojo"
         
-        registro_mas_reciente = SensorsData.objects.all().last()
+        
+        registro_mas_reciente = SensorsData.objects.using('sensorDB').all().last()
         if not registro_mas_reciente:
             logger_AFD.warning("No hay registros en SensorsData.")
-            return None
+            message ="No hay registros almacenados para el sensor"
+            color ="rojo"
 
         ts_mas_reciente = registro_mas_reciente.ts
         ts_limite = ts_mas_reciente - timedelta(minutes=30)
 
-        logger_AFD.debug(f"Buscando registros desde {ts_limite} hasta {ts_mas_reciente}")
+        logger_AFD.debug(f"calculado fugas con registros de {ts_limite} hasta {ts_mas_reciente}")
         
         # Paso 2: Obtener registros de los últimos 30 minutos
-        registros = SensorsData.objects.filter(ts__range=(ts_limite, ts_mas_reciente)).order_by('ts')
+        registros = SensorsData.objects.using('sensorDB').filter(ts__range=(ts_limite, ts_mas_reciente)).order_by('ts')
 
         if not registros.exists():
             logger_AFD.warning("No se encontraron registros en los últimos 30 minutos.")
-            return None
+            message ="No se encontraron registros en los últimos 30 minutos."
+            color ="rojo"
 
         primero = registros.first()
         ultimo = registros.last()
 
-        logger_AFD.debug(f"Primer registro: {primero.ts}, Último registro: {ultimo.ts}")
+        # logger_AFD.debug(f"Primer registro: {primero.ts}, Último registro: {ultimo.ts}")
 
         # Paso 3: Cálculo de intervalo y presiones
         diferencia = ultimo.ts - primero.ts
@@ -595,6 +579,7 @@ class Semaforo:
         presion_hace30m = primero.pt1
         presion_actual = ultimo.pt1
 
+        
         if presion_actual == 0:
             logger_AFD.error("Presión actual es cero, división por cero evitada.")
             porcentaje = float('inf')
@@ -602,38 +587,25 @@ class Semaforo:
             porcentaje = 1 - (presion_hace30m / presion_actual)
 
         formula = "porcentaje = 1 - (presion_hace30m / presion_actual)"
-        color = self.calcular_semaforo_v6(porcentaje)
+        message, color = self.calcular_semaforo_v6(porcentaje=porcentaje)
         self.detalle.setdefault("colores", []).append(color)
-        '''
-        fuera_de_rango = porcentaje > config.tolerancia_maxima or porcentaje < config.tolerancia_minima
-
-        if fuera_de_rango and config.alerta_activa:
-            #self.enviar_alerta_fuga(...)
-            if porcentaje > config.tolerancia_maxima * 2:
-                semaforo.esta_bloqueado = True
-                semaforo.motivo_bloqueo = f"Fuga crítica detectada. Caída del {round(porcentaje*100,2)}%"
-                semaforo.color_actual = "rojo"
-                semaforo.save()
 
         semaforo.color_actual = color
         semaforo.save()
-        '''
+        
         self.detalle['v6'] = {
             "intervalo en segundos": round(segundos_diferencia, 3),
             "presion actual": round(presion_actual, 3),
             "presion hace30m": round(presion_hace30m, 3),
-            "porcentaje": round(porcentaje, 3),
+            "porcentaje": f"{int(porcentaje*100)} %",
             "formula": formula,
+            "message": message,
             "color": color
         }
 
-        logger_AFD.debug(f"Resultado fugas_v6: {self.detalle['v6']}")
+        # logger_AFD.debug(f"Resultado fugas_v6: {self.detalle['v6']}")
 
         return color
-    
-    
-
-    
 
 
     def calcular_semaforo_v7(self, potencia):

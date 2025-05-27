@@ -3,6 +3,7 @@ from django.shortcuts import redirect, render
 
 from django.views.generic import TemplateView
 
+from applications.fanreal.fanAdministrator import FanAdministrator
 from applications.getdata.models import IntervalosDeActualizacion, Proyecto
 from applications.home.functions import get_last_project
 from modules.semaforo import Semaforo
@@ -18,8 +19,9 @@ class HomeView(TemplateView):
         context['Project'] = proyecto or None
         if context['Project'] is not None:
             context['Projects'] = Proyecto.objects.exclude(pk=context['Project'].pk)
-        
-            semaforo= Semaforo()
+            
+            fan = FanAdministrator(proyecto)
+            semaforo = Semaforo(fan=fan)
             try:
                 semaforo.calcular_estado_final(proyecto)
                 context["detalle_semaforo"]=semaforo.detalle

@@ -3,6 +3,7 @@ import io
 import os
 import subprocess
 from time import timezone
+import traceback
 import zipfile
 from django.shortcuts import render
 from django.views import View
@@ -13,10 +14,10 @@ import requests as rq
 from django.conf import settings
 from applications.currentstatus.mixin import procesar_datos_sensores
 from applications.currentstatus.tools import area_ducto_circular, area_inlet_bell, calculate_perdida_choque_codos
-from applications.currentstatus.utils import calculo_densidad_aire_sensor, caudal_aire_sensor1, caudal_de_la_frente, presion_dinamica_sensor_1, velocidad_aire_sensor
+from applications.currentstatus.utils import caudal_aire_sensor1, caudal_de_la_frente, velocidad_aire_sensor
+from applications.fanreal.fanAdministrator import FanAdministrator
 from applications.getdata.models import Proyecto, SensorsData, VdfData
 from django.db.models import Max
-from applications.getdata.simulador.simulador import insert_sensor_data
 from core.logger_config import logger_AFD
 from modules.semaforo import Semaforo
 from django.utils import timezone
@@ -112,16 +113,19 @@ def get_recent_data(request):
         
         # densidad configurada en el proyecto
         variables['densidad'] = item_sensors.ps1
-        
+        fan = FanAdministrator(project)
         # densidad calculada
-        calculador_densidad_aire_s1 = calculo_densidad_aire_sensor(project)
-        densidad = calculador_densidad_aire_s1.densidad_del_aire()
+        
+        densidad = fan.densidad_del_aire_s1()
 
         mid_densidad = densidad/2
         # CONFIGURAR EL SEMAFORO PARA OBTENER CAUDALES
-        semaforo = Semaforo()
+        
+        print(f"{fan.densidad_aire_sensores}")
+        semaforo = Semaforo(fan=fan)
         semaforo.encender(project)
         caudal_del_ventilador = semaforo.calculate_Q1()
+        
         Qf = caudal_de_la_frente(semaforo.calculate_Q2(), semaforo.leakage_coefficient_v4(), item_sensors.pt2, project.ducto.Ldsf )
         
         # cambio de valores 
@@ -161,6 +165,7 @@ def get_recent_data(request):
             variables["perdida_choque_codos"] = perdidas_choque_codos
 
         except TypeError as e:
+            traceback.print_exc()
             context = {}
             context["status"] = "error"
             context["message"] = f"No se pudo realizar el calculo de calcular choque de codos: {e}, verifique el valor de diametro del ducto"
@@ -203,7 +208,7 @@ def get_recent_data(request):
         
         perdidas_friccionales = var_intermedia - perdida_choque_total_sistema_ducto
         # calculando el caudal del aire sensor 1
-        velocidad_aire_sensor1 = velocidad_aire_sensor(presion_dinamica, calculador_densidad_aire_s1.densidad_del_aire())
+        velocidad_aire_sensor1 = velocidad_aire_sensor(presion_dinamica, fan.densidad_del_aire_s1())
         area_ducto = project.ducto.area
         data = {
             "pt1": round(item_sensors.pt1, 2),

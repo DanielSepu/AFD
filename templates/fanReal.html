@@ -136,7 +136,7 @@
    <script type="text/javascript">
       
       const dataV = {{ scatter_data|safe }};
-      const promedios = {{ c }};
+      const promedios = {{ c| safe }};
       const dataV2 = {{scatter_data2|safe}};
       {% comment %} const curva_dis = {{VenCurvaDis}}; {% endcomment %}
       // Call the function initially

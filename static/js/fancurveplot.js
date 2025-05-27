@@ -1,355 +1,129 @@
-      // Config Grafico
-      const margin = { top: 20, right: 30, bottom: 40, left: 40 };
-      //const containerHeight = graphContainer.clientHeight;
+const margin = { top: 20, right: 30, bottom: 40, left: 40 };
+const toleranceTable = {
+  "volume flow rate": { AN1: 0.01, AN2: 0.025, AN3: 0.05, AN4: 0.10 },
+  "fan pressure":      { AN1: 0.01, AN2: 0.025, AN3: 0.05, AN4: 0.10 },
+  "power":             { AN1: 0.02, AN2: 0.03,  AN3: 0.08, AN4: 0.16 }
+};
+function createFanChart(
+  dataOriginal,
+  dataAjustada,
+  chart_type,
+  promedios,
+  toleranceGrade,
+  toleranceParam
+) {
+  console.log(dataOriginal);
+  console.log(dataAjustada);
+  const graphContainer = document.getElementById(chart_type);
+  graphContainer.innerHTML = "";
+  const wrapper = document.getElementById("graphContainer");
+  const width = wrapper.clientWidth - margin.right;
+  const height = wrapper.clientHeight;
 
-      function  createFanChart(data, chart_type, promedios, data2) { 
-         console.log(chart_type)
-         console.log(data2)
-         const graphContainer = document.getElementById(chart_type);
-         console.log(graphContainer)
-         // Get the dimensions of the container
-         const graphContainer2 = document.getElementById("graphContainer");
-         const containerWidth = graphContainer2.clientWidth - margin.right;
-         const containerHeight = graphContainer2.clientHeight;
-         //const containerHeight = 500;
-         const keys = Object.keys(data[0]);
-         // Declare the x (horizontal position) scale for "Q1".
-            const x = d3.scaleLinear()
-            .domain([0, d3.max(data, function(d) { return d[keys[0]]; })])
-            .range([margin.left*2, containerWidth - margin.right]);
+  // Considerar ambos conjuntos de datos para escalas
+  const allData = [...dataOriginal, ...dataAjustada];
+  const [xKey, yKey] = Object.keys(allData[0]);
+  const maxX = Math.max(d3.max(allData, d => d[xKey]), promedios[0]);
+  const maxY = Math.max(d3.max(allData, d => d[yKey]), promedios[1]);
+  const x = d3.scaleLinear().domain([0, maxX]).range([margin.left * 2, width - margin.right]);
+  const y = d3.scaleLinear().domain([0, maxY]).range([height - margin.bottom, margin.top]);
 
-         // Declare the y (vertical position) scale for "Pt1".
-            const y = d3.scaleLinear()
-            .domain([0, d3.max(data, function(d) { return d[keys[1]]; })])
-            .range([containerHeight - margin.bottom, margin.top]);
+  const svg = d3.create("svg").attr("width", width).attr("height", height);
 
-         // Create the SVG container.
-         const svg = d3.create("svg")
-            .attr("width", containerWidth)
-            .attr("height", containerHeight);
+    // --- Gridlines ---
+  function make_x_gridlines() {
+    return d3.axisBottom(x)
+            .ticks(10); // ajusta la cantidad de líneas si quieres
+  }
+  function make_y_gridlines() {
+    return d3.axisLeft(y)
+            .ticks(10);
+  }
 
-         // Add the x-axis.
-         svg.append("g")
-         .attr("transform", `translate(0,${containerHeight - margin.bottom})`)
-         .call(d3.axisBottom(x));
+  // Gridlines horizontales
+  svg.append("g")			
+    .attr("class", "grid")
+    .attr("transform", `translate(0,${height - margin.bottom})`)
+    .call(make_x_gridlines()
+      .tickSize(-(height - margin.top - margin.bottom))
+      .tickFormat("")
+    );
 
-         // Add the y-axis.
-         svg.append("g")
-         .attr("transform", `translate(${margin.left*2},0)`)
-         .call(d3.axisLeft(y));
+  // Gridlines verticales
+  svg.append("g")			
+    .attr("class", "grid")
+    .attr("transform", `translate(${margin.left * 2},0)`)
+    .call(make_y_gridlines()
+      .tickSize(-(width - margin.left * 2 - margin.right))
+      .tickFormat("")
+    );
 
-         // Add x-axis title.
-         svg.append("text")
-            .attr("x", containerWidth / 2)
-            .attr("y", containerHeight )
-            .style("text-anchor", "middle")
-            .text(keys[0]);
+  // Ejes y etiquetas
+  svg.append("g").attr("transform", `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x));
+  svg.append("g").attr("transform", `translate(${margin.left * 2},0)`).call(d3.axisLeft(y));
+  svg.append("text").attr("x", width / 2).attr("y", height).style("text-anchor", "middle").text(xKey);
+  svg.append("text").attr("transform", "rotate(-90)").attr("x", -height / 2).attr("y", margin.left / 2).style("text-anchor", "middle").text(yKey);
 
-         // Add y-axis title.
-         svg.append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("x", 0 - containerHeight / 2)
-            .attr("y", margin.left / 2)
-            .style("text-anchor", "middle")
-            .text(keys[1]);
+  // Puntos de dataOriginal
+  svg.selectAll(".dot-original").data(dataOriginal).enter().append("circle")
+    .attr("class", "dot-original")
+    .attr("cx", d => x(d[xKey]))
+    .attr("cy", d => y(d[yKey]))
+    .attr("r", 5)
+    .attr("fill", "#2074b7"); // Azul para original
 
-         // Add the scatter plot points.
-            svg.selectAll("circle")
-            .data(data)
-            .enter().append("circle")
-            .attr("cx", function(d) { return x(d[keys[0]]); })
-            .attr("cy", function(d) { return y(d[keys[1]]); })
-            .attr("r", 5); // Tamaño de los puntos
-            
-         // Agregar punto de promedio  
-         // Valores de ejemplo 
-         svg.append("circle")
-         .attr("cx", x(promedios[0]))
-         .attr("cy", y(promedios[1]))
-         .attr("r", 8) 
-         .attr("fill", "red");
-      
+  // Puntos de dataAjustada (si quieres)
+  svg.selectAll(".dot-ajustada").data(dataAjustada).enter().append("circle")
+    .attr("class", "dot-ajustada")
+    .attr("cx", d => x(d[xKey]))
+    .attr("cy", d => y(d[yKey]))
+    .attr("r", 5)
+    .attr("fill", "#c72c41"); // Rojo para ajustada
 
-         // se ha agregado la linea   
-            svg.append("path")
-               .datum(data)
-               .attr("fill", "none")
-               .attr("stroke", "black")
-               .attr("stroke-width", 1.5)
-               .attr("d", d3.line()
-               .curve(d3.curveBasis) // Just add that to have a curve instead of segments
-               .x(function(d) { return x(d[keys[0]]); })
-               .y(function(d) { return y(d[keys[1]]); })
-            )
-            
-            svg.append("path")
-               .datum(data2)
-               .attr("fill", "none")
-               .attr("stroke", "black")
-               .attr("stroke-width", 1.5)
-               .attr("d", d3.line()
-               .curve(d3.curveBasis) // Just add that to have a curve instead of segments
-               .x(function(d) { return x(d[keys[0]]); })
-               .y(function(d) { return y(d[keys[1]]); })
-            )
+  // Curva Original (azul)
+  svg.append("path")
+    .datum(dataOriginal)
+    .attr("fill", "none")
+    .attr("stroke", "#2074b7")
+    .attr("stroke-width", 2)
+    .attr("d", d3.line().curve(d3.curveBasis).x(d => x(d[xKey])).y(d => y(d[yKey])));
 
+  // Curva Ajustada (roja)
+  svg.append("path")
+    .datum(dataAjustada)
+    .attr("fill", "none")
+    .attr("stroke", "#c72c41")
+    .attr("stroke-width", 2)
+    .attr("stroke-dasharray", "6,2") // Línea punteada, opcional
+    .attr("d", d3.line().curve(d3.curveBasis).x(d => x(d[xKey])).y(d => y(d[yKey])));
+  
+  
 
-         // Append the SVG element.
-         //graphContainer.innerHTML = ""; // Limpiar el contenedor antes de agregar el nuevo gráfico
-         graphContainer.appendChild(svg.node());
-      }
+  // Punto promedio
+  const cx = x(promedios[0]), cy = y(promedios[1]);
+  svg.append("circle").attr("cx", cx).attr("cy", cy).attr("r", 8).attr("fill", "red");
 
-      // Function to update chart dimensions based on container size
-      function updateFanChart(data, chart_type, promedios, data2) {
-         // Get the dimensions of the container
-         const containerWidth = graphContainer.clientWidth - margin.right;
-         const containerHeight = graphContainer.clientHeight;
-         //const containerHeight = 500;
-         const keys = Object.keys(data[0]);
-         // Declare the x (horizontal position) scale for "Q1".
-            const x = d3.scaleLinear()
-            .domain([0, d3.max(data, function(d) { return d[keys[0]]; })])
-            .range([margin.left*2, containerWidth - margin.right]);
+  // Cuadro de tolerancia
+  const tolFracX = (toleranceTable[toleranceParam]?.[toleranceGrade] ?? 0) * promedios[0];
+  const tolFracY = (toleranceTable["fan pressure"]?.[toleranceGrade] ?? 0) * promedios[1];
+  const x0 = x(promedios[0] - tolFracX), x1 = x(promedios[0] + tolFracX);
+  const y0 = y(promedios[1] + tolFracY), y1 = y(promedios[1] - tolFracY);
 
-         // Declare the y (vertical position) scale for "Pt1".
-            const y = d3.scaleLinear()
-            .domain([0, d3.max(data, function(d) { return d[keys[1]]; })])
-            .range([containerHeight - margin.bottom, margin.top]);
+  svg.append("rect")
+    .attr("x", x0)
+    .attr("y", y0)
+    .attr("width", x1 - x0)
+    .attr("height", y1 - y0)
+    .attr("fill", "none")
+    .attr("stroke", "orange")
+    .attr("stroke-width", 2)
+    .attr("stroke-dasharray", "4 2");
 
-         // Create the SVG container.
-         const svg = d3.create("svg")
-            .attr("width", containerWidth)
-            .attr("height", containerHeight);
+  // Leyenda (opcional)
+  svg.append("circle").attr("cx", width - 120).attr("cy", 30).attr("r", 6).attr("fill", "#2074b7");
+  svg.append("text").attr("x", width - 110).attr("y", 35).text("Original").style("font-size", "12px").attr("alignment-baseline", "middle");
+  svg.append("circle").attr("cx", width - 120).attr("cy", 50).attr("r", 6).attr("fill", "#c72c41");
+  svg.append("text").attr("x", width - 110).attr("y", 55).text("Ajustada").style("font-size", "12px").attr("alignment-baseline", "middle");
 
-         // Add the x-axis.
-         svg.append("g")
-         .attr("transform", `translate(0,${containerHeight - margin.bottom})`)
-         .call(d3.axisBottom(x));
-
-         // Add the y-axis.
-         svg.append("g")
-         .attr("transform", `translate(${margin.left*2},0)`)
-         .call(d3.axisLeft(y));
-
-         // Add x-axis title.
-         svg.append("text")
-            .attr("x", containerWidth / 2)
-            .attr("y", containerHeight )
-            .style("text-anchor", "middle")
-            .text(keys[0]);
-
-         // Add y-axis title.
-         svg.append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("x", 0 - containerHeight / 2)
-            .attr("y", margin.left / 2)
-            .style("text-anchor", "middle")
-            .text(keys[1]);
-
-         // Add the scatter plot points.
-            svg.selectAll("circle")
-            .data(data)
-            .enter().append("circle")
-            .attr("cx", function(d) { return x(d[keys[0]]); })
-            .attr("cy", function(d) { return y(d[keys[1]]); })
-            .attr("r", 5); // Tamaño de los puntos
-            
-         // Agregar punto de promedio  
-         // Valores de ejemplo 
-         svg.append("circle")
-         .attr("cx", x(promedios[0]))
-         .attr("cy", y(promedios[1]))
-         .attr("r", 8) 
-         .attr("fill", "red");
-      
-
-         // se ha agregado la linea   
-            svg.append("path")
-               .datum(data)
-               .attr("fill", "none")
-               .attr("stroke", "black")
-               .attr("stroke-width", 1.5)
-               .attr("d", d3.line()
-               .curve(d3.curveBasis) // Just add that to have a curve instead of segments
-               .x(function(d) { return x(d[keys[0]]); })
-               .y(function(d) { return y(d[keys[1]]); })
-            )
-            
-            svg.append("path")
-               .datum(data2)
-               .attr("fill", "none")
-               .attr("stroke", "black")
-               .attr("stroke-width", 1.5)
-               .attr("d", d3.line()
-               .curve(d3.curveBasis) // Just add that to have a curve instead of segments
-               .x(function(d) { return x(d[keys[0]]); })
-               .y(function(d) { return y(d[keys[1]]); })
-            )
-
-
-         // Append the SVG element.
-         //graphContainer.innerHTML = ""; // Limpiar el contenedor antes de agregar el nuevo gráfico
-         graphContainer.appendChild(svg.node());
-      }
-
-
-
-
-      // Con imagen de fondo
-      function  createFanChartImg(data, chart_type) {
-         let imgPath;
-         if(chart_type === 'total_pressure'){
-            imgPath="../../media/img/FanCurveAXN.png";
-         } else {
-            imgPath = "../../media/img/FanCurveAXN.png";
-         }
-         // Get the dimensions of the container
-         const containerWidth = graphContainer.clientWidth - margin.right;
-         const containerHeight = graphContainer.clientHeight;
-         //const containerHeight = 500;
-         const keys = Object.keys(data[0]);
-         // Declare the x (horizontal position) scale for "Q1".
-         const x = d3.scaleLinear()
-         .domain([0, d3.max(data, function(d) { return d[keys[0]]; })])
-         .range([margin.left*2, containerWidth - margin.right]);
-
-         // Declare the y (vertical position) scale for "Pt1".
-         const y = d3.scaleLinear()
-         .domain([0, d3.max(data, function(d) { return d[keys[1]]; })])
-         .range([containerHeight - margin.bottom, margin.top]);
-
-         // Create the SVG container.
-         const svg = d3.create("svg")
-            .attr("width", containerWidth)
-            .attr("height", containerHeight);
-
-         // Add pattern for the background image.
-         svg.append("defs").append("pattern")
-            .attr("id", "background-image")
-            .attr("width", "100%")
-            .attr("height", "100%")
-            .attr("patternContentUnits", "objectBoundingBox")
-            .append("image")
-            .attr("width", 1)
-            .attr("height", 1)
-            .attr("preserveAspectRatio", "none")
-            .attr("href", imgPath);
-
-         // Add a rectangle with the pattern as the background.
-         svg.append("rect")
-            .attr("width", containerWidth - margin.left*2 - margin.right)
-            .attr("height", containerHeight - margin.top - margin.bottom)
-            .attr("x", margin.right*2.65)
-            .attr("y", margin.top)
-            .style("fill", "url(#background-image)");
-
-         // Add the x-axis.
-         svg.append("g")
-         .attr("transform", `translate(0,${containerHeight - margin.bottom})`)
-         .call(d3.axisBottom(x));
-
-         // Add the y-axis.
-         svg.append("g")
-         .attr("transform", `translate(${margin.left*2},0)`)
-         .call(d3.axisLeft(y));
-
-         // Add x-axis title.
-         svg.append("text")
-            .attr("x", containerWidth / 2)
-            .attr("y", containerHeight )
-            .style("text-anchor", "middle")
-            .text(keys[0]);
-
-         // Add y-axis title.
-         svg.append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("x", 0 - containerHeight / 2)
-            .attr("y", margin.left / 2)
-            .style("text-anchor", "middle")
-            .text(keys[1]);
-
-         // Add the scatter plot points.
-         svg.selectAll("circle")
-         .data(data)
-         .enter().append("circle")
-         .attr("cx", function(d) { return x(d[keys[0]]); })
-         .attr("cy", function(d) { return y(d[keys[1]]); })
-         .attr("r", 5); // Tamaño de los puntos
-
-         // Append the SVG element.
-         //graphContainer.innerHTML = ""; // Limpiar el contenedor antes de agregar el nuevo gráfico
-         graphContainer.appendChild(svg.node());
-      }
-
-      function updateFanChartImg(data) {
-         console.log("resize");
-
-         const keys = Object.keys(data[0]);
-         
-         // Get the dimensions of the container
-         const containerWidth = graphContainer.clientWidth - margin.right;
-         //const containerHeight = graphContainer.clientHeight;
-         const containerHeight = 500;
-         // Declare the x (horizontal position) scale for "Q1".
-         const x = d3.scaleLinear()
-         .domain([0, 120])
-         .range([margin.left*2, containerWidth - margin.right]);
-         // Declare the y (vertical position) scale for "Pt1".
-         const y = d3.scaleLinear()
-         .domain([0, d3.max(data, function(d) { return d[keys[1]]; })])
-         .range([containerHeight - margin.bottom, margin.top]);
-         // Remove any existing chart elements
-         d3.select("#graphContainer").selectAll("*").remove()
-         // Create the SVG container.
-         const svg = d3.create("svg")
-         .attr("width", containerWidth)
-         .attr("height", containerHeight)
-         // Add pattern for the background image.
-         svg.append("defs").append("pattern")
-            .attr("id", "background-image")
-            .attr("width", "100%")
-            .attr("height", "100%")
-            .attr("patternContentUnits", "objectBoundingBox")
-            .append("image")
-            .attr("width", 1)
-            .attr("height", 1)
-            .attr("preserveAspectRatio", "none")
-            .attr("href", "../../media/img/FanCurveAXN.png");
-         // Add a rectangle with the pattern as the background.
-         svg.append("rect")
-            .attr("width", containerWidth - margin.left*2 - margin.right)
-            .attr("height", containerHeight - margin.top - margin.bottom)
-            .attr("x", margin.right*2.65)
-            .attr("y", margin.top)
-            .style("fill", "url(#background-image)");
-         // Add the x-axis.
-         svg.append("g")
-         .attr("transform", `translate(0,${containerHeight - margin.bottom})`)
-         .call(d3.axisBottom(x))
-         // Add the y-axis.
-         svg.append("g")
-            .attr("transform", `translate(${margin.left*2},0)`)
-            .call(d3.axisLeft(y))
-         // Add x-axis title.
-         svg.append("text")
-            .attr("x", containerWidth / 2)
-            .attr("y", containerHeight )
-            .style("text-anchor", "middle")
-            .text(keys[0]);
-         // Add y-axis title.
-         svg.append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("x", 0 - containerHeight / 2)
-            .attr("y", margin.left / 2)
-            .style("text-anchor", "middle")
-            .text(keys[1]);
-         // Add the scatter plot points.
-         svg.selectAll("circle")
-         .data(data)
-         .enter().append("circle")
-         .attr("cx", function(d) { return x(d[keys[0]]); })
-         .attr("cy", function(d) { return y(d[keys[1]]); })
-         .attr("r", 5); // Tamaño de los punto
-         // Append the SVG element.
-         graphContainer.appendChild(svg.node());
-      }
+  graphContainer.appendChild(svg.node());
+}

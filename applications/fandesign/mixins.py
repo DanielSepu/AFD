@@ -2,6 +2,8 @@
 
 
 import pandas as pd
+from applications.getdata.models import Proyecto, SensorsData
+from django.db.models import Max
 from modules.graphdata import dens_adjust_pt, get_fan_data, rpm_adjust_caudal, rpm_adjust_pt
 
 
@@ -41,3 +43,43 @@ def presion_total_2(N, mid_densidad, Q):
     # Presión total - mid_densidad*((Q^2)/(Adifusor^2))
     area_difusor = 3.14159 * (N/2000)**2
     return mid_densidad*((Q**2)/area_difusor)
+
+# Global defaults
+db_alias = 'sensorDB'
+
+class SensorDataMixin:
+    db_alias = db_alias
+
+    def get_latest_sensor_item(self):
+        max_id = SensorsData.objects.using(self.db_alias).aggregate(Max('id'))['id__max']
+        return SensorsData.objects.using(self.db_alias).get(id=max_id)
+
+    def get_ultima_medicion(self):
+        return SensorsData.objects.using(self.db_alias).order_by('-ts').first()
+
+class ProjectMixin:
+    def get_proyecto(self):
+        return Proyecto.objects.order_by('id').last()
+
+class FanCalculationsMixin(SensorDataMixin, ProjectMixin):
+    def compute_mid_density(self, sensor_item):
+        return sensor_item.ps1 / 2
+
+    def compute_sensor_means(self, df):
+        
+        Q = float(df['ps1'].mean())
+        P = float(df['pt1'].mean())
+        return Q, P
+
+    def compute_resistencia(self, ultima_med, caudal):
+        try:
+            return ultima_med.ps1 / caudal**2
+        except AttributeError:
+            return None
+
+    def build_scatter_records(self, df, x_field, y_field, x_label, y_label):
+        records = df[[x_field, y_field]].to_dict(orient='records')
+        for rec in records:
+            rec[x_label] = rec.pop(x_field)
+            rec[y_label] = rec.pop(y_field)
+        return records

@@ -8,10 +8,7 @@
 
    <div class="row h-100">
       <div class="col">
-         <div class="form-check form-switch mt-3 ml">
-            <input class="form-check-input" type="checkbox" id="toggleOriginalDesign" onclick="toggleOriginalDesign()">
-            <label class="form-check-label" for="toggleOriginalDesign" id="toggleLabel">Mostrando curva calculada</label>
-         </div>
+
          <div  class="d3-graphic" id="graphContainer" data-scatter-data="{{ scatter_data|safe }}" ></div>
          <div  class="d3-graphic" id="graphContainer_original" data-scatter-data="{{ curva_inicial|safe }}" style="visibility: hidden; position: absolute;"></div>
       </div>
@@ -26,7 +23,7 @@
             setTimeout(() => {
                $(window).trigger('resize'); // Asegura que D3 repinte el gráfico correctamente
             }, 100);
-   
+            
          } else {
             $('#graphContainer').css({ visibility: 'visible', position: 'static' });
             $('#graphContainer_original').css({ visibility: 'hidden', position: 'absolute' });

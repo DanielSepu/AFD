@@ -91,7 +91,6 @@
                         </div>
                     </div>
                 </div>
-        
                 <!-- Rotación -->
                 <div class="col-12">
                     <div class="d-flex border border-3 border-warning">
@@ -133,7 +132,17 @@
         </div>
         
         
-        
+ <style>
+   .grid line {
+  stroke: #cccccc;
+  stroke-opacity: 0.5;
+  shape-rendering: crispEdges;
+}
+.grid path {
+  stroke-width: 0;
+}
+
+</style>       
         
         
 {% endblock %}
@@ -150,23 +159,20 @@
       const dataV = {{ scatter_data|safe }};
       const dataV_init = {{ curva_inicial|safe }};
       const promedios = {{ c | safe }};
-      const dataV2 = {{scatter_data2|safe}};
-      {% comment %} const curva_dis = {{VenCurvaDis}}; {% endcomment %}
+
       // Call the function initially
       document.addEventListener("DOMContentLoaded",
          function() {
             if ("{{ chart_type }}" == "total_pressure"){
 
-               createFanChart(dataV, 'graphContainer', promedios, dataV2);
-               createFanChart(dataV_init, 'graphContainer_original', promedios, dataV2);
-            } else if ("{{ chart_type }}" == "static_pressure"){
+               createFanChart(dataV_init, dataV, 'graphContainer', promedios, "AN2", "volume flow rate");
 
-               createFanChart(dataV, 'graphContainer', promedios, dataV2, dataV_init);
-               createFanChart(dataV_init, 'graphContainer_original', promedios, dataV2);
+            } else if ("{{ chart_type }}" == "static_pressure"){
+               createFanChart(dataV_init, dataV, 'graphContainer', promedios, "AN2", "volume flow rate");
+               
             } else if ("{{ chart_type }}" == "power"){
 
-               createFanChart(dataV, 'graphContainer', promedios, dataV2, dataV_init);
-               createFanChart(dataV_init, 'graphContainer_original', promedios, dataV2);
+               createFanChart(dataV_init, dataV, 'graphContainer', promedios, "AN2", "volume flow rate");
             }
          });
       // Call the function on window resize

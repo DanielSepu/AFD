@@ -1,0 +1,59 @@
+<div style="position: absolute; top: 10px; right: 10px; z-index: 100;">
+    <label for="toleranceSelect_{{ nombre_grafica }}" class="form-label">Tolerancia</label>
+    <select id="toleranceSelect_{{ nombre_grafica }}"
+            class="form-select form-select-sm"
+            onchange="actualizarToleranciaDesdeFrontend(this.value, '{{ nombre_grafica }}')">
+        {% for an in niveles_tolerancia %}
+            <option value="{{ an }}" {% if an == tolerancia_actual %}selected{% endif %}>{{ an }}</option>
+        {% endfor %}
+    </select>
+
+</div>
+
+<script>
+(function() {
+    const tipoGrafico = "{{ nombre_grafica }}";
+    const selectId = `toleranceSelect_${tipoGrafico}`;
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            const cookies = document.cookie.split(";");
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith(name + "=")) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    window.actualizarToleranciaDesdeFrontend = function(valor, tipo) {
+        fetch("/api/tolerancia/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                tipo: tipo,
+                tolerancia: valor
+            })
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Error al guardar la tolerancia.");
+            return response.json();
+        })
+        .then(data => {
+            console.log(`Tolerancia actualizada (${tipo}):`, data);
+            // Aquí podrías llamar a una función de redibujo
+            window.location.reload(); 
+        })
+        .catch(error => {
+            console.error("Error al actualizar la tolerancia:", error);
+        });
+    };
+})();
+</script>

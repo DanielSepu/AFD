@@ -1,6 +1,5 @@
 import math
-from django.db.models import Max
-from applications.getdata.models import SensorsData
+from core.logger_config import logger_AFD
 
 
 
@@ -16,6 +15,8 @@ def caudal_aire_sensor1(velocidad_aire_sensor1, area_ducto):
 
 
 def caudal_de_la_frente(Q2, Lc, pt2, Lf):
+    logger_AFD.info(f" caudal_de_la_frente: Q2: {Q2} Lc: {Lc} pt2: {pt2} Lf: {Lf}")
+    
     return Q2 - Lc*0.5*pt2*Lf /100000
 
 

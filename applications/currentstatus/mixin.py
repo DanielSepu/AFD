@@ -41,7 +41,9 @@ def setup_semaforo(project, sensor_data):
     Q1 = semaforo.calculate_Q1()
     Q2 = semaforo.calculate_Q2()
     leakage = semaforo.leakage_coefficient_v4()
-    Qf = caudal_de_la_frente(Q2, leakage, sensor_data.pt2, project.ducto.Ldsf)
+    # Qf = caudal_de_la_frente(Q2, leakage, sensor_data.pt2, project.ducto.Ldsf)
+    Qf = semaforo.calcular_qf(Q2, leakage, sensor_data.pt2, project.ducto.Ldsf)
+
     return semaforo, Q1, Qf
 
 # Calcula las áreas relevantes
@@ -91,11 +93,11 @@ def compute_static_and_friction(item_sensors, presion_dinamica_entrada, perdida_
     return presion_estatica, presion_dinamica, perdidas_friccionales
 
 # Construye el diccionario de datos para la respuesta
-def build_data_dict(item_sensors, item_vdf, project, calculador_densidad):
+def build_data_dict(item_sensors, item_vdf, project, Qf):
     fan = FanAdministrator(project=project)
     data = {
         "pt1": round(item_sensors.pt1, 2),
-        "qf": round(item_sensors.HRs1, 2),
+        "qf": round(Qf, 2),
         "q1": caudal_aire_sensor1(
                 velocidad_aire_sensor(item_sensors.pt1 - item_sensors.ps1, fan.densidad_del_aire_s1()),
                 project.ducto.area
@@ -261,11 +263,10 @@ def procesar_datos_sensores():
     )
     fan = FanAdministrator(project=project)
     # Calcular velocidad y caudal a partir de sensores
-    velocidad_sensor = velocidad_aire_sensor(item_sensors.pt1 - item_sensors.ps1, dens_calculada)
-    q1_sensor = caudal_aire_sensor1(velocidad_sensor, project.ducto.area)
+    velocidad_sensor = fan.velocidad_aire_sensores['sensor1']
     
     data = build_data_dict(
-        item_sensors, item_vdf, project, fan.densidad_del_aire_s1()
+        item_sensors, item_vdf, project, Qf
     )
     
     # Se arma el contexto principal

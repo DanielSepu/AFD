@@ -181,17 +181,6 @@ class Semaforo:
         
         # = J22  * E24
         try:
-            # calcular densidad aire en la frente
-            HRf  = self.sensorData["Tbs2"].mean()
-            # temperatura bulbo seco
-            Tbs2 = self.sensorData["Tbs1"].mean()
-            # presion barometrica en la frente
-            P2  = self.sensorData["Pbs2"].mean()
-            # definir variables
-            pt2 = self.sensorData["pt2"].mean()
-
-            ps2 = self.sensorData["ps2"].mean()
-            
             velocidad_sensor_2 = self.fan.velocidad_aire_sensores['sensor2']
             area_ducto = self.calcular_area_ducto()
             Q2 = velocidad_sensor_2 * area_ducto  #  caudal sensor 2 = (m/s)/(m2)
@@ -224,7 +213,7 @@ class Semaforo:
         if self.Q1 != None:
             return self.Q1   
         try:
-            velocidad_sensor_1 = self.fan.densidad_aire_sensores['sensor1']
+            velocidad_sensor_1 = self.fan.velocidad_aire_sensores['sensor1']
             logger_AFD.info(f"velocidad_sensor_1: {velocidad_sensor_1}")
             area_ducto = self.calcular_area_ducto()
             Q1  = velocidad_sensor_1 *area_ducto #  m3/s = (m2)*(m/s).  (Crear variable Q1) caudal_ventilador_2
@@ -259,6 +248,11 @@ class Semaforo:
             return color
         raise Exception(f"No se logro calcular un valor para el semaforo valor: {Qf}")
     
+    
+    def calcular_qf(self, Q2, Lc, pt2, lf):
+        return Q2 - Lc*0.5*pt2*(lf/100000)
+        
+        
     def caudal_en_la_frente_v1(self):
         """
         Calcula el caudal en la frente del ventilador
@@ -275,7 +269,7 @@ class Semaforo:
         pt2 = self.sensorData["pt2"].mean()
         lf = self.project.ducto.dS2_F
 
-        Qf = Q2 - Lc*0.5*pt2*(lf/100000)
+        Qf = self.calcular_qf( Q2, Lc, pt2, lf)
         formula = "Qf = Q2 - Lc*0.5*pt2*(lf/100000)"
 
         values_dic = {
@@ -426,8 +420,9 @@ class Semaforo:
         pt2 = self.sensorData["pt2"].mean()
         
         L = self.project.dis_e_sens
-        Lc = 3*(Q1-Q2)*(pt1-pt2)/(2*L*(pow(pt1,1.5)-pow(pt2,1.5)))*100*pow(1000,0.5)
-        logger_AFD.info(f"----> LC: {Lc} Q1: {Q1}  Q2: {Q2} pt1: {pt1} pt2: {pt2} L: {L}")
+        Lc = (3  * (Q1-Q2)  * (pt1-pt2)    /   (2    *   L  * (pow(pt1,1.5)    -   pow(pt2,1.5))   )) * 100    * pow(1000,0.5)
+             # (3*(Q1-Q2)*(pt1-pt2)    /   2*L*(pow(pt1,1.5)-pow(pt2,1.5)))       *100*pow(1000,0.5)
+        # logger_AFD.info(f"----> LC: {Lc} Q1: {Q1}  Q2: {Q2} pt1: {pt1} pt2: {pt2} L: {L}")
         formula = "Lc = 3 * (Q1-Q2) * (pt1-pt2) / ( 2 * L *(pow(pt1,1.5)  - pow(pt2,1.5) )) * 100 * pow(1000,0.5)"
         color = self.calcular_semaforo_v4(Lc)
         self.detalle['v4'] = {

@@ -13,7 +13,8 @@ from applications.fanreal.fanAdministrator import FanAdministrator
 from applications.getdata.models import Historial, Proyecto, SensorsData, VdfData
 from applications.home.functions import get_last_project
 from modules.semaforo import Semaforo
-from core.logger_config import logger_AFD
+from django.contrib import messages
+
 
 
 # Función para obtener el último registro de un modelo dado
@@ -27,7 +28,7 @@ def get_current_project():
     return Proyecto.objects.all().order_by('id').last()
 
 # Calcula la densidad y devuelve la densidad configurada, la calculada y su mitad
-def compute_density(project, sensor_data):
+def compute_density( project, sensor_data):
     dens_configurada = sensor_data.ps1
     dens_calculada = FanAdministrator(project=project).densidad_del_aire_s1()
     mid_densidad = dens_calculada / 2
@@ -143,7 +144,7 @@ def guardar_historial_detalle(detalle):
     Recibe el diccionario consolidado 'detalle' y crea una nueva instancia de Historial
     asignando los valores correspondientes a cada campo.
     """
-    logger_AFD.debug(detalle['v5'])
+    
     # logger_config.logger_AFD.debug(f"guardando historial v3: {detalle['v3']}")
     historial = Historial.objects.create(
         # Pérdidas de ductos
@@ -204,7 +205,7 @@ def procesar_datos_sensores():
     })
     
     # Calcular densidad
-    _, mid_densidad, dens_calculada = compute_density(project, item_sensors)
+    _, mid_densidad, dens_calculada = compute_density( project, item_sensors)
     
     # Configurar semáforo y caudales
     semaforo, Q1, Qf = setup_semaforo(project, item_sensors)
@@ -287,7 +288,7 @@ def procesar_datos_sensores():
     # print(f"semaforo: {detalle_semaforo}")
     context = {**context, **detalle_semaforo}
     # Consolidar el diccionario final eliminando claves innecesarias
-    
+    # print(context)
     detalle_consolidado = merge_detalle_semaforo(context)
     detalle_consolidado['velocidad_sensor'] = semaforo.fan.densidad_aire_sensores
     detalle_consolidado['v5'] = context.get('v5', None)

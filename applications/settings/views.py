@@ -98,7 +98,7 @@ class AdminPageView(TemplateView, AdminFormHandlersMixin):
         context = super().get_context_data(**kwargs)
 
         try:
-            simulador_json = Simulador.objects.latest('-id')
+            simulador_json = Simulador.objects.order_by('-id').first()
         except Simulador.DoesNotExist:
             simulador_json = None
 
@@ -132,6 +132,7 @@ class AdminPageView(TemplateView, AdminFormHandlersMixin):
         }
 
         handler = handler_map.get(form_type)
+        print(f"handler: {handler}")
         if handler:
             return handler(request)
 

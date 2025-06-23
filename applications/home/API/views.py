@@ -14,22 +14,34 @@ class  SemaforoApiView(APIView):
     """
     
     def get(self, request, format=None):
-        # Obtener el ultimo proyecto
+        # Obtener el último proyecto
         project = get_last_project()
-        context = {}
 
         if not project:
-            context["error"] = "No se encontró un proyecto válido."
-            return Response(context, status=404)
+            return Response({
+                "status": "error",
+                "message": "No se encontró un proyecto válido."
+            }, status=404)
 
-        fan = FanAdministrator(project)
-        semaforo = Semaforo(fan=fan)
         try:
+            fan = FanAdministrator(project)
+            semaforo = Semaforo(fan=fan)
             semaforo.calcular_estado_final(project)
-            context["detalle_semaforo"] = semaforo.detalle
+
+            return Response({
+                "status": "success",
+                "data": {
+                    "detalle_semaforo": semaforo.detalle
+                },
+                "variables": {
+                    # puedes agregar variables adicionales aquí
+                }
+            })
+
         except Exception as e:
             traceback.print_exc()
-            context["error"] = "Ocurrió un error al calcular el estado del semáforo."
-
-        return Response(context)
+            return Response({
+                "status": "error",
+                "message": f"Ocurrió un error al calcular el estado del semáforo o ventilador. {str(e)}"
+            }, status=500)
     

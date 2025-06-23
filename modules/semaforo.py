@@ -290,7 +290,7 @@ class Semaforo:
             'formula': formula,
             'color': color
         }
-        logger_AFD.debug(f"---> caudal: Lc: {Lc} Qf: {Qf} Q2: {Q2} pt2: {pt2} lf: {lf}")
+        # logger_AFD.debug(f"---> caudal: Lc: {Lc} Qf: {Qf} Q2: {Q2} pt2: {pt2} lf: {lf}")
         return Qf
     
     def calculate_tbh(self, tbs, hr):
@@ -488,7 +488,7 @@ class Semaforo:
             mensaje ="ALERTA DE SISTEMA: No podemos calcular el color del semaforo en las fugas, falta la configuración del promedio y los rangos de tolerancia de las fugas"
             return mensaje, "amarillo"
 
-        logger_AFD.debug(f"calculando la variable 6: {porcentaje}")
+        
 
         # Determinar color según tolerancias dinámicas
         tolerancia_verde = config.tolerancia_minima/100
@@ -551,7 +551,7 @@ class Semaforo:
         ts_mas_reciente = registro_mas_reciente.ts
         ts_limite = ts_mas_reciente - timedelta(minutes=30)
 
-        logger_AFD.debug(f"calculado fugas con registros de {ts_limite} hasta {ts_mas_reciente}")
+       
         
         # Paso 2: Obtener registros de los últimos 30 minutos
         registros = SensorsData.objects.using('sensorDB').filter(ts__range=(ts_limite, ts_mas_reciente)).order_by('ts')

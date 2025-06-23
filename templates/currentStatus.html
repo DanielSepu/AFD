@@ -119,32 +119,34 @@
          }
       }
 
-      function getValues() {
-         fetch("/get_recent_data")
-         .then(response => {
+      async function getValues() {
+         try {
+            const response = await fetch("/get_recent_data");
             if (!response.ok) {
-               // Si hay un error HTTP, lanza un error
                throw new Error(`HTTP error! Status: ${response.status}`);
             }
-            return response.json();
-         })
-         .then(context => {
-            if (context.status === "error") {
-               // Manejo del error en el JSON
-               console.error(context.message);
-               alert(context.message); // Muestra un mensaje de alerta al usuario
-            } else {
-               // Procesa los datos en caso de éxito
-               actualizarElementosHTML(context.variables);
-               updateValues(context.data, context);
+
+            const { data, variables } = await response.json();
+            console.info("Respuesta del backend (data & variables):", { data, variables });
+
+            // Solo renderizamos lo que hacía la función anterior:
+            if (variables) {
+               actualizarElementosHTML(variables);
             }
-         })
-         .catch(error => {
-            // Manejo de errores generales
+
+            if (data) {
+               updateValues(data, { data, variables });
+               showToast("Datos actualizados correctamente.", "success");
+            } else {
+               showToast("No se encontraron datos para mostrar.", "warning");
+            }
+
+         } catch (error) {
             console.error("Error al realizar la solicitud:", error);
-            alert("Ocurrió un problema al obtener los datos.");
-         });
-      }
+            showToast("No se pudo conectar con el servidor: " + error.message, "danger");
+         }
+         }
+
 
       function updateValues(data, context) {
          // Actualiza los divs con los nuevos valores  

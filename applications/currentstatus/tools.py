@@ -125,7 +125,6 @@ def aply_third_codo(first_section, project, Q1,type, Qf):
         return  first_section*formula_parte_2_ducto_circular*Q_codos_3
     
 def area_ducto_circular(project):
-    print(f"---> diametro: {project.ducto.diametro}")
     return 3.14159 * pow(project.ducto.diametro/2000,2)
 
 def area_inlet_bell(project):

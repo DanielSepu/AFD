@@ -89,8 +89,13 @@ def get_recent_data(request):
 
     '''
     if request.method == 'GET':
-        
-        context = procesar_datos_sensores()
+        context = {}
+        try:
+            context = procesar_datos_sensores()
+            logger_AFD.info(context)
+        except Exception as e:
+            context["status"] = f"error"
+            context["message"] = f"{e}"
         return JsonResponse(context, safe=False)
     
 def update_frequency(request):

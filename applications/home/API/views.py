@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from applications.fanreal.fanAdministrator import FanAdministrator
 from applications.home.functions import get_last_project
 from modules.semaforo import Semaforo
+from core.logger_config import logger_AFD
 
 from rest_framework.views import APIView
 
@@ -40,6 +41,7 @@ class  SemaforoApiView(APIView):
 
         except Exception as e:
             traceback.print_exc()
+            logger_AFD.info(f"error -> {e}")
             return Response({
                 "status": "error",
                 "message": f"Ocurrió un error al calcular el estado del semáforo o ventilador. {str(e)}"

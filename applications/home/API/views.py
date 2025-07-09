@@ -22,14 +22,15 @@ class  SemaforoApiView(APIView):
             context["error"] = "No se encontró un proyecto válido."
             return Response(context, status=404)
 
-        fan = FanAdministrator(project)
-        semaforo = Semaforo(fan=fan)
+        
         try:
+            fan = FanAdministrator(project)
+            semaforo = Semaforo(fan=fan)
             semaforo.calcular_estado_final(project)
             context["detalle_semaforo"] = semaforo.detalle
         except Exception as e:
             traceback.print_exc()
-            context["error"] = "Ocurrió un error al calcular el estado del semáforo."
+            context["error"] = f"Error calculando semaforo: {e}"
 
         return Response(context)
     

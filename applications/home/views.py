@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render
 
 from django.views.generic import TemplateView
-
+from django.contrib import messages
 from applications.fanreal.fanAdministrator import FanAdministrator
 from applications.getdata.models import IntervalosDeActualizacion, Proyecto
 from applications.home.functions import get_last_project
@@ -19,9 +19,11 @@ class HomeView(TemplateView):
         context['Project'] = proyecto or None
         if context['Project'] is not None:
             context['Projects'] = Proyecto.objects.exclude(pk=context['Project'].pk)
-            
-            fan = FanAdministrator(proyecto)
-            semaforo = Semaforo(fan=fan)
+            try:
+                fan = FanAdministrator(proyecto, request=self.request)
+                semaforo = Semaforo(fan=fan)
+            except Exception as e:
+                messages.warning(self.request, e)
             try:
                 semaforo.calcular_estado_final(proyecto)
                 context["detalle_semaforo"]=semaforo.detalle

@@ -4,7 +4,7 @@ import math
 
 import pandas as pd
 import requests
-
+from django.core.exceptions import ObjectDoesNotExist
 from applications.settings.models import FugasConfig, SemaforoEstado
 from applications.fandesign.mixins import presion_total
 from applications.fandesign.utils import calcular_la_curva_total, calcular_la_presion_maxima
@@ -532,15 +532,19 @@ class Semaforo:
         # Paso 1: Obtener el registro más reciente
         message = ""
 
-        semaforo = SemaforoEstado.objects.first()
+        try:
+            semaforo = SemaforoEstado.objects.latest('id')  # O usa 'fecha' si tienes campo timestamp
+        except ObjectDoesNotExist:
+            semaforo = None  # No hay registros
 
-        
-
-        if semaforo.esta_bloqueado:
+        if semaforo and semaforo.esta_bloqueado:
             logger_AFD.warning("Semáforo bloqueado. No se ejecuta análisis.")
-            self.detalle['v6'] = {"estado": "bloqueado", "color": semaforo.color_actual}
-            message ="No hay registros almacenados para el sensor"
-            color ="rojo"
+            self.detalle['v6'] = {
+                "estado": "bloqueado",
+                "color": semaforo.color_actual
+            }
+            message = "El análisis está bloqueado por el semáforo."
+            color = "rojo"
         
         
         registro_mas_reciente = SensorsData.objects.using('sensorDB').all().last()
@@ -669,7 +673,7 @@ class Semaforo:
 
         self.detalle["color"] = color
         self.limpiar_valores_json(self.detalle)
-        logger_AFD.info(self.detalle)
+        # logger_AFD.info(self.detalle)
         self.informar_semaforo_fisico(color)
 
     def limpiar_valores_json(self, obj):

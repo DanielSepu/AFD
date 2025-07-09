@@ -338,7 +338,7 @@ class FanDesignView(FanCalculationsMixin, TemplateView):
             fan = FanAdministrator(project=proyecto)
             q1 = fan.velocidad_aire_sensores['sensor1']
             logger_AFD.info(context)
-            print(f"{fan.velocidad_aire_sensores['sensor1']}  -- {fan.caudal_aire_sensores['sensor1']}")
+            print(f"---> {fan.velocidad_aire_sensores['sensor1']}  -- {fan.caudal_aire_sensores['sensor1']}")
             context.update({
                 'chart_type': chart_type,
                 'c': [fan.caudal_aire_sensores['sensor1'], sensor_item.pt1],

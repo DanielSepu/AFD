@@ -123,26 +123,22 @@
          fetch("/get_recent_data")
          .then(response => {
             if (!response.ok) {
-               // Si hay un error HTTP, lanza un error
-               throw new Error(`HTTP error! Status: ${response.status}`);
+                  throw new Error(`HTTP error! Status: ${response.status}`);
             }
             return response.json();
          })
          .then(context => {
             if (context.status === "error") {
-               // Manejo del error en el JSON
-               console.error(context.message);
-               alert(context.message); // Muestra un mensaje de alerta al usuario
+                  showBootstrapAlert(context.message, 'danger', '¡Error!');
+                  console.error(context.message);
             } else {
-               // Procesa los datos en caso de éxito
-               actualizarElementosHTML(context.variables);
-               updateValues(context.data, context);
+                  actualizarElementosHTML(context.variables);
+                  updateValues(context.data, context);
             }
          })
          .catch(error => {
-            // Manejo de errores generales
             console.error("Error al realizar la solicitud:", error);
-            alert("Ocurrió un problema al obtener los datos.");
+            showBootstrapAlert("Ocurrió un problema al obtener los datos.", 'warning', 'Problema de conexión');
          });
       }
 
@@ -197,6 +193,31 @@
             }
          }
       }
+   
+   
+      function showBootstrapAlert(message, type = 'danger', title = '') {
+         const alertId = `alert-${Date.now()}`;
+         const alertHtml = `
+            <div id="${alertId}" class="alert alert-${type} alert-dismissible fade show shadow" role="alert">
+            ${title ? `<strong>${title}</strong><br>` : ""}
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>`;
+         const container = document.getElementById('alert-container');
+         container.insertAdjacentHTML('beforeend', alertHtml);
+
+         // Auto-destruir la alerta después de 5 segundos
+         setTimeout(() => {
+            const alertElement = document.getElementById(alertId);
+            if (alertElement) {
+                  alertElement.classList.remove('show');
+                  alertElement.classList.add('hide');
+                  setTimeout(() => alertElement.remove(), 400); // Tiempo para el fade out
+            }
+         }, 5000);
+      }
+
+
    </script>
    
    <script>

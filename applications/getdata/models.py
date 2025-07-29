@@ -63,10 +63,6 @@ class Evento(models.Model):
    class Meta:
       db_table = "evento"
    
-
-
-
-
 class SetParams(models.Model):  # Asegúrate de heredar de models.Model
    id = models.AutoField(primary_key=True) 
    ts = models.DateTimeField()
@@ -347,8 +343,6 @@ class Historial(models.Model):
 
     def __str__(self):
          return f"Historial #{self.id}"
-    
-
 
 class IntervalosDeActualizacion(models.Model):
       semaforo = models.IntegerField(null=True, blank=True)

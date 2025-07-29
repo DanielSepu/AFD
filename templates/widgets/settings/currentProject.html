@@ -17,11 +17,11 @@
                   {% for eqp in equipamientos %}
                      {% if eqp in up_eqp %}
                         <label class="list-group-item">
-                           <input name="eq_{{ eqp.id }}" data-value="{{eqp.potencia}}" type="checkbox" checked class="form-check-input me-2">{{ eqp.id }} | {{ eqp.modelo_diesel }}  
+                           <input name="eq_{{ eqp.id }}" data-value="{{eqp.qr_calculado}}" data-qr_potencia="{{eqp.qr_calculado}}" type="checkbox" checked class="form-check-input me-2">{{ eqp.id }} | {{ eqp.modelo_diesel }}  
                         </label>
                      {% else %}
                         <label class="list-group-item">
-                           <input name="eq_{{ eqp.id }}" data-value="{{eqp.potencia}}"  type="checkbox" class="form-check-input me-2">{{ eqp.id }} |  {{ eqp.modelo_diesel }} 
+                           <input name="eq_{{ eqp.id }}" data-value="{{eqp.qr_calculado}}"  type="checkbox" class="form-check-input me-2">{{ eqp.id }} |  {{ eqp.modelo_diesel }} 
                         </label>
                      {% endif %}
                   {% endfor %}

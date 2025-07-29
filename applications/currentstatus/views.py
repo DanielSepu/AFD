@@ -233,19 +233,21 @@ class BackupDownloadView(View):
                     # Nota: En mysqldump, para evitar problemas con el formato de la contraseña,
                     # es recomendable pasarla directamente en el comando o definir la variable de entorno MYSQL_PWD.
                     cmd = [
-                        "mysqldump",
+                        "pg_dump",
                         "-h", host,
-                        "-P", str(port),
-                        "-u", user,
-                        f"--password={password}",
-                        name
+                        "-p", str(port),
+                        "-U", user,
+                        "-d", name,
+                        "--inserts",
+                        "--no-owner",
+                        "--no-acl"
                     ]
-                    logger_AFD.debug(f"Ejecutando mysqldump para la base de datos '{db_alias}' con el comando: {' '.join(cmd)}")
+                    logger_AFD.debug(f"Ejecutando pg_dump para la base de datos '{db_alias}' con el comando: {' '.join(cmd)}")
                     
                     result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     if result.returncode != 0:
                         error_message = result.stderr.decode("utf-8")
-                        logger_AFD.error(f"Error en mysqldump para {db_alias}: {error_message}")
+                        logger_AFD.error(f"Error en pg_dump para {db_alias}: {error_message}")
                         backup_content = f"-- Error al generar backup para {db_alias}:\n{error_message}\n".encode("utf-8")
                     else:
                         backup_content = result.stdout

@@ -435,6 +435,7 @@ class Semaforo:
             'color': color,
             'formula': formula,
         }
+        logger_AFD.info(f"Q1: {Q1} Q2: {Q2}")
         self.detalle["colores"].append(color)
         return Lc 
 

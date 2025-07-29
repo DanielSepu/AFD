@@ -265,7 +265,7 @@ class DuctoForm(forms.ModelForm):
     )
     class Meta:
         model = Ducto
-        fields = ['idu', 't_ducto','diametro','area', 'f_friccion', 'f_fuga', 't_acople', 'largo', 'Ldsf']
+        fields = ['idu', 't_ducto','diametro','area', 'f_friccion', 'f_fuga', 't_acople', 'largo', 'Ldsf', 'dSensores', 'dS2_F']
         
         labels = {
             'idu': 'ID/Nombre',
@@ -284,7 +284,20 @@ class EquipDieselForm(forms.ModelForm):
     class CustomEDN(forms.ModelChoiceField):
         def label_from_instance(self, obj):
             return obj.nombre
-
+    idu = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ingrese ID o nombre del equipo'
+        }),
+        label='ID/Nombre'
+    )
+    modelo_diesel = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ingrese el modelo del equipo'
+        }),
+        label='Modelo'
+    )
     potencia = forms.FloatField(
         widget=forms.NumberInput(attrs={
             'onchange': 'Funcion()',
@@ -428,10 +441,10 @@ class ProyectoForm(forms.ModelForm):
         label='Distancia entre sensores (m)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese la distancia entre sensores'})
     )
-    dedf = forms.FloatField(
+    """ dedf = forms.FloatField(
         label='Distancia estimada del ducto a frente (m)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese la distancia estimada del ducto a la frente en metros'})
-    )
+    ) """
     lf = forms.FloatField(
         label='Longitud de ducto desde el sensor 2 hasta la frente (m)',
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'longitud de ducto desde el sensor 2 hasta la frente (m)'})

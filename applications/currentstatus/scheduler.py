@@ -101,9 +101,10 @@ def start_scheduler():
             pass
 
     if intervalos:
+        valor_sistema = getattr(intervalos, 'sistema', None) or 30 
         scheduler.add_job(
             sensor_job,
-            trigger=IntervalTrigger(seconds=intervalos.sistema),
+            trigger = IntervalTrigger(seconds=valor_sistema),
             id=SENSOR_JOB_ID,
             replace_existing=True,
         )

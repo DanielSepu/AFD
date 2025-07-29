@@ -271,9 +271,9 @@ class FanDesignView(FanCalculationsMixin, TemplateView):
             
             presion_dinamica = sensor_item.pt1 - sensor_item.ps1
             velocidad = velocidad_aire_sensor(presion_dinamica_sensor=presion_dinamica, densidad_aire_sensor1=densidad2)
-            
+            logger_AFD.debug(msg=f"velocidad: {velocidad}  proyecto.ducto.area: {proyecto.ducto.area}")
             caudal = caudal_aire_sensor1(velocidad_aire_sensor1=velocidad, area_ducto=proyecto.ducto.area) # type: ignore
-
+            logger_AFD.debug(msg=f"caudal: {caudal}")
             resistencia = self.compute_resistencia(ultima_med=ultima_med, caudal=caudal)
             
             if resistencia is None:

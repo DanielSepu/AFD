@@ -93,7 +93,7 @@ function get_semaforo() {
                 $('#mensaje-error-semaforo').remove();
             }
 
-            var semaforo = data.detalle_semaforo;
+            var semaforo = data.data.detalle_semaforo;
             var v1 = semaforo.v1;
             cambiarSemaforo(semaforo.color)
             actualizarV1(v1);

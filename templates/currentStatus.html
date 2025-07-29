@@ -41,17 +41,6 @@
                         <p class="text-start fs-6 ps-4 m-1">  {{project.factor}} % </p>
                      </div>
                   </div>
-                  <!-- <div class="list-group border border-3 border-warning p-3 mb-2">
-                     <div class="row">
-                        <p class="text-start fs-5 m-0">Desempeño Actual del Sistema (coming son)</p>
-                     </div>
-                  </div>
-                  <div class="list-group border border-3 border-warning p-3 mb-2">
-                     <div class="row">
-                        <p class="text-start fs-5 m-0" id="desempeno">{{ data.3 }} %</p>
-                     </div>
-                  </div> -->
-
                   <div class="list-group border border-3 border-warning p-3 mb-2">
                      <div class="row">
                         <p class="text-start fs-5 m-0">Calor generado</p>
@@ -119,28 +108,34 @@
          }
       }
 
-      function getValues() {
-         fetch("/get_recent_data")
-         .then(response => {
+      async function getValues() {
+         try {
+            const response = await fetch("/get_recent_data");
             if (!response.ok) {
-                  throw new Error(`HTTP error! Status: ${response.status}`);
+               throw new Error(`HTTP error! Status: ${response.status}`);
             }
-            return response.json();
-         })
-         .then(context => {
-            if (context.status === "error") {
-                  showBootstrapAlert(context.message, 'danger', '¡Error!');
-                  console.error(context.message);
+
+            const { data, variables } = await response.json();
+            console.info("Respuesta del backend (data & variables):", { data, variables });
+
+            // Solo renderizamos lo que hacía la función anterior:
+            if (variables) {
+               actualizarElementosHTML(variables);
+            }
+
+            if (data) {
+               updateValues(data, { data, variables });
+               showToast("Datos actualizados correctamente.", "success");
             } else {
-                  actualizarElementosHTML(context.variables);
-                  updateValues(context.data, context);
+               showToast("No se encontraron datos para mostrar.", "warning");
             }
-         })
-         .catch(error => {
+
+         } catch (error) {
             console.error("Error al realizar la solicitud:", error);
-            showBootstrapAlert("Ocurrió un problema al obtener los datos.", 'warning', 'Problema de conexión');
-         });
-      }
+            showToast("No se pudo conectar con el servidor: " + error.message, "danger");
+         }
+         }
+
 
       function updateValues(data, context) {
          // Actualiza los divs con los nuevos valores  

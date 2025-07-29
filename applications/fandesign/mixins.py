@@ -72,6 +72,7 @@ class FanCalculationsMixin(SensorDataMixin, ProjectMixin):
         return Q, P
 
     def compute_resistencia(self, ultima_med, caudal):
+        print(f"ultima_med.ps1: {ultima_med.ps1}   -- caudal: {caudal}")
         try:
             return ultima_med.ps1 / caudal**2
         except AttributeError:

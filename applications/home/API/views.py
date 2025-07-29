@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from applications.fanreal.fanAdministrator import FanAdministrator
 from applications.home.functions import get_last_project
 from modules.semaforo import Semaforo
+from core.logger_config import logger_AFD
 
 from rest_framework.views import APIView
 
@@ -14,23 +15,35 @@ class  SemaforoApiView(APIView):
     """
     
     def get(self, request, format=None):
-        # Obtener el ultimo proyecto
+        # Obtener el último proyecto
         project = get_last_project()
-        context = {}
 
         if not project:
-            context["error"] = "No se encontró un proyecto válido."
-            return Response(context, status=404)
+            return Response({
+                "status": "error",
+                "message": "No se encontró un proyecto válido."
+            }, status=404)
 
-        
         try:
             fan = FanAdministrator(project)
             semaforo = Semaforo(fan=fan)
             semaforo.calcular_estado_final(project)
-            context["detalle_semaforo"] = semaforo.detalle
+
+            return Response({
+                "status": "success",
+                "data": {
+                    "detalle_semaforo": semaforo.detalle
+                },
+                "variables": {
+                    # puedes agregar variables adicionales aquí
+                }
+            })
+
         except Exception as e:
             traceback.print_exc()
-            context["error"] = f"Error calculando semaforo: {e}"
-
-        return Response(context)
+            logger_AFD.info(f"error -> {e}")
+            return Response({
+                "status": "error",
+                "message": f"Ocurrió un error al calcular el estado del semáforo o ventilador. {str(e)}"
+            }, status=500)
     

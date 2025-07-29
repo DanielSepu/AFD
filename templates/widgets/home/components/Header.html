@@ -1,7 +1,25 @@
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <h2>Datos del proyecto</h2>
+    <ul class="nav nav-tabs" id="projectTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="proyecto-tab" data-bs-toggle="tab" data-bs-target="#proyecto" type="button" role="tab" aria-controls="proyecto" aria-selected="true">
+                Proyecto
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="vdf-tab" data-bs-toggle="tab" data-bs-target="#vdf" type="button" role="tab" aria-controls="vdf" aria-selected="false">
+                VDF (10 min)
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="sensor-tab" data-bs-toggle="tab" data-bs-target="#sensor" type="button" role="tab" aria-controls="sensor" aria-selected="false">
+                Sensor (10 min)
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-3" id="projectTabsContent">
+        <div class="tab-pane fade show active" id="proyecto" role="tabpanel" aria-labelledby="proyecto-tab">
+            <h2>Configuración del sistema</h2>
             <table class="table table-bordered table-striped">
                 <thead class="table-light">
                     <tr>
@@ -42,18 +60,23 @@
                         <td>{{ Project.lf }}</td>
                         <td>{{ Project.s_partida }}</td>
                     </tr>
-
                 </tbody>
             </table>
         </div>
-    </div>
-    <h3>Datos promediados VDF (10 min)</h3>
-    <div class="row" id="vdf">
 
-    </div>
-    <h3>Datos promediados del sensor (10 min)</h3>
-    <div class="row" id="sensor">
+        <div class="tab-pane fade" id="vdf" role="tabpanel" aria-labelledby="vdf-tab">
+            <h3>Datos promediados VDF (10 min)</h3>
+            <div class="row">
+                <!-- Aquí va el contenido dinámico para VDF -->
+            </div>
+        </div>
 
+        <div class="tab-pane fade" id="sensor" role="tabpanel" aria-labelledby="sensor-tab">
+            <h3>Datos promediados del sensor (10 min)</h3>
+            <div class="row">
+                <!-- Aquí va el contenido dinámico para Sensor -->
+            </div>
+        </div>
     </div>
 </div>
 

@@ -8,7 +8,10 @@ def presion_dinamica_sensor_1(presion_t_s1, presion_estatica_s1):
     
 def velocidad_aire_sensor(presion_dinamica_sensor, densidad_aire_sensor1):
     primera_ = 2 * presion_dinamica_sensor
-    return math.sqrt(primera_/densidad_aire_sensor1)
+    try:
+        return math.sqrt(primera_/densidad_aire_sensor1)
+    except ValueError:
+        raise Exception(f"No se puede calcular la velocidad del aire. presion dinamica: {presion_dinamica_sensor} densidad del aire: {densidad_aire_sensor1}")
 
 def caudal_aire_sensor1(velocidad_aire_sensor1, area_ducto):
     return round(velocidad_aire_sensor1*area_ducto,1)

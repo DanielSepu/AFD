@@ -33,7 +33,6 @@ class FanAdministrator:
         }
         self.start()
 
-
     def start(self) -> None:
         """
         areas_ducto: dict, ejemplo: {'sensor1': ..., 'sensor2': ...}
@@ -50,6 +49,7 @@ class FanAdministrator:
         ps1 = self.item_sensors.ps1
         self.presion_dinamica['sensor1'] = pt1 - ps1
         
+        # logger_AFD.info(f"presion_dinamica 1: {pt1} - {ps1}")
         area_ducto = self.configuracion.ducto.area
         
         self.tbs2 = self.item_sensors.Tbs2 # Tbs2
@@ -59,6 +59,15 @@ class FanAdministrator:
         HRs2 = self.item_sensors.HRs2 # HRs2
         self.pbs1 = self.item_sensors.Pbs1  # Pbs1
         self.pbs2 = self.item_sensors.Pbs2  # Pbs2
+        
+        # SENSOR 2
+        pt2 = self.item_sensors.pt2
+        ps2 = self.item_sensors.ps2
+
+        self.presion_dinamica['sensor2'] = pt2 - ps2
+        # logger_AFD.info(f"presion_dinamica 2 {pt2} - {ps2}")
+        
+        self.verificaciones_iniciales()
         
         self.tbs1 = round(self.calculate_tbh(Tbs1, HRs1),1)
         self.temperatura_bh_s1 = round(self.calculate_tbh(Tbs2, HRs2),1)
@@ -80,9 +89,8 @@ class FanAdministrator:
             raise Exception(f"No se pudo calcular la velocidad del aire, presión dinámica: {self.presion_dinamica['sensor1']} densidad del aire s1: {self.densidad_aire_sensores['sensor1']}")
 
         # SENSOR 2
-        pt2 = self.item_sensors.pt2
-        ps2 = self.item_sensors.ps2
-        self.presion_dinamica['sensor2'] = pt2 - ps2
+        
+        
         self.densidad_aire_sensores['sensor2'] = self.densidad_del_aire_s2()
         
         try:
@@ -98,17 +106,14 @@ class FanAdministrator:
             velocidad_aire_sensor=self.velocidad_aire_sensores['sensor2'],
             area_ducto=area_ducto
         )
-        
-        
-
-    # @staticmethod
-    def velocidad_aire_sensor(self, presion_dinamica_sensor, densidad_aire_sensor):
+   
+    @staticmethod
+    def velocidad_aire_sensor(presion_dinamica_sensor, densidad_aire_sensor):
         primera_ = 2 * presion_dinamica_sensor
         try:
             return math.sqrt(primera_/densidad_aire_sensor)
-        except (ValueError, ZeroDivisionError):
-            raise Exception(f"No se pudo calcular la velocidad del aire, presión dinámica: {presion_dinamica_sensor} densidad aire: {densidad_aire_sensor}")
-            
+        except Exception as e:
+            raise Exception(f"No se puede operar una raiz cuadrada para velocidad_aire_sensor con estos valores: densidad aire sensor: {densidad_aire_sensor} presion_dinamica sensor: {presion_dinamica_sensor}")
 
     # @staticmethod
     def caudal_aire_sensor(self, velocidad_aire_sensor, area_ducto):
@@ -121,6 +126,9 @@ class FanAdministrator:
             raise Exception(f"No se pudo calcular el caudal del aire; valores actuales:  velocidad aire: {velocidad_aire_sensor} area ducto: {area_ducto}")
 
 
+    def verificaciones_iniciales(self):
+        if self.presion_dinamica['sensor1'] < 0 or self.presion_dinamica['sensor2'] < 0:
+            raise Exception("Verifique las conexiones de los sensores, la orientación del flujo, y asegúrese de que la presión total sea mayor que la presión estática. Si el problema persiste, revise la configuración del sistema.")
         
     def esd(self):
         return round(610 * math.exp(17.27 * self.tbs1 / (237.3 + self.tbs1)), 3)

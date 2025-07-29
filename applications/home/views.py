@@ -7,6 +7,7 @@ from applications.fanreal.fanAdministrator import FanAdministrator
 from applications.getdata.models import IntervalosDeActualizacion, Proyecto
 from applications.home.functions import get_last_project
 from modules.semaforo import Semaforo
+from django.contrib import messages
 
 # Create your views here.
 
@@ -20,10 +21,10 @@ class HomeView(TemplateView):
         if context['Project'] is not None:
             context['Projects'] = Proyecto.objects.exclude(pk=context['Project'].pk)
             try:
-                fan = FanAdministrator(proyecto, request=self.request)
+                fan = FanAdministrator(proyecto)
                 semaforo = Semaforo(fan=fan)
             except Exception as e:
-                messages.warning(self.request, e)
+                messages.warning(self.request, f"Error en los calculos del ventilador, {e}")
             try:
                 semaforo.calcular_estado_final(proyecto)
                 context["detalle_semaforo"]=semaforo.detalle

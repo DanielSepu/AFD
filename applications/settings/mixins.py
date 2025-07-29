@@ -60,19 +60,20 @@ class AdminFormHandlersMixin:
             sensors_data = {"ts": str(timezone.now()), **sensors_form.cleaned_data}
 
             simulador = Simulador.objects.order_by('-id').first()
-
+            
             if simulador:
                 # Actualizar los campos necesarios
                 simulador.vdf_data = vdf_data
                 simulador.sensors_data = sensors_data
                 simulador.save()
+                print(f"Datos del simulador: {sensors_data}")
             else:
                 # Si no existe ningún registro, crearlo
                 Simulador.objects.create(
                     vdf_data=vdf_data,
                     sensors_data=sensors_data
                 )
-            return redirect(reverse_lazy('settings:simulador'))
+            return redirect(reverse_lazy('settings:admin_page'))
         else:
             context = self.get_context_data(
                 vdf_form=vdf_form,

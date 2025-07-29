@@ -447,12 +447,12 @@ class Semaforo:
     
 
     def punto_de_stall_v5(self):
-        pt2 = self.sensorData["pt2"].mean()
+        pt1 = self.sensorData["pt1"].mean()
         presion_total_df =  presion_total(self.project, self.vdfData, self.sensorData)
         # obtener el valor maximo del dataframe que contiene la curva ajustada
         presion_maxima_curvaAjustada = presion_total_df['presion'].max()
         fila = presion_total_df.loc[presion_total_df['presion'] == presion_maxima_curvaAjustada ]
-        stall = pt2 / presion_maxima_curvaAjustada * 100
+        stall = pt1 / presion_maxima_curvaAjustada * 100
         
         df_fan = pd.DataFrame(data=dict(self.project.curva_diseno.datos_curva), dtype=float)
         rpm_del_proyecto = self.project.curva_diseno.rpm

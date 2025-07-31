@@ -13,7 +13,7 @@ function createFanChart(data, chart_type, promedios, data2, toleranceGrade, tole
   const wrapper = document.getElementById("graphContainer");
   const width  = wrapper.clientWidth  - margin.right;
   const height = wrapper.clientHeight;
-
+  
   const [xKey, yKey] = Object.keys(data[0]);
 
   // --- escalas incluyendo el punto promedio ---

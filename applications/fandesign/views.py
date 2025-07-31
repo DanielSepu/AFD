@@ -1,6 +1,7 @@
 from math import sqrt
 import traceback
 from django.shortcuts import render
+from modules.semaforo import Semaforo
 import numpy as np
 import pandas as pd  # Importa pandas
 from django.contrib import messages
@@ -262,18 +263,12 @@ class FanDesignView(FanCalculationsMixin, TemplateView):
             df_vdf = get_10min_vdf_data()
 
             Q_medido, P_medido = self.compute_sensor_means(df=df_sensor1)
-            
-            
-            logger_AFD.debug(msg=f"Q_medido: {Q_medido} P_medido: {P_medido}")
             Fan = FanAdministrator(project=proyecto)
             densidad2 = Fan.densidad_del_aire_s1()
-            
-            
+
             presion_dinamica = sensor_item.pt1 - sensor_item.ps1
             velocidad = velocidad_aire_sensor(presion_dinamica_sensor=presion_dinamica, densidad_aire_sensor1=densidad2)
-            logger_AFD.debug(msg=f"velocidad: {velocidad}  proyecto.ducto.area: {proyecto.ducto.area}")
             caudal = caudal_aire_sensor1(velocidad_aire_sensor1=velocidad, area_ducto=proyecto.ducto.area) # type: ignore
-            logger_AFD.debug(msg=f"caudal: {caudal}")
             resistencia = self.compute_resistencia(ultima_med=ultima_med, caudal=caudal)
             
             if resistencia is None:
@@ -337,12 +332,17 @@ class FanDesignView(FanCalculationsMixin, TemplateView):
             context['scatter_data2'] = [{'caudal': Qs[i], 'presion': Ys[i]} for i in range(6)]
             
             fan = FanAdministrator(project=proyecto)
-            q1 = fan.velocidad_aire_sensores['sensor1']
-            logger_AFD.info(context)
-            print(f"{fan.velocidad_aire_sensores['sensor1']}  -- {fan.caudal_aire_sensores['sensor1']}")
+            semaforo = Semaforo(fan)
+            # semaforo.encender()
+            semaforo.calcular_estado_final(proyecto)
+            # context['semaforo'] = semaforo.detalle
+
+            logger_AFD.info(f"valor de Q1: {semaforo.detalle['v2']['Q1']}")
+            
+            
             context.update({
                 'chart_type': chart_type,
-                'c': [fan.caudal_aire_sensores['sensor1'], sensor_item.pt1],
+                'c': [semaforo.detalle['v2']['Q1'], sensor_item.pt1],
                 'proyecto': proyecto,
                 'peak_resistance': peak_resistance,
                 'peak_pressure': peak_pressure,
@@ -353,7 +353,7 @@ class FanDesignView(FanCalculationsMixin, TemplateView):
                 'tolerancia_actual': tolerancia,
                 'niveles_tolerancia': ['AN1', 'AN2', 'AN3', 'AN4'],
             })
-            logger_AFD.debug(context['c'])
+            
         except Exception as e:
             import traceback; traceback.print_exc()
             messages.warning(request, f"Warning: {e}")

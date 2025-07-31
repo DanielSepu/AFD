@@ -473,11 +473,11 @@ class Semaforo:
         color = self.calcular_semaforo_v5(presion_maxima)
         print(f"punto de stall: {presion_maxima}")
         self.detalle['v5'] = {
-            'pt2': round(pt2,3),
+            'pt2': round(pt1,3),
             'presion_maxima': round(presion_maxima_curvaAjustada,3),
             'stall': f"{round(stall,3)} %",
             'color': self.calcular_semaforo_v5(stall),
-            'formula': "stall = pt2 / presion_maxima_curvaAjustada * 100"
+            'formula': "stall = pt1 / presion_maxima_curvaAjustada * 100"
         }
         self.detalle["colores"].append(color)
         return presion_maxima

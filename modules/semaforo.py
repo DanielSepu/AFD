@@ -13,6 +13,9 @@ from applications.getdata.models import SensorsData, VdfData
 from modules.queries import get_10min_sensor_data, get_10min_vdf_data
 from django.db.models import Max
 from core.logger_config import logger_AFD
+from django.db.models import F, ExpressionWrapper, DurationField
+from django.utils import timezone
+
 
 
 def mostrar_inicio_formulas_principales(str, description):
@@ -375,9 +378,7 @@ class Semaforo:
         """
         formula = f'''tgbh = (0.7 * tbh + (0.3 * tbs'''
         tbs = self.sensorData["Tbs1"].mean()
-        logger_AFD.info(f"-- TBS ---> {tbs}")
         Tbs2  = self.sensorData["Tbs2"].mean()
-        logger_AFD.info(f"-- TBS ---> {Tbs2}")
         humedad_relativa_s1 = self.sensorData['HRs1'].mean()
         tbh = self.calculate_tbh(Tbs2, humedad_relativa_s1)
         
@@ -422,8 +423,6 @@ class Semaforo:
         
         L = self.project.dis_e_sens
         Lc = (3  * (Q1-Q2)  * (pt1-pt2)    /   (2    *   L  * (pow(pt1,1.5)    -   pow(pt2,1.5))   )) * 100    * pow(1000,0.5)
-             # (3*(Q1-Q2)*(pt1-pt2)    /   2*L*(pow(pt1,1.5)-pow(pt2,1.5)))       *100*pow(1000,0.5)
-        # logger_AFD.info(f"----> LC: {Lc} Q1: {Q1}  Q2: {Q2} pt1: {pt1} pt2: {pt2} L: {L}")
         formula = "Lc = 3 * (Q1-Q2) * (pt1-pt2) / ( 2 * L *(pow(pt1,1.5)  - pow(pt2,1.5) )) * 100 * pow(1000,0.5)"
         color = self.calcular_semaforo_v4(Lc)
         self.detalle['v4'] = {
@@ -436,7 +435,6 @@ class Semaforo:
             'color': color,
             'formula': formula,
         }
-        logger_AFD.info(f"Q1: {Q1} Q2: {Q2}")
         self.detalle["colores"].append(color)
         return Lc 
 
@@ -471,7 +469,7 @@ class Semaforo:
         presion_maxima_curvaAjustada = df_total_pressure["presion"].max()
         presion_maxima = calcular_la_presion_maxima(item_sensors, df_total_pressure, indice_max) 
         color = self.calcular_semaforo_v5(presion_maxima)
-        print(f"punto de stall: {presion_maxima}")
+        logger_AFD.info(f"punto de stall: {presion_maxima}")
         self.detalle['v5'] = {
             'pt2': round(pt1,3),
             'presion_maxima': round(presion_maxima_curvaAjustada,3),
@@ -555,49 +553,24 @@ class Semaforo:
             message ="No hay registros almacenados para el sensor"
             color ="rojo"
 
-        ts_mas_reciente = registro_mas_reciente.ts
-        ts_limite = ts_mas_reciente - timedelta(minutes=30)
-
-       
+        # obtener los promedios de la presion en 5 minutos y 30 minutos
+        mean_30m, mean_5m = self.auxiliar_fugas()
         
-        # Paso 2: Obtener registros de los últimos 30 minutos
-        registros = SensorsData.objects.using('sensorDB').filter(ts__range=(ts_limite, ts_mas_reciente)).order_by('ts')
-
-        if not registros.exists():
-            logger_AFD.warning("No se encontraron registros en los últimos 30 minutos.")
-            message ="No se encontraron registros en los últimos 30 minutos."
-            color ="rojo"
-
-        primero = registros.first()
-        ultimo = registros.last()
-
-        # logger_AFD.debug(f"Primer registro: {primero.ts}, Último registro: {ultimo.ts}")
-
-        # Paso 3: Cálculo de intervalo y presiones
-        diferencia = ultimo.ts - primero.ts
-        segundos_diferencia = diferencia.total_seconds()
-
-        presion_hace30m = primero.pt1
-        presion_actual = ultimo.pt1
-
         
-        if presion_actual == 0:
-            logger_AFD.error("Presión actual es cero, división por cero evitada.")
-            porcentaje = float('inf')
-        else:
-            porcentaje = 1 - (presion_hace30m / presion_actual)
-
+        
+        porcentaje = (mean_5m - mean_30m) / mean_30m
+        logger_AFD.debug(f"porcentaje: {porcentaje}") 
         formula = "porcentaje = 1 - (presion_hace30m / presion_actual)"
         message, color = self.calcular_semaforo_v6(porcentaje=porcentaje)
         self.detalle.setdefault("colores", []).append(color)
 
         semaforo.color_actual = color
         semaforo.save()
-        
+        # TODO: si el valor del calculo es negativo, se convierte a positivo, si es positivo se ignora
         self.detalle['v6'] = {
-            "intervalo en segundos": round(segundos_diferencia, 3),
-            "presion actual": round(presion_actual, 3),
-            "presion hace30m": round(presion_hace30m, 3),
+            "intervalo en segundos": 30,
+            "presion actual": round(mean_5m, 3),
+            "presion hace30m": round(mean_30m, 3),
             "porcentaje": f"{int(porcentaje*100)} %",
             "formula": formula,
             "message": message,
@@ -608,6 +581,36 @@ class Semaforo:
 
         return color
 
+    def auxiliar_fugas(self):
+        ahora = timezone.now()
+        ventana_50m = ahora - timedelta(minutes=50)
+        qs = (
+            SensorsData.objects
+            .using('sensorDB')
+            .filter(ts__gte=ventana_50m, ts__lte=ahora)
+            .values('ts', 'pt1')
+        )
+        df = pd.DataFrame.from_records(qs)
+        if df.empty:
+            raise ValueError("No se encontraron lecturas en los últimos 50 min")
+        df['ts'] = pd.to_datetime(df['ts'], utc=True)  # asegura zona horaria correcta
+        df = df.set_index('ts').sort_index()
+
+        # 1. calcular el promedio de la presion en 5 minutos
+        inicio_5m = ahora - timedelta(minutes=5)
+        mask_5m = df.index >= inicio_5m
+        mean_5m = df.loc[mask_5m, 'pt1'].mean()
+
+        # 2. Promedio de los 30 min entre ‑40 y ‑10 (saltando ‑10 a ‑5)
+        inicio_30m = ahora - timedelta(minutes=40)
+        fin_30m    = ahora - timedelta(minutes=10)
+        mask_30m   = (df.index >= inicio_30m) & (df.index < fin_30m)
+        mean_30m   = df.loc[mask_30m, 'pt1'].mean()
+
+
+        logger_AFD.info(f"Media 5 min  (-5 -> 0):   {mean_5m:.2f} Pa")
+        logger_AFD.info(f"Media 30 min (-40 -> -10): {mean_30m:.2f} Pa")
+        return mean_30m, mean_5m
 
     def calcular_semaforo_v7(self, potencia):
         if potencia < 95:

@@ -30,7 +30,11 @@ def get_current_project():
 # Calcula la densidad y devuelve la densidad configurada, la calculada y su mitad
 def compute_density( project, sensor_data):
     dens_configurada = sensor_data.ps1
-    dens_calculada = FanAdministrator(project=project).densidad_del_aire_s1()
+    try:
+        fan = FanAdministrator(project=project)
+        dens_calculada = fan.densidad_aire_sensores['sensor1']
+    except Exception as e:
+        messages.warning(self.request, e)
     mid_densidad = dens_calculada / 2
     return dens_configurada, mid_densidad, dens_calculada
 

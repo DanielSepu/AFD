@@ -5,7 +5,7 @@ import traceback
 
 import pandas as pd
 import requests
-
+from django.core.exceptions import ObjectDoesNotExist
 from applications.settings.models import FugasConfig, SemaforoEstado
 from applications.fandesign.mixins import presion_total
 from applications.fandesign.utils import calcular_la_curva_total, calcular_la_presion_maxima
@@ -232,6 +232,7 @@ class Semaforo:
         return Q1
 
     def calcular_semaforo_v1(self, Qf):
+        Qf=int(Qf)
         equipamiento_diesel = self.project.equipamientos.all()
         
         caudal_requerido = 0 
@@ -248,7 +249,7 @@ class Semaforo:
         if caudal_requerido > Qf :
             color = "verde"
             return color
-        raise Exception("No se logro calcular un valor para el semaforo")
+        raise Exception(f"No se logro calcular un valor para el semaforo valor: {Qf}")
     
     
     def calcular_qf(self, Q2, Lc, pt2, lf):
@@ -531,13 +532,19 @@ class Semaforo:
         # Paso 1: Obtener el registro más reciente
         message = ""
 
-        semaforo = SemaforoEstado.objects.first()
+        try:
+            semaforo = SemaforoEstado.objects.latest('id')  # O usa 'fecha' si tienes campo timestamp
+        except ObjectDoesNotExist:
+            semaforo = None  # No hay registros
 
-        if semaforo.esta_bloqueado:
+        if semaforo and semaforo.esta_bloqueado:
             logger_AFD.warning("Semáforo bloqueado. No se ejecuta análisis.")
-            self.detalle['v6'] = {"estado": "bloqueado", "color": semaforo.color_actual}
-            message ="No hay registros almacenados para el sensor"
-            color ="rojo"
+            self.detalle['v6'] = {
+                "estado": "bloqueado",
+                "color": semaforo.color_actual
+            }
+            message = "El análisis está bloqueado por el semáforo."
+            color = "rojo"
         
         
         registro_mas_reciente = SensorsData.objects.using('sensorDB').all().last()
@@ -672,6 +679,7 @@ class Semaforo:
 
         self.detalle["color"] = color
         self.limpiar_valores_json(self.detalle)
+        # logger_AFD.info(self.detalle)
         self.informar_semaforo_fisico(color)
 
     def limpiar_valores_json(self, obj):
@@ -680,10 +688,11 @@ class Semaforo:
         elif isinstance(obj, list):
             return [self.limpiar_valores_json(i) for i in obj]
         elif isinstance(obj, float):
-            if math.isinf(obj) or math.isnan(obj):
-                return None  # o "NaN", "∞", o 0
+            if math.isnan(obj) or math.isinf(obj):
+                return None  # o "NaN", o 0.0, según prefieras
             return round(obj, 3)
         return obj
+
 
     def informar_semaforo_fisico(self, color: str):
         """

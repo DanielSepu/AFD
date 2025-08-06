@@ -34,8 +34,8 @@ SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG")
-ALLOWED_HOSTS = ['*']
 
+ALLOWED_HOSTS = ['*'] # 192.168.4.1
 
 # Application definition
 INSTALLED_APPS = [

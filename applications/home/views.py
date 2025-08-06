@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render
 
 from django.views.generic import TemplateView
-
+from django.contrib import messages
 from applications.fanreal.fanAdministrator import FanAdministrator
 from applications.getdata.models import IntervalosDeActualizacion, Proyecto
 from applications.home.functions import get_last_project

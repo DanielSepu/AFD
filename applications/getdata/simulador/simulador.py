@@ -82,7 +82,7 @@ def insert_sensor_data(count=None):
     }
 
     # Guardar la instancia de VdfData en la base de datos
-    VdfData.objects.using('sensorDB').create(**vdf_data)
+    # VdfData.objects.using('sensorDB').create(**vdf_data)
 
 if __name__ == "__main__":
     insert_sensor_data()

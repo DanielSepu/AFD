@@ -207,7 +207,10 @@ class BackupDownloadView(View):
                         "-h", host,
                         "-p", str(port),
                         "-U", user,
-                        "-d", name
+                        "-d", name,
+                        "--inserts",
+                        "--no-owner",
+                        "--no-acl"
                     ]
                     # Copiamos el entorno y asignamos la contraseña
                     env = os.environ.copy()

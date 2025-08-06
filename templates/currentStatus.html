@@ -188,6 +188,31 @@
             }
          }
       }
+   
+   
+      function showBootstrapAlert(message, type = 'danger', title = '') {
+         const alertId = `alert-${Date.now()}`;
+         const alertHtml = `
+            <div id="${alertId}" class="alert alert-${type} alert-dismissible fade show shadow" role="alert">
+            ${title ? `<strong>${title}</strong><br>` : ""}
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>`;
+         const container = document.getElementById('alert-container');
+         container.insertAdjacentHTML('beforeend', alertHtml);
+
+         // Auto-destruir la alerta después de 5 segundos
+         setTimeout(() => {
+            const alertElement = document.getElementById(alertId);
+            if (alertElement) {
+                  alertElement.classList.remove('show');
+                  alertElement.classList.add('hide');
+                  setTimeout(() => alertElement.remove(), 400); // Tiempo para el fade out
+            }
+         }, 5000);
+      }
+
+
    </script>
    
    <script>

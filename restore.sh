@@ -8,7 +8,7 @@ FILE_DEFAULT="backup_default_2025-07-29_17-20-51.sql"
 
 # Usaremos nombres en minúsculas para evitar problemas de quoting
 DB_SENSOR="sensordb"
-DB_DEFAULT="afd"
+DB_DEFAULT="ventdb"
 OWNER_ROLE="postgres"   # Propietario de las BDs
 
 need_file () {

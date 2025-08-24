@@ -260,7 +260,7 @@ def procesar_datos_sensores():
     
     # Total de pérdidas
     perdida_total = compute_total_losses(perdidas_choque_codos, sumatoria_choque_accesorios, perdida_choque_salida)
-    variables['perdida_choque_total_sistema_ducto'] = perdida_total
+    variables['perdida_choque_total_sistema_ducto'] = round(perdida_total,2)
     
     # Cálculo de presión estática y pérdidas friccionales
     presion_estatica, presion_dinamica, perdidas_friccionales = compute_static_and_friction(

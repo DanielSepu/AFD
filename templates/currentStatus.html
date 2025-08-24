@@ -141,6 +141,8 @@
          // Actualiza los divs con los nuevos valores  
          // $("#ps1").text(data.ps1);  
          console.debug(data)
+         console.debug("------")
+         console.debug(context)
          $("#q1").text(data.q1);
          $("#pt1").text(data.pt1);
          $("#qf").text(data.qf);
@@ -148,7 +150,7 @@
          $("#densidad1").text(data.densidad1);
          $("#desempeno").text(`${data[3]} %`);
          $("#fref").text(data.fref);
-         $("#pe").text(context.presion_estatica);
+         $("#pe").text(context.variables.presion_estatica);
          $("#pd").text(context.presion_dinamica);
          $("#pch").text(context.perdida_de_choque);
          $("#pf").text(context.perdidas_friccionales);

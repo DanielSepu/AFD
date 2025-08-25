@@ -38,7 +38,7 @@
                   {# Ángulo de la Hoja #}
                   <div class="list-group border border-3 border-warning p-3 mb-2">
                      <div class="row">
-                        <p class="text-start fs-6 ps-4 m-1">  {{project.factor}} % </p>
+                        <p class="text-start fs-5 m-0">  {{project.factor}} % </p>
                      </div>
                   </div>
                   <div class="list-group border border-3 border-warning p-3 mb-2">
@@ -115,7 +115,7 @@
                throw new Error(`HTTP error! Status: ${response.status}`);
             }
 
-            const { data, variables } = await response.json();
+            const { data, variables, ...rest } = await response.json();
             console.info("Respuesta del backend (data & variables):", { data, variables });
 
             // Solo renderizamos lo que hacía la función anterior:
@@ -124,7 +124,7 @@
             }
 
             if (data) {
-               updateValues(data, { data, variables });
+               updateValues(data, { data, variables, ...rest });
                showToast("Datos actualizados correctamente.", "success");
             } else {
                showToast("No se encontraron datos para mostrar.", "warning");
@@ -141,7 +141,7 @@
          // Actualiza los divs con los nuevos valores  
          // $("#ps1").text(data.ps1);  
          console.debug(data)
-         console.debug("------")
+         console.debug("--- contexto ---")
          console.debug(context)
          $("#q1").text(data.q1);
          $("#pt1").text(data.pt1);

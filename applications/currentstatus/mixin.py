@@ -301,4 +301,6 @@ def procesar_datos_sensores():
     # Guardar en Historial usando el diccionario consolidado
     guardar_historial_detalle(detalle_consolidado)
     # logger_AFD.debug(f"se ha guardado un nuevo registro en el historial: {detalle_consolidado}")
+    print(f"Contexto final: {context}")
+    
     return context

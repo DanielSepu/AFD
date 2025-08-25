@@ -5,7 +5,7 @@ import os
 # Diccionario que mapea tipo -> columnas 
 CHART_MAP = {
    "pt": ["caudal", "presionTotal", "densidad", "rpm"],
-   "pot": ["caudal", "potencia", "densidad", "rpm"]
+   "pot": ["caudal (m3/s)", "potencia (HP)", "densidad (kg/m3)", "rpm"]
 }
 
 def  get_fan_data(proyect, chart_type):

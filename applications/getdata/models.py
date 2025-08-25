@@ -218,19 +218,19 @@ class Simulador(models.Model):
 class Historial(models.Model):
     # Pérdidas de ductos (ducto circular)
     pc1_dc   = models.FloatField(
-        verbose_name="pérdida codo 1 ducto circular",
+        verbose_name="Pérdida codo 1 ducto circular",
         blank=True, null=True
     )
     pc2_dc   = models.FloatField(
-        verbose_name="pérdida codo 2 ducto circular",
+        verbose_name="Pérdida codo 2 ducto circular",
         blank=True, null=True
     )
     pc345_dc = models.FloatField(
-        verbose_name="pérdida codos 3,4,5 ducto circular",
+        verbose_name="Pérdida codos 3,4,5 ducto circular",
         blank=True, null=True
     )
     pcc_dc   = models.FloatField(
-        verbose_name="pérdida choque codos ducto",
+        verbose_name="Pérdida choque codos ducto",
         blank=True, null=True
     )
 
@@ -272,49 +272,49 @@ class Historial(models.Model):
 
     # Otras pérdidas y presiones
     pct_sys = models.FloatField(
-        verbose_name="pérdida choque total sistema ducto circular/ovalado",
+        verbose_name="Pérdida choque total sistema ducto circular/ovalado",
         blank=True, null=True
     )
     pd_v    = models.FloatField(
-        verbose_name="presión dinámica ventilador",
+        verbose_name="Presión dinámica ventilador",
         blank=True, null=True
     )
     pe_v    = models.FloatField(
-        verbose_name="presión estática ventilador",
+        verbose_name="Presión estática ventilador",
         blank=True, null=True
     )
     pd_e    = models.FloatField(
-        verbose_name="presión dinámica entrada",
+        verbose_name="Presión dinámica entrada",
         blank=True, null=True
     )
     pcs_dc  = models.FloatField(
-        verbose_name="pérdida choque salida ducto",
+        verbose_name="Pérdida choque salida ducto",
         blank=True, null=True
     )
     pta_v   = models.FloatField(
-        verbose_name="pérdida total accesorios ventilador",
+        verbose_name="Pérdida total accesorios ventilador",
         blank=True, null=True
     )
 
     # Temperaturas y presiones
     tbs      = models.FloatField(
-        verbose_name="temperatura bulbo seco",
+        verbose_name="Temperatura bulbo seco",
         blank=True, null=True
     )
     tbh      = models.FloatField(
-        verbose_name="temperatura bulbo húmedo",
+        verbose_name="Temperatura bulbo húmedo",
         blank=True, null=True
     )
     presion_t = models.FloatField(
-        verbose_name="presión total",
+        verbose_name="Presión total",
         blank=True, null=True
     )
     lc       = models.FloatField(
-        verbose_name="temperatura seca sensor",
+        verbose_name="Temperatura seca sensor",
         blank=True, null=True
     )
     tgbh     = models.FloatField(
-        verbose_name="tgbh",  
+        verbose_name="TGBH",  
         blank=True, null=True
     )
 

@@ -592,7 +592,8 @@ class Semaforo:
         )
         df = pd.DataFrame.from_records(qs)
         if df.empty:
-            raise ValueError("No se encontraron lecturas en los últimos 50 min")
+            # raise ValueError("No se encontraron lecturas en los últimos 50 min")
+            pass
         df['ts'] = pd.to_datetime(df['ts'], utc=True)  # asegura zona horaria correcta
         df = df.set_index('ts').sort_index()
 

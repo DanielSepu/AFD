@@ -28,13 +28,18 @@ def get_current_project():
     return Proyecto.objects.all().order_by('id').last()
 
 # Calcula la densidad y devuelve la densidad configurada, la calculada y su mitad
-def compute_density( project, sensor_data):
+def compute_density( project, sensor_data, request=None):
     dens_configurada = sensor_data.ps1
     try:
         fan = FanAdministrator(project=project)
         dens_calculada = fan.densidad_aire_sensores['sensor1']
     except Exception as e:
-        messages.warning(self.request, e)
+        if request != None:
+            print(f"imprimiendo request")
+            messages.warning(request, e)
+        else:
+            print(f"Warning: {e}")   
+        dens_calculada = 0
     mid_densidad = dens_calculada / 2
     return dens_configurada, mid_densidad, dens_calculada
 
@@ -191,7 +196,7 @@ def guardar_historial_detalle(detalle):
     return historial
 
 # Función principal que orquesta el procesamiento, consolidación y almacenamiento.
-def procesar_datos_sensores():
+def procesar_datos_sensores(request=None):
     variables = {}
 
     # Obtener los últimos registros de sensores y VDF
@@ -209,7 +214,10 @@ def procesar_datos_sensores():
     })
     
     # Calcular densidad
-    _, mid_densidad, dens_calculada = compute_density( project, item_sensors)
+    if request != None:
+        _, mid_densidad, dens_calculada = compute_density( project, item_sensors, request=request)
+    else:
+        _, mid_densidad, dens_calculada = compute_density( project, item_sensors)
     
     # Configurar semáforo y caudales
     semaforo, Q1, Qf = setup_semaforo(project, item_sensors)
@@ -289,10 +297,8 @@ def procesar_datos_sensores():
     semaforo.calcular_estado_final(proyecto)
     # Se obtiene el detalle del semáforo y se fusiona en el contexto
     detalle_semaforo = semaforo.detalle
-    # print(f"semaforo: {detalle_semaforo}")
     context = {**context, **detalle_semaforo}
     # Consolidar el diccionario final eliminando claves innecesarias
-    # print(context)
     detalle_consolidado = merge_detalle_semaforo(context)
     detalle_consolidado['velocidad_sensor'] = semaforo.fan.densidad_aire_sensores
     detalle_consolidado['v5'] = context.get('v5', None)
@@ -300,7 +306,4 @@ def procesar_datos_sensores():
 
     # Guardar en Historial usando el diccionario consolidado
     guardar_historial_detalle(detalle_consolidado)
-    # logger_AFD.debug(f"se ha guardado un nuevo registro en el historial: {detalle_consolidado}")
-    print(f"Contexto final: {context}")
-    
     return context

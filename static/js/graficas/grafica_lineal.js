@@ -140,18 +140,41 @@ am5.ready(function () {
 
   // Función para actualizar el gráfico con nuevos datos
   function renderizarGrafico(data) {
-    const datosFormateados = data.labels.map((label, i) => {
-      // Conversión de fecha básica (se puede ajustar según formato)
-      const date = new Date(`${label} ${new Date().getFullYear()}`);
-      return {
-        date: date.getTime(),
-        value: data.data[i]
-      };
-    });
+    // Intenta parsear "YYYY-MM-DD HH:MM" o ISO; devuelve Date o null
+    const parseLabelToDate = (label) => {
+      // 1) ISO directo
+      const tsISO = Date.parse(label);
+      if (!Number.isNaN(tsISO)) return new Date(tsISO);
 
-    series.data.setAll(datosFormateados);
-    series.set("name", data.label || "Datos");
+      // 2) "YYYY-MM-DD HH:MM" (local)
+      const m = /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})$/.exec(label);
+      if (m) {
+        const [, y, mo, d, h, mi] = m.map(Number);
+        return new Date(y, mo - 1, d, h, mi, 0, 0); // local time
+      }
+
+      // 3) Fallback: intentar con 'T'
+      const tsTry = Date.parse(label.replace(' ', 'T'));
+      return Number.isNaN(tsTry) ? null : new Date(tsTry);
+    };
+
+    const puntos = [];
+    for (let i = 0; i < data.labels.length; i++) {
+      const dt = parseLabelToDate(data.labels[i]);
+      const val = Number(data.data[i]);
+      if (dt && !Number.isNaN(val)) {
+        puntos.push({ date: dt.getTime(), value: val });
+      }
+    }
+
+    // Asegura orden temporal
+    puntos.sort((a, b) => a.date - b.date);
+
+    // Cargar datos en la serie (amCharts)
+    series.data.setAll(puntos);
+    if (data.label) series.set("name", data.label);
   }
+
 
   // Hacer la función accesible desde afuera
   window.initGraficoAmCharts = function(data) {

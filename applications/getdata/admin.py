@@ -11,17 +11,10 @@ class SensorsDataAdmin(admin.ModelAdmin):
     ordering = ('ts',)                          # ¿Cuál debería ser el orden?
 
 class HistorialAdmin(admin.ModelAdmin):
-    # Mostrar timestamp y los dos primeros campos relevantes después del PK
-    list_display = ('ts', 'pc1_dc', 'pc2_dc')  # Primera fecha y dos pérdidas de ductos
-    
-    # Campos buscables (los dos primeros elementos después de PK)
-    search_fields = ('pc1_dc', 'pc2_dc')       
-    
-    # Filtro por uno de los campos principales
-    list_filter = ('ts',)                  
-    
-    # Ordenamiento por fecha
-    ordering = ('-ts',)                         
+    list_display = [field.name for field in Historial._meta.get_fields()]
+    search_fields = [field.name for field in Historial._meta.get_fields() if field.get_internal_type() in ['CharField', 'TextField', 'FloatField']]
+    list_filter = ('ts', 'creado_en')
+    ordering = ('-ts',)                        
 
 
 admin.site.register(Caracteristicas_Ventilador)

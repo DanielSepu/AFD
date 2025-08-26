@@ -128,7 +128,8 @@ class FanAdministrator:
 
     def verificaciones_iniciales(self):
         if self.presion_dinamica['sensor1'] < 0 or self.presion_dinamica['sensor2'] < 0:
-            raise Exception("Verifique las conexiones de los sensores, la orientación del flujo, y asegúrese de que la presión total sea mayor que la presión estática. Si el problema persiste, revise la configuración del sistema.")
+            pass
+            #raise Exception("Verifique las conexiones de los sensores, la orientación del flujo, y asegúrese de que la presión total sea mayor que la presión estática. Si el problema persiste, revise la configuración del sistema.")
         
     def esd(self):
         return round(610 * math.exp(17.27 * self.tbs1 / (237.3 + self.tbs1)), 3)

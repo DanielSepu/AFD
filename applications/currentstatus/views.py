@@ -91,7 +91,7 @@ def get_recent_data(request):
     if request.method == 'GET':
         context = {}
         try:
-            context = procesar_datos_sensores()
+            context = procesar_datos_sensores(request=request)
             # logger_AFD.info(context)
         except Exception as e:
             context["status"] = f"error"

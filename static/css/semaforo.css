@@ -1,0 +1,25 @@
+:root{
+  /* Paleta pastel editable */
+  --sem-verde-bg:   #b3e6b3;
+  --sem-verde-text: #004d00;
+
+  --sem-amarillo-bg:   #fff5b3;
+  --sem-amarillo-text: #4d4d00;
+
+  --sem-rojo-bg:   #f5b3b3;
+  --sem-rojo-text: #660000;
+
+  --sem-neutral-bg: #d9d9d9; /* gris “apagado” */
+  --sem-neutral-text: #333333;
+}
+
+/* Clases reutilizables */
+.bg-semaforo-verde   { background-color: var(--sem-verde-bg)   !important; color: var(--sem-verde-text)   !important; }
+.bg-semaforo-amarillo{ background-color: var(--sem-amarillo-bg)!important; color: var(--sem-amarillo-text)!important; }
+.bg-semaforo-rojo    { background-color: var(--sem-rojo-bg)    !important; color: var(--sem-rojo-text)    !important; }
+.bg-neutral          { background-color: var(--sem-neutral-bg) !important; color: var(--sem-neutral-text) !important; }
+
+/* Transición suave opcional */
+.semaforo-luz, .semaforo-estado, .semaforo-badge, td, th {
+  transition: background-color .25s ease, color .25s ease;
+}

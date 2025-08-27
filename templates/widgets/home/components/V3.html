@@ -1,7 +1,7 @@
 <div class="row align-items-start my-4">
 
   <!-- Estado y Fórmula -->
-  <div class="col-md-4">
+  <div class="col-md-5">
     <table class="table table-bordered">
       <thead>
         <tr class="bg-secondary text-white text-center">
@@ -40,17 +40,21 @@
   </div>
 
   <!-- Niveles de Carga de Trabajo -->
-  <div class="col-md-5">
+  <div class="col-md-3">
     <table class="table table-bordered">
       <thead class="thead-light bg-secondary text-white text-center">
         <tr>
-          <th>Nivel de carga de trabajo</th>
+          <th rowspan="2">Nivel de carga de trabajo</th>
+          <th colspan="4">Trabajo / Descanso</th>
+        </tr>
+        <tr>
           <th>Trabajo continuo</th>
-          <th>75% trabajo - 25% descanso</th>
-          <th>50% trabajo - 50% descanso</th>
-          <th>25% trabajo - 75% descanso</th>
+          <th>75% / 25%</th>
+          <th>50% / 50%</th>
+          <th>25% / 75%</th>
         </tr>
       </thead>
+
       <tbody>
         <tr>
           <td class="text-center">Liviana</td>
@@ -78,53 +82,53 @@
   </div>
 
   <!-- TGBH y Semáforo -->
-  <div class="col-md-3">
+  <div class="col-md-4">
     <table class="table table-bordered">
-      <thead class="bg-secondary text-white text-center">
-        <tr>
-          <th colspan="2">TGBH y Semáforo</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>TGBH</td>
-          <td class="text-center" id="v3_tgbh2">{{ tgbh.tgbh }}</td>
-        </tr>
-        <tr>
-          <td>T° b. húmedo</td>
-          <td class="text-center" id="v3_tbh">{{ tgbh.temp_bulbo_humedo }}</td>
-        </tr>
-        <tr>
-          <td>T° b. seco</td>
-          <td class="text-center" id="v3_tbs">{{ tgbh.temp_bulbo_seco }}</td>
-        </tr>
-        <tr>
-          <td>Nivel de carga</td>
-          <td class="text-center" id="v3_nivel_carga">{{ tgbh.nivel_carga }}</td>
-        </tr>
-        <table style="border-collapse: collapse; width: 100%;">
-          <tr>
-            <td rowspan="3" style="text-align: center; vertical-align: middle; width: 20%; font-size: 13px; padding:5px;">
-              Semáforo
-            </td>
-            <td class="text-center" style="background-color: red; color: white; height: 30px; text-align: center; font-size: 13px;">
-              TGBH sobre el Rango de T°
-            </td>
-          </tr>
-          <tr>
-            <td class="text-center" style="background-color: rgb(236, 219, 24); color: rgb(0, 0, 0); height: 30px; text-align: center; font-size: 13px;">
-              TGBH dentro del Rango de T°
-            </td>
-          </tr>
-          <tr>
-            <td class="text-center" style="background-color: rgb(9, 103, 13); color: white; height: 30px; text-align: center; font-size: 14px;">
-              TGBH abajo del Rango de T°
-            </td>
-          </tr>
-        </table>
-        
-      </tbody>
+        <thead class="bg-secondary text-white text-center">
+            <tr>
+                <th colspan="2">TGBH y Semáforo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>TGBH</td>
+                <td class="text-center" id="v3_tgbh2">{{ tgbh.tgbh }}</td>
+            </tr>
+            <tr>
+                <td>T° b. húmedo</td>
+                <td class="text-center" id="v3_tbh">{{ tgbh.temp_bulbo_humedo }}</td>
+            </tr>
+            <tr>
+                <td>T° b. seco</td>
+                <td class="text-center" id="v3_tbs">{{ tgbh.temp_bulbo_seco }}</td>
+            </tr>
+            <tr>
+                <td>Nivel de carga</td>
+                <td class="text-center" id="v3_nivel_carga">{{ tgbh.nivel_carga }}</td>
+            </tr>
+            <table style="border-collapse: collapse; width: 100%;">
+                <tr>
+                    <td rowspan="3" style="text-align: center; vertical-align: middle; width: 20%; font-size: 13px; padding:5px;">
+                        Semáforo
+                    </td>
+                    <td class="text-center" style="background-color: #f5b3b3; color: #660000; height: 30px; text-align: center; font-size: 13px;">
+                        TGBH sobre el Rango de T°
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center" style="background-color: #fff5b3; color: #4d4d00; height: 30px; text-align: center; font-size: 13px;">
+                        TGBH dentro del Rango de T°
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center" style="background-color: #b3e6b3; color: #004d00; height: 30px; text-align: center; font-size: 14px;">
+                        TGBH abajo del Rango de T°
+                    </td>
+                </tr>
+            </table>
+        </tbody>
     </table>
-  </div>
+</div>
+
 </div>
 <hr/>

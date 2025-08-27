@@ -348,7 +348,7 @@ class FanDesignView(FanCalculationsMixin, TemplateView):
                 'peak_pressure': peak_pressure,
                 'densidad_actual': round(densidad2,2),
                 'rendimiento_ventilador': round(rendimiento,1),
-                'rotacion_actual': round(rpm_model,1),
+                'rotacion_actual': 750,
                 'presion_maxima': presion_maxima,
                 'tolerancia_actual': tolerancia,
                 'niveles_tolerancia': ['AN1', 'AN2', 'AN3', 'AN4'],

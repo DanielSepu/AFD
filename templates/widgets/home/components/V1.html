@@ -56,23 +56,26 @@
   <!-- Semáforo -->
   <div class="col-md-4">
     <table class="table table-bordered">
-      <thead class="bg-secondary text-white text-center">
-        <tr>
-          <th>Semáforo</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="text-center" id="v1_semaforo" style="background-color: {% if caudal_de_frente.q_frente >= caudal_de_frente.q_requerido %}#28a745{% else %}#dc3545{% endif %}; color: white;">
-            {% if caudal_de_frente.q_frente >= caudal_de_frente.q_requerido %}
-              Caudal sobre requerimiento
-            {% else %}
-              Caudal bajo requerimiento
-            {% endif %}
-          </td>
-        </tr>
-      </tbody>
+        <thead class="bg-secondary text-white text-center">
+            <tr>
+                <th>Semáforo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="text-center" id="v1_semaforo" 
+                    style="background-color: {% if caudal_de_frente.q_frente >= caudal_de_frente.q_requerido %}#b3e6b3{% else %}#f5b3b3{% endif %}; 
+                           color: {% if caudal_de_frente.q_frente >= caudal_de_frente.q_requerido %}#004d00{% else %}#660000{% endif %};">
+                    {% if caudal_de_frente.q_frente >= caudal_de_frente.q_requerido %}
+                        Caudal sobre requerimiento
+                    {% else %}
+                        Caudal bajo requerimiento
+                    {% endif %}
+                </td>
+            </tr>
+        </tbody>
     </table>
-  </div>
+</div>
+
 </div>
 <hr/>

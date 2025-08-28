@@ -7,27 +7,49 @@
           <th colspan="4">Caudal en la frente</th>
         </tr>
       </thead>
-      
+
       <tbody>
         <tr>
-          <td rowspan="3" class="align-middle text-center" style="width: 100px;">
+          <!-- Número grande a la izquierda -->
+          <td rowspan="4" class="align-middle text-center" style="width: 100px;">
             <h1 class="display-1 fw-bold m-0">1</h1>
           </td>
+
+          <!-- Fila 1: Estado -->
           <td>Estado</td>
-          <td class="text-center" id="v1_estado" style="background-color: {% if caudal_de_frente.estado == 1 %}#d4edda{% else %}#f8d7da{% endif %};">
+          <td
+            class="text-center semaforo-estado
+                   {% if caudal_de_frente.estado == 1 %}bg-semaforo-verde
+                   {% elif caudal_de_frente.estado == 2 %}bg-semaforo-amarillo
+                   {% else %}bg-semaforo-rojo{% endif %}"
+            id="v1_estado">
             {{ caudal_de_frente.estado }}
           </td>
-          <td rowspan="2" class="text-center align-middle font-italic fw-bold" id="v1_formula" style="font-size: 1.2rem;">
-            Qf = Velocidad aire x Área ducto [m³/s]
+
+          <!-- Fórmula a la derecha con el mismo tamaño (rowspan=4) -->
+          <td rowspan="4" class="text-center align-middle font-italic" id="v1_formula" style="font-size: 1.2rem;">
+            Q<sub>f</sub> = Velocidad del aire × Área del ducto<br />[m³/s]
           </td>
         </tr>
+
+        <!-- Fila 2: Límite/Consigna (Lc) -->
         <tr>
           <td>Lc</td>
           <td class="text-center" id="v1_lc">{{ caudal_de_frente.q_requerido }}</td>
         </tr>
+
+        <!-- Fila 3: Q Frente (medido) -->
         <tr>
           <td>Q Frente</td>
-          <td colspan="2" class="text-center" id="v1_q_frente">{{ caudal_de_frente.q_frente }}</td>
+          <td class="text-center" id="v1_q_frente">{{ caudal_de_frente.q_frente }}</td>
+        </tr>
+
+        <!-- Fila 4: ΔQ (opcional para mantener el mismo alto que TGBH) -->
+        <tr>
+          <td>ΔQ (Q<sub>f</sub> − Lc)</td>
+          <td class="text-center" id="v1_delta">
+            {{ caudal_de_frente.delta }}
+          </td>
         </tr>
       </tbody>
     </table>
@@ -56,26 +78,28 @@
   <!-- Semáforo -->
   <div class="col-md-4">
     <table class="table table-bordered">
-        <thead class="bg-secondary text-white text-center">
-            <tr>
-                <th>Semáforo</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="text-center" id="v1_semaforo" 
-                    style="background-color: {% if caudal_de_frente.q_frente >= caudal_de_frente.q_requerido %}#b3e6b3{% else %}#f5b3b3{% endif %}; 
-                           color: {% if caudal_de_frente.q_frente >= caudal_de_frente.q_requerido %}#004d00{% else %}#660000{% endif %};">
-                    {% if caudal_de_frente.q_frente >= caudal_de_frente.q_requerido %}
-                        Caudal sobre requerimiento
-                    {% else %}
-                        Caudal bajo requerimiento
-                    {% endif %}
-                </td>
-            </tr>
-        </tbody>
+      <thead class="bg-secondary text-white text-center">
+        <tr>
+          <th>Semáforo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td
+            class="text-center semaforo-estado
+                   {% if caudal_de_frente.q_frente >= caudal_de_frente.q_requerido %}bg-semaforo-verde
+                   {% else %}bg-semaforo-rojo{% endif %}"
+            id="v1_semaforo">
+            {% if caudal_de_frente.q_frente >= caudal_de_frente.q_requerido %}
+              Caudal sobre requerimiento
+            {% else %}
+              Caudal bajo requerimiento
+            {% endif %}
+          </td>
+        </tr>
+      </tbody>
     </table>
+  </div>
 </div>
 
-</div>
 <hr/>

@@ -104,7 +104,7 @@ DATABASES = {
     },
     "sensorDB" : {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": 'ventdb2',
+        "NAME": 'ventdb3',
         "USER": env("LOCAL_POSTGRES_USER"),
         "PASSWORD": env("LOCAL_POSTGRES_PASSWORD"),
         "HOST": env("LOCAL_POSTGRES_HOST"),

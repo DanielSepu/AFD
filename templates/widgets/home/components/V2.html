@@ -7,57 +7,79 @@
 <div class="row align-items-start my-4">
   <!-- Velocidad del aire -->
   <div class="col-md-5">
-    <table class="table table-bordered">
-      <thead>
-        <tr class="bg-secondary text-white text-center">
-          <th colspan="6">Velocidad del aire</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <!-- Número "2" como parte de la tabla -->
-          <td rowspan="8" class="align-middle text-center" style="width: 100px;">
-            <h1 class="display-1 fw-bold m-0">2</h1>
-          </td>
-          <td colspan="4" class="text-center fw-bold bg-light">Velocidad mínima</td>
-          <td rowspan="8" id="v2_formula" class="text-center align-middle">
-            Fórmula
-          </td>
-        </tr>
-        <tr>
-          <td colspan="2" class="text-center">Estado</td>
-          <td colspan="1" id="v2_estado"></td>
-        </tr>
-        <tr>
-          <td>V min</td>
-          <td>Vel. Aire</td>
-          <td id="v2_vel_aire_min"></td>
-        </tr>
-        <tr>
-          <td id="v2_q_ventilador_min">0.25</td>
-          <td></td>
-          <td id="v2_q_frente"></td>
-        </tr>
-        <tr>
-          <td colspan="4" class="text-center fw-bold bg-light">Velocidad máxima</td>
-        </tr>
-        <tr>
-          <td colspan="2" class="text-center">Estado</td>
-          <td id="v2_estado_max"></td>
-        </tr>
-        <tr>
-          <td>V max</td>
-          <td></td>
-          <td></td>
-        </tr>
-        <tr>
-          <td id="v2_q_frente">2.5</td>
-          <td></td>
-          <td id="v2_q_frente"></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <table class="table table-bordered">
+    <thead>
+      <tr class="bg-secondary text-white text-center">
+        <th colspan="4">Velocidad del aire</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <!-- Fila 1: Número grande + título sección mínima + fórmula -->
+      <tr>
+        <td rowspan="8" class="align-middle text-center" style="width: 100px;">
+          <h1 class="display-1 fw-bold m-0">2</h1>
+        </td>
+        <td colspan="2" class="text-center fw-bold bg-light">Velocidad mínima</td>
+        <td rowspan="8" id="v2_formula" class="text-center align-middle font-italic" style="font-size: 1.2rem;">
+          V = Q / A &nbsp;[m/s]
+        </td>
+      </tr>
+
+      <!-- Fila 2: Estado mínimo -->
+      <tr>
+        <td>Estado</td>
+        <td class="text-center semaforo-estado
+                  {% if velocidad_min.estado == 1 %}bg-semaforo-verde
+                  {% elif velocidad_min.estado == 2 %}bg-semaforo-amarillo
+                  {% else %}bg-semaforo-rojo{% endif %}"
+            id="v2_estado">
+          {{ velocidad_min.estado }}
+        </td>
+
+      </tr>
+
+      <!-- Fila 3: V min (consigna) -->
+      <tr>
+        <td>V min</td>
+        <td class="text-center" id="v2_vmin">{{ velocidad_min.v_min }}</td>
+      </tr>
+
+      <!-- Fila 4: Velocidad actual (para comparar contra V min) -->
+      <tr>
+        <td>Vel. aire (actual)</td>
+        <td class="text-center" id="v2_vel_aire_min">{{ velocidad_min.vel_aire_actual }}</td>
+      </tr>
+
+      <!-- Fila 5: Título sección máxima -->
+      <tr>
+        <td colspan="2" class="text-center fw-bold bg-light">Velocidad máxima</td>
+      </tr>
+
+      <!-- Fila 6: Estado máximo -->
+      <tr>
+        <td>Estado</td>
+        <td class="text-center" id="v2_estado_max"
+            style="background-color: {% if velocidad_max.estado == 1 %}#d4edda{% else %}#f8d7da{% endif %};">
+          {{ velocidad_max.estado }}
+        </td>
+      </tr>
+
+      <!-- Fila 7: V max (límite superior) -->
+      <tr>
+        <td>V max</td>
+        <td class="text-center" id="v2_vmax">{{ velocidad_max.v_max }}</td>
+      </tr>
+
+      <!-- Fila 8: ΔV respecto al máximo (opcional) -->
+      <tr>
+        <td>ΔV (V max − actual)</td>
+        <td class="text-center" id="v2_delta_max">{{ velocidad_max.delta }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 
   <!-- Requerimientos de Velocidad -->
   <div class="col-md-3">
@@ -87,24 +109,25 @@
   <!-- Semáforo -->
   <div class="col-md-4">
     <table class="table table-bordered">
-        <thead class="bg-secondary text-white text-center">
-            <tr>
-                <th>Semáforo</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="text-center" style="background-color: #b3f5d1; color: #004d26;">
-                    0.25 m/s &lt; Velocidad del aire &lt; 2.5 m/s
-                </td>
-            </tr>
-            <tr>
-                <td class="text-center" style="background-color: #f5b3b3; color: #660000;">
-                    Velocidad del aire fuera de rango
-                </td>
-            </tr>
-        </tbody>
+      <thead class="bg-secondary text-white text-center">
+        <tr>
+          <th>Semáforo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-center semaforo-estado bg-semaforo-verde">
+            0.25 m/s &lt; Velocidad del aire &lt; 2.5 m/s
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center semaforo-estado bg-semaforo-rojo">
+            Velocidad del aire fuera de rango
+          </td>
+        </tr>
+      </tbody>
     </table>
+
 </div>
 
 </div>

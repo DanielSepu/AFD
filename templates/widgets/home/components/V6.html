@@ -2,34 +2,55 @@
     <div class="row align-items-start my-4">
         <!-- Estado y Fugas -->
         <div class="col-md-5">
-            <table class="table table-bordered">
-                <thead>
-                    <tr class="bg-secondary text-white text-center">
-                        <th colspan="3">Fugas</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td rowspan="3" class="align-middle text-center" style="width: 100px;">
-                            <h1 class="display-1 fw-bold m-0">6</h1>
-                        </td>
-                        <td>Estado</td>
-                        <td class="text-center fw-bold" id="v6_estado" style="background-color: {% if fugas.estado == 3 %}#f8d7da{% elif fugas.estado == 2 %}#fff3cd{% elif fugas.estado == 1 %}#d4edda{% else %}#f8d7da{% endif %};">
-                            
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Fugas</td>
-                        <td class="text-center" id="v6_porcentaje">{{ fugas.fugas_percent }}%</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" class="text-center font-italic align-middle" style="font-size: 1rem;" id="v6_message">
-                            Con esta configuración, el sistema de parpadeo indicará visualmente el nivel de desviación de la presión actual en comparación con la presión nominal.
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+  <table class="table table-bordered">
+    <thead>
+      <tr class="bg-secondary text-white text-center">
+        <th colspan="4">Fugas</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <!-- Fila 1: Número grande + Estado + fórmula/explicación -->
+      <tr>
+        <td rowspan="4" class="align-middle text-center" style="width: 100px;">
+          <h1 class="display-1 fw-bold m-0">6</h1>
+        </td>
+        <td>Estado</td>
+        <td class="text-center fw-bold semaforo-estado
+                    {% if fugas.estado == 1 %}bg-semaforo-verde
+                    {% elif fugas.estado == 2 %}bg-semaforo-amarillo
+                    {% elif fugas.estado == 3 %}bg-semaforo-rojo
+                    {% else %}bg-neutral{% endif %}"
+                id="v6_estado">
+            {{ fugas.estado }}
+        </td>
+
+        <td rowspan="4" class="text-center align-middle font-italic" style="font-size: 1.1rem;" id="v6_message">
+          Con esta configuración, el sistema de parpadeo indica visualmente el nivel de desviación de la presión actual frente a la presión nominal.
+        </td>
+      </tr>
+
+      <!-- Fila 2: Porcentaje de fugas -->
+      <tr>
+        <td>Fugas</td>
+        <td class="text-center" id="v6_porcentaje">{{ fugas.fugas_percent }}%</td>
+      </tr>
+
+      <!-- Fila 3: Presión nominal -->
+      <tr>
+        <td>P. nominal</td>
+        <td class="text-center" id="v6_p_nominal">{{ fugas.p_nominal }}</td>
+      </tr>
+
+      <!-- Fila 4: Presión actual -->
+      <tr>
+        <td>P. actual</td>
+        <td class="text-center" id="v6_p_actual">{{ fugas.p_actual }}</td>
+      </tr>
+    </tbody>
+  </table>
         </div>
+
   
         <!-- Presión Total y Porcentaje de Fuga -->
         <div class="col-md-3">
@@ -61,27 +82,28 @@
             <table class="table table-bordered">
                 <thead class="bg-secondary text-white text-center">
                     <tr>
-                        <th>Semáforo</th>
+                    <th>Semáforo</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="text-center fw-bold" style="background-color: #b3e6b3; color: #004d00;">
-                            Fugas &lt; 5%
-                        </td>
+                    <td class="text-center fw-bold semaforo-estado bg-semaforo-verde">
+                        Fugas &lt; 5%
+                    </td>
                     </tr>
                     <tr>
-                        <td class="text-center fw-bold" style="background-color: #fff5b3; color: #4d4d00;">
-                            5% &lt; Fugas &lt; 10%
-                        </td>
+                    <td class="text-center fw-bold semaforo-estado bg-semaforo-amarillo">
+                        5% &lt; Fugas &lt; 10%
+                    </td>
                     </tr>
                     <tr>
-                        <td class="text-center fw-bold" style="background-color: #f5b3b3; color: #660000;">
-                            Fugas &gt; 10%
-                        </td>
+                    <td class="text-center fw-bold semaforo-estado bg-semaforo-rojo">
+                        Fugas &gt; 10%
+                    </td>
                     </tr>
                 </tbody>
             </table>
+
         </div>
 
     </div>

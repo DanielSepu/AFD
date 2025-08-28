@@ -13,10 +13,15 @@
                         <h1 class="display-1 fw-bold m-0">7</h1>
                     </td>
                     <td>Estado</td>
-                    <td class="text-center" id="v7_estado" style="background-color: {% if potencia.estado == 1 %}#d4edda{% else %}#f8d7da{% endif %};">
+                    <td class="text-center semaforo-estado 
+                            {% if potencia.estado == 1 %}bg-semaforo-verde
+                            {% elif potencia.estado == 2 %}bg-semaforo-amarillo
+                            {% else %}bg-semaforo-rojo{% endif %}" 
+                        id="v7_estado">
                         {{ potencia.estado }}
                     </td>
-                    <td rowspan="2" id="v7_formula" class="text-center align-middle font-italic fw-bold p-4" style="font-size: 1.2rem;">
+
+                    <td rowspan="2" id="v7_formula" class="text-center align-middle font-italic p-4" style="font-size: 1.2rem;">
                         La potencia consumida frente a la potencia instalada es un indicador visual que representa la proporción entre la potencia eléctrica utilizada y la capacidad total de un sistema.
                     </td>
                 </tr>
@@ -67,29 +72,30 @@
     <!-- Semáforo de Potencia -->
     <div class="col-md-4">
         <table class="table table-bordered mb-0">
-            <thead class="bg-secondary text-white text-center">
-                <tr>
-                    <th>Semáforo</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="text-center fw-bold" style="background-color: rgba(0, 128, 0, 0.3); color: #004d00;">
-                        Potencia &lt; 95%
-                    </td>
-                </tr>
-                <tr>
-                    <td class="text-center fw-bold" style="background-color: rgba(255, 255, 0, 0.4); color: #4d4d00;">
-                        95% &lt; Potencia &lt; 99%
-                    </td>
-                </tr>
-                <tr>
-                    <td class="text-center fw-bold" style="background-color: rgba(255, 0, 0, 0.3); color: #660000;">
-                        Potencia &gt; 99%
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+  <thead class="bg-secondary text-white text-center">
+    <tr>
+      <th>Semáforo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="text-center fw-bold semaforo-estado bg-semaforo-verde">
+        Potencia &lt; 95%
+      </td>
+    </tr>
+    <tr>
+      <td class="text-center fw-bold semaforo-estado bg-semaforo-amarillo">
+        95% &lt; Potencia &lt; 99%
+      </td>
+    </tr>
+    <tr>
+      <td class="text-center fw-bold semaforo-estado bg-semaforo-rojo">
+        Potencia &gt; 99%
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 
     </div>
   </div>

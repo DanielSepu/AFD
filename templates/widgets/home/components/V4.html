@@ -17,7 +17,7 @@
           <td class="text-center" id="v4_estado" style="">
             {{ lc.estado }}
           </td>
-          <td rowspan="3" class="text-center align-middle font-italic fw-bold" id="v4_formula" style="font-size: 1.2rem;">
+          <td rowspan="3" class="text-center align-middle font-italic" id="v4_formula" style="font-size: 1.2rem;">
             El Lc se encuentra operando dentro de los rangos admitidos.
           </td>
         </tr>
@@ -38,29 +38,30 @@
   <!-- Semáforo -->
   <div class="col-md-3">
     <table class="table table-bordered">
-        <thead class="bg-secondary text-white text-center">
-            <tr>
-                <th>Semáforo</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="text-center" style="background-color: #b3e6b3; color: #004d00;">
-                    Lc &lt; 0.5
-                </td>
-            </tr>
-            <tr>
-                <td class="text-center" style="background-color: #fff5b3; color: #4d4d00;">
-                    0.5 &lt; Lc &lt; 1
-                </td>
-            </tr>
-            <tr>
-                <td class="text-center" style="background-color: #f5b3b3; color: #660000;">
-                    Lc &gt; 1
-                </td>
-            </tr>
-        </tbody>
-    </table>
+  <thead class="bg-secondary text-white text-center">
+    <tr>
+      <th>Semáforo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="text-center semaforo-estado bg-semaforo-verde">
+        Lc &lt; 0.5
+      </td>
+    </tr>
+    <tr>
+      <td class="text-center semaforo-estado bg-semaforo-amarillo">
+        0.5 &lt; Lc &lt; 1
+      </td>
+    </tr>
+    <tr>
+      <td class="text-center semaforo-estado bg-semaforo-rojo">
+        Lc &gt; 1
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 </div>
 
 

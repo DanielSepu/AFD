@@ -140,3 +140,6 @@ venv/
 applications/dbs/__pycache__/
 staticfiles
 .sql
+
+.gemini/
+gha-creds-*.json

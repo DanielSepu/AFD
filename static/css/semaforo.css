@@ -1,12 +1,12 @@
 :root{
   /* Paleta pastel editable */
-  --sem-verde-bg:   #b3e6b3;
+  --sem-verde-bg:   #5af15a;
   --sem-verde-text: #004d00;
 
-  --sem-amarillo-bg:   #fff5b3;
+  --sem-amarillo-bg:   hwb(52 27% 4%);
   --sem-amarillo-text: #4d4d00;
 
-  --sem-rojo-bg:   #f5b3b3;
+  --sem-rojo-bg:   #ff6464;
   --sem-rojo-text: #660000;
 
   --sem-neutral-bg: #d9d9d9; /* gris “apagado” */

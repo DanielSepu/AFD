@@ -14,10 +14,15 @@
             <h1 class="display-1 fw-bold m-0">5</h1>
           </td>
           <td>Estado</td>
-          <td class="text-center" id="v5_estado" style="background-color: {% if punto_stall.estado == 1 %}#d4edda{% else %}#f8d7da{% endif %};">
+          <td class="text-center semaforo-estado
+                    {% if punto_stall.estado == 1 %}bg-semaforo-verde
+                    {% elif punto_stall.estado == 2 %}bg-semaforo-amarillo
+                    {% else %}bg-semaforo-rojo{% endif %}"
+              id="v5_estado">
             {{ punto_stall.estado }}
           </td>
-          <td rowspan="4" id="v5_formula" class="text-center align-middle font-italic fw-bold" style="font-size: 1.2rem;">
+
+          <td rowspan="4" id="v5_formula" class="text-center align-middle font-italic" style="font-size: 1.2rem;">
             El punto de STALL, que corresponde al punto de operación del ventilador donde no debe operar, se calcula teniendo la curva del ventilador. Corresponde al punto máximo de presión total del ventilador.
           </td>
         </tr>
@@ -28,8 +33,10 @@
         <tr>
           <td colspan="2">
             <div class="text-start">
+              {% comment %}
               Verde => El ventilador se encuentra operando BAJO un 90%.<br>
               Rojo => El ventilador se encuentra operando entre un 90% y 100% de su capacidad.
+              {% endcomment %}
             </div>
           </td>
         </tr>
@@ -61,24 +68,25 @@
   <!-- Semáforo -->
   <div class="col-md-4">
     <table class="table table-bordered">
-        <thead class="bg-secondary text-white text-center">
-            <tr>
-                <th>Semáforo</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="text-center" style="background-color: #b3e6b3; color: #004d00;">
-                    90% &lt; Pto Stall
-                </td>
-            </tr>
-            <tr>
-                <td class="text-center" style="background-color: #f5b3b3; color: #660000;">
-                    Pto stall &gt; 90%
-                </td>
-            </tr>
-        </tbody>
-    </table>
+  <thead class="bg-secondary text-white text-center">
+    <tr>
+      <th>Semáforo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="text-center semaforo-estado bg-semaforo-verde">
+        90% &lt; Pto Stall
+      </td>
+    </tr>
+    <tr>
+      <td class="text-center semaforo-estado bg-semaforo-rojo">
+        Pto stall &gt; 90%
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 </div>
 
 </div>

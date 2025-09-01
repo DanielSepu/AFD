@@ -554,10 +554,12 @@ class Semaforo:
             color ="rojo"
 
         # obtener los promedios de la presion en 5 minutos y 30 minutos
-        mean_30m, mean_5m = self.auxiliar_fugas()
-        
-        
-        
+        try:
+            mean_30m, mean_5m = self.auxiliar_fugas()
+        except Exception as e:
+            raise Exception(str(e))
+
+
         porcentaje = (mean_5m - mean_30m) / mean_30m
         logger_AFD.debug(f"porcentaje: {porcentaje}") 
         formula = "porcentaje = 1 - (presion_hace30m / presion_actual)"
@@ -594,7 +596,10 @@ class Semaforo:
         if df.empty:
             # raise ValueError("No se encontraron lecturas en los últimos 50 min")
             pass
-        df['ts'] = pd.to_datetime(df['ts'], utc=True)  # asegura zona horaria correcta
+        try:
+            df['ts'] = pd.to_datetime(df['ts'], utc=True)  # asegura zona horaria correcta
+        except:
+            raise Exception("Error, no se encontraron registros para los ultimos 50 minutos, no se pueden calcular las fugas")
         df = df.set_index('ts').sort_index()
 
         # 1. calcular el promedio de la presion en 5 minutos
@@ -662,9 +667,9 @@ class Semaforo:
             try:
                 funcion()
             except Exception as e:
-                traceback.print_exc()
+                # traceback.print_exc()
                 error_msg = f"[ERROR] en {funcion.__name__}: {str(e)}"
-                print(error_msg)
+                # print(error_msg)
                 errores.append(error_msg)
 
         # Si hubo errores, forzar estado amarillo y registrarlos

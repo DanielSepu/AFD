@@ -59,22 +59,38 @@ function get_semaforo() {
     url: "v1/semaforo",
     type: "GET",
     success: function(data) {
+      // Manejo de error general del endpoint
       if (data && data.error) {
         if ($('#mensaje-error-semaforo').length === 0) {
           $('#semaforo').after('<div id="mensaje-error-semaforo" class="text-danger mt-2">' + data.error + '</div>');
         } else {
           $('#mensaje-error-semaforo').text(data.error);
         }
+        // También lo mandamos a toast como "danger"
+        if (typeof showToast === "function") showToast(data.error, "danger");
         return;
       } else {
         $('#mensaje-error-semaforo').remove();
       }
 
-      var semaforo = data.data.detalle_semaforo;
-      var v1 = semaforo.v1;
+      const semaforo = data?.data?.detalle_semaforo || {};
 
+      // ---- Mostrar errores como TOASTS ----
+      if (Array.isArray(semaforo.errores) && semaforo.errores.length > 0) {
+        // Mostrar cada error como toast "danger" con leve separación
+        semaforo.errores.forEach((err, idx) => {
+          setTimeout(() => {
+            // Si el mensaje inicia con "[ERROR]" usa danger; si dice "[WARN]" usa warning
+            const lower = String(err).toLowerCase();
+            const type = lower.includes("warn") ? "warning" : "danger";
+            if (typeof showToast === "function") showToast(err, type);
+          }, idx * 600); // 600ms entre toasts
+        });
+      }
+
+      // ---- Resto de la actualización de UI ----
       cambiarSemaforo(semaforo.color);
-      actualizarV1(v1);
+      actualizarV1(semaforo.v1);
       actualizarV2(semaforo.v2);
       actualizarV3(semaforo.v3);
       actualizarV4(semaforo.v4);
@@ -88,22 +104,22 @@ function get_semaforo() {
       $("#vdf table").addClass("table");
 
       const colorData = {
-        'color-caudal-frente': v1.color,
-        'color-velocidad-aire': semaforo.v2.color,
-        'color-tgbh': semaforo.v3.color,
-        'color-leakage-coefficient': semaforo.v4.color,
-        'color-punto-stall': semaforo.v5.color,
-        'color-fugas': semaforo.v6.color,
-        'color-potencia': semaforo.v7.color
+        'color-caudal-frente': semaforo.v1?.color,
+        'color-velocidad-aire': semaforo.v2?.color,
+        'color-tgbh': semaforo.v3?.color,
+        'color-leakage-coefficient': semaforo.v4?.color,
+        'color-punto-stall': semaforo.v5?.color,
+        'color-fugas': semaforo.v6?.color,
+        'color-potencia': semaforo.v7?.color
       };
       const tooltipValues = {
-        'tooltip-caudal-frente': v1.message,
-        'tooltip-velocidad-aire': semaforo.v2.message,
-        'tooltip-tgbh': semaforo.v3.message,
-        'tooltip-leakage-coefficient': semaforo.v4.message,
-        'tooltip-punto-stall': semaforo.v5.message,
-        'tooltip-fugas': semaforo.v6.message,
-        'tooltip-potencia': semaforo.v7.message
+        'tooltip-caudal-frente': semaforo.v1?.message,
+        'tooltip-velocidad-aire': semaforo.v2?.message,
+        'tooltip-tgbh': semaforo.v3?.message,
+        'tooltip-leakage-coefficient': semaforo.v4?.message,
+        'tooltip-punto-stall': semaforo.v5?.message,
+        'tooltip-fugas': semaforo.v6?.message,
+        'tooltip-potencia': semaforo.v7?.message
       };
 
       actualizarColorCuadros(colorData);
@@ -121,9 +137,12 @@ function get_semaforo() {
       } else {
         $('#mensaje-error-semaforo').text(errorMsg);
       }
+      // También mostrar toast
+      if (typeof showToast === "function") showToast(errorMsg, "danger");
     }
   });
 }
+
 
 function aplicarTooltips(tooltipValues) {
   for (const [id, tooltip] of Object.entries(tooltipValues)) {
@@ -213,6 +232,7 @@ function actualizarV5(v5) {
 }
 
 function actualizarV6(v6) {
+  console.info(v6);
   setColorClass($('#v6_estado'), v6.color);
 
   if (v6.color === "verde") {

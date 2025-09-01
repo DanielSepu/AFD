@@ -12,7 +12,7 @@
 {% block body_container_classes %}mx-0 w-100 mw-100{% endblock %}
 
 {% block body_content %}
-{# All your page content goes here! #}
+{# ¡Todo el contenido de tu página va aquí! #}
    
     <style>
             .d3-graphic{
@@ -68,7 +68,7 @@
                         <p class="text-start fs-6  ps-4 m-1">  {{proyecto.curva_diseno.angulo}} ° </p>
                      </div>
                   </div>
-                  {#  Blade angle #}
+                  {#  Ángulo de la pala #}
                   <div class="list-group border border-3 border-warning p-3 mb-2">
                      <div class="row">
                         <p class="text-start fs-5 m-0  fw-bold">Accessories</p>
@@ -109,7 +109,7 @@
                   </div>
                   <div class="list-group border border-3 border-warning p-3 mb-2">
                      <div class="row">
-                        <p class="text-start fs-5 m-0 fw-bold">Peak Pressure</p>
+                        <p class="text-start fs-5 m-0 fw-bold">Presión Máxima</p>
                         <p class="text-start fs-6  ps-4 m-1">  {{peak_pressure}}% </p>
                      </div>
                   </div>
@@ -139,7 +139,7 @@
       const promedios = {{ c| safe }};
       const dataV2 = {{scatter_data2|safe}};
       {% comment %} const curva_dis = {{VenCurvaDis}}; {% endcomment %}
-      // Call the function initially
+      // Llama a la función inicialmente
       document.addEventListener("DOMContentLoaded",
          function() {
             if ("{{ chart_type }}" == "total_pressure"){
@@ -150,7 +150,7 @@
                createFanChart(dataV, 'power', promedios, dataV2);
             }
          });
-      // Call the function on window resize
+      // Llama a la función al redimensionar la ventana
       window.addEventListener("resize", function() { updateFanChart(dataV); });
       // Cambiar vista
       function changeChartType(type) {
@@ -158,4 +158,17 @@
       }
    </script> 
 {% endblock %}
+
+ock %}
+
+pt> 
+{% endblock %}
+
+
+
+pt> 
+{% endblock %}
+
+
+}
 

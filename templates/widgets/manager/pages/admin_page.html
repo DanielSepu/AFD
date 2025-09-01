@@ -46,7 +46,7 @@
         <!-- Pestaña Simulador -->
         <div class="tab-pane fade show active" id="simulador" role="tabpanel" aria-labelledby="simulador-tab">
           
-          <h2>intervalos de actualización</h2>
+          <h2>Intervalos de actualización</h2>
           <form class="card p-3" method="post" action="{% url 'settings:admin_page' %}">
             {% csrf_token %}
             <input type="hidden" name="form_type" value="intervalo">

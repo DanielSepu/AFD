@@ -6,7 +6,7 @@
 
 {% block head_css %}{# additional <link> tags for CSS #}{% endblock %}
 
-{% block head_title %}{# Page title. Base page has " | VentApp"; follow this pattern for sub-page titling #}{% endblock %}
+{% block head_title %}{# Título de la página. La página base tiene " | VentApp"; sigue este patrón para los títulos de las subpáginas #}{% endblock %}
 
 {% block body_container_classes %}mx-0 w-100 mw-100{% endblock %}
 
@@ -160,7 +160,7 @@
       const dataV_init = {{ curva_inicial|safe }};
       const promedios = {{ c | safe }};
 
-      // Call the function initially
+      // Llama a la función inicialmente
       document.addEventListener("DOMContentLoaded",
          function() {
             if ("{{ chart_type }}" == "total_pressure"){
@@ -184,4 +184,6 @@
       }
    </script> 
 {% endblock %}
+
+ock %}
 

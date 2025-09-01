@@ -1,5 +1,5 @@
 <fieldset class="border p-3 mb-3">
-        <legend class="float-none w-auto px-3">Configuración del intervalo de actualizacion</legend>
+        <legend class="float-none w-auto px-3">Configuración del intervalo de actualización</legend>
           <form method="post" action="{% url 'settings:config_semaforo' %}">
             {% csrf_token %}
             <input type="hidden" name="form_type" value="semaforo_form">

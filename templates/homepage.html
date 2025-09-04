@@ -3,18 +3,22 @@
 {% block head_title %}Home{% endblock %}
 {% block body_content %}
   <div class="row">
-    <h1 class="display-4 text-primary mb-4 ">
-      <span class=""><i class="fas fa-fan rotating-icon"></i></span> Auxiliary Fan Platform
+    <h1 class="display-4 fw-bold text-primary mb-4 d-flex align-items-center">
+      <i class="fas fa-fan rotating-icon me-2"></i>
+      <span>Auxiliary Fan Platform</span>
     </h1>
   </div>
+
   <div class="row">
     <h3 class="text-success mb-4">Estado del semáforo</h3>
   </div>
+
   <div class="row">
     <div class="col-md-12">
       {% include "widgets/home/semaforo.html" %}
     </div>
   </div>
+
   <div class="row">
     <div class="col-md-6">
       {% include "widgets/home/projectDescription.html" %}
@@ -38,6 +42,7 @@
       </div>
     </div>
   </div>
+
   {% if Projects %}
   <div class="container-fluid">
     <div class="row mt-4">
@@ -87,22 +92,24 @@
     </div>
   </div>
   {% endif %}
+
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       const fieldsets = document.querySelectorAll(".toggle-fieldset");
       fieldsets.forEach(function(fieldset) {
         const legend = fieldset.querySelector("legend");
         const content = fieldset.querySelector("table, p");
-        content.style.display = "none";
-        legend.addEventListener("click", function() {
+        if (content) content.style.display = "none";
+        legend && legend.addEventListener("click", function() {
+          if (!content) return;
           content.style.display = content.style.display === "none" ? "block" : "none";
         });
       });
     });
   </script>
 {% endblock %}
-{% block body_js %}
-    <script src="{% static 'js/home/semaforo.js' %}"></script>
-    <script src="{% static 'js/home/projectDescription.js' %}"></script>
 
+{% block body_js %}
+  <script src="{% static 'js/home/semaforo.js' %}"></script>
+  <script src="{% static 'js/home/projectDescription.js' %}"></script>
 {% endblock body_js %}

@@ -155,6 +155,7 @@ def guardar_historial_detalle(detalle):
     """
     
     # logger_config.logger_AFD.debug(f"guardando historial v3: {detalle['v3']}")
+    
     historial = Historial.objects.create(
         # Pérdidas de ductos
         pc1_dc   = detalle.get("perdida_choque_codos", 0.0),
@@ -180,8 +181,8 @@ def guardar_historial_detalle(detalle):
         pe_v    = detalle.get("presion_estatica", 0.0),
         pd_e    = detalle.get("presion_dinamica_entrada_Pa", 0.0),
         pcs_dc  = detalle.get("perdida_choque_salida_ducto", 0.0),
-        tbs     = detalle['velocidad_sensor'].get("tbs"),
-        tbh     = detalle['velocidad_sensor'].get("tbh2"),
+        tbs     = detalle['v3'].get("tbs"),
+        tbh     = detalle['v3'].get("tbh"),
         presion_t = detalle['v5'].get("presion_maxima"),
         pta_v   = 0.0,
         lc   = detalle.get("Lc", 0.0),

@@ -273,6 +273,8 @@ class Semaforo:
         lf = self.project.ducto.dS2_F
 
         Qf = self.calcular_qf( Q2, Lc, pt2, lf)
+        # v_minima = 0.25
+        # v_max =  2.5
         formula = "Qf = Q2 - Lc*0.5*pt2*(lf/100000)"
 
         values_dic = {

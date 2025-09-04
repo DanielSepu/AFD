@@ -126,7 +126,7 @@ def insert_sensor_data():
         varied = _vary(key, base_value)
         smoothed = _smooth(f"{prefix}:{key}", varied)  # prefijos separan Sensors vs VDF
         clipped = _clip_by_key(key, smoothed, base_value)
-        return round(clipped, 1) if abs(clipped) >= 1000 else round(clipped, 2)
+        return round(clipped, 1) if abs(clipped) >= 1000 else round(clipped, 1)
 
     # ----------------- generación de registros -----------------
     now = timezone.now()

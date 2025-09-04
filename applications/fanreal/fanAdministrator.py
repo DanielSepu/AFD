@@ -132,31 +132,31 @@ class FanAdministrator:
             #raise Exception("Verifique las conexiones de los sensores, la orientación del flujo, y asegúrese de que la presión total sea mayor que la presión estática. Si el problema persiste, revise la configuración del sistema.")
         
     def esd(self):
-        return round(610 * math.exp(17.27 * self.tbs1 / (237.3 + self.tbs1)), 3)
+        return round(610 * math.exp(17.27 * self.tbs1 / (237.3 + self.tbs1)), 1)
 
     def esw(self):
-        return round(610 * math.exp(17.27 * self.temperatura_bh_s1 / (237.3 + self.temperatura_bh_s1)), 3)
+        return round(610 * math.exp(17.27 * self.temperatura_bh_s1 / (237.3 + self.temperatura_bh_s1)), 1)
 
     def xs(self):
-        return round(0.622 * self.esw() / (self.pbs1 - self.esw()), 3)
+        return round(0.622 * self.esw() / (self.pbs1 - self.esw()), 1)
 
     def lw(self):
-        return round((2502.5 - 2.386 * self.temperatura_bh_s1) * 1000, 3)
+        return round((2502.5 - 2.386 * self.temperatura_bh_s1) * 1000, 1)
 
     def s(self):
-        return round(self.lw() * self.xs() + 1005 * self.temperatura_bh_s1, 3)
+        return round(self.lw() * self.xs() + 1005 * self.temperatura_bh_s1, 1)
 
     def x(self):
-        return round((self.s() - 1005 * self.tbs1) / (self.lw() + 1884 * (self.tbs1 - self.temperatura_bh_s1)), 3)
+        return round((self.s() - 1005 * self.tbs1) / (self.lw() + 1884 * (self.tbs1 - self.temperatura_bh_s1)), 1)
 
     def e(self):
-        return round((self.pbs1 * self.x()) / (0.622 + self.x()), 3)
+        return round((self.pbs1 * self.x()) / (0.622 + self.x()), 1)
 
     def densidad_del_aire_s1(self):
-        return round((self.pbs1 - self.e()) / (287.04 * (self.tbs1 + 273.15)), 3)
+        return round((self.pbs1 - self.e()) / (287.04 * (self.tbs1 + 273.15)), 1)
     
     def densidad_del_aire_s2(self):
-        return round((self.pbs2 - self.e()) / (287.04 * (self.tbs2 + 273.15)), 3)
+        return round((self.pbs2 - self.e()) / (287.04 * (self.tbs2 + 273.15)), 1)
     
     def calculate_tbh(self, tbs, hr):
         return tbs * atan(0.151977 * sqrt(hr + 8.313659)) + atan(tbs + hr) - atan(hr - 1.6763) + 0.00391838 * pow(hr, 1.5) * atan(0.023101 * hr) - 4.686035

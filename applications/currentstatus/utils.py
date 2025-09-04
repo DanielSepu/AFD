@@ -14,7 +14,7 @@ def velocidad_aire_sensor(presion_dinamica_sensor, densidad_aire_sensor1):
         raise Exception(f"No se puede calcular la velocidad del aire. presion dinamica: {presion_dinamica_sensor} densidad del aire: {densidad_aire_sensor1}")
 
 def caudal_aire_sensor1(velocidad_aire_sensor1, area_ducto):
-    return round(velocidad_aire_sensor1*area_ducto,1)
+    return round(velocidad_aire_sensor1*area_ducto, 1)
 
 
 def caudal_de_la_frente(Q2, Lc, pt2, Lf):

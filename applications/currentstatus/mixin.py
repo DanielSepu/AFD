@@ -96,7 +96,7 @@ def compute_total_losses(perdida_choque_codos, sumatoria_choque_accesorios, perd
 # Calcula presión estática, presión dinámica y pérdidas friccionales
 def compute_static_and_friction(item_sensors, presion_dinamica_entrada, perdida_total):
     presion_total = item_sensors.pt1
-    presion_estatica = round(presion_total - presion_dinamica_entrada, 0)
+    presion_estatica = round(presion_total - presion_dinamica_entrada, 1)
     presion_dinamica = item_sensors.pt1 - item_sensors.ps1
     var_intermedia = presion_total - presion_dinamica
     perdidas_friccionales = var_intermedia - perdida_total
@@ -106,19 +106,19 @@ def compute_static_and_friction(item_sensors, presion_dinamica_entrada, perdida_
 def build_data_dict(item_sensors, item_vdf, project, Qf):
     fan = FanAdministrator(project=project)
     data = {
-        "pt1": round(item_sensors.pt1, 2),
-        "qf": round(Qf, 2),
+        "pt1": round(item_sensors.pt1, 1),
+        "qf": round(Qf, 1),
         "q1": caudal_aire_sensor1(
                 velocidad_aire_sensor(item_sensors.pt1 - item_sensors.ps1, fan.densidad_del_aire_s1()),
                 project.ducto.area
             ),
-        "HRs2": round(item_sensors.HRs2, 2),
-        "densidad1": round(item_sensors.ps1, 2),
-        "powerc": round(item_vdf.powerc, 2),
-        "fref": round(item_vdf.fref, 2),
-        "frequency_ratio_1": round((item_vdf.freal / item_vdf.fref) * 100, 2),
-        "frequency_ratio_2": round((item_vdf.freal / item_vdf.fref) * 100, 2),
-        "powerc_duplicate": round(item_vdf.powerc, 2),
+        "HRs2": round(item_sensors.HRs2, 1),
+        "densidad1": round(item_sensors.ps1, 1),
+        "powerc": round(item_vdf.powerc, 1),
+        "fref": round(item_vdf.fref, 1),
+        "frequency_ratio_1": round((item_vdf.freal / item_vdf.fref) * 100, 1),
+        "frequency_ratio_2": round((item_vdf.freal / item_vdf.fref) * 100, 1),
+        "powerc_duplicate": round(item_vdf.powerc, 1),
     }
     return data
 
@@ -268,7 +268,7 @@ def procesar_datos_sensores(request=None):
     
     # Total de pérdidas
     perdida_total = compute_total_losses(perdidas_choque_codos, sumatoria_choque_accesorios, perdida_choque_salida)
-    variables['perdida_choque_total_sistema_ducto'] = round(perdida_total,2)
+    variables['perdida_choque_total_sistema_ducto'] = round(perdida_total, 1)
     
     # Cálculo de presión estática y pérdidas friccionales
     presion_estatica, presion_dinamica, perdidas_friccionales = compute_static_and_friction(
@@ -287,8 +287,8 @@ def procesar_datos_sensores(request=None):
         "data": data,
         "presion_estatica": round(presion_estatica, 1),
         "presion_dinamica": round(presion_dinamica, 1),
-        "perdida_de_choque": round(perdida_total, 0),
-        "perdidas_friccionales": round(perdidas_friccionales, 0),
+        "perdida_de_choque": round(perdida_total, 1),
+        "perdidas_friccionales": round(perdidas_friccionales, 1),
         "variables": variables
     }
     

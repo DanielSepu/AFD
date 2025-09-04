@@ -1,112 +1,163 @@
-<div class="row align-items-start my-4" style="background-color: #ffffff;">
-    <div class="row align-items-start my-4">
-        <!-- Estado y Fugas -->
-        <div class="col-md-5">
-  <table class="table table-bordered">
-    <thead>
-      <tr class="bg-secondary text-white text-center">
-        <th colspan="4">Fugas</th>
-      </tr>
-    </thead>
+<div class="row g-3 align-items-start my-4" style="background-color:#ffffff;">
 
-    <tbody>
-      <!-- Fila 1: Número grande + Estado + fórmula/explicación -->
-      <tr>
-        <td rowspan="4" class="align-middle text-center" style="width: 100px;">
-          <h1 class="display-1 fw-bold m-0">6</h1>
-        </td>
-        <td>Estado</td>
-        <td class="text-center fw-bold semaforo-estado
-                    {% if fugas.estado == 1 %}bg-semaforo-verde
-                    {% elif fugas.estado == 2 %}bg-semaforo-amarillo
-                    {% elif fugas.estado == 3 %}bg-semaforo-rojo
-                    {% else %}bg-neutral{% endif %}"
-                id="v6_estado">
+  <!-- 1) Estado y Fugas -->
+  <div class="col-12 col-lg-3 d-flex">
+    <table class="table table-bordered mb-0 w-100">
+      <thead>
+        <tr class="bg-secondary text-white text-center">
+          <th colspan="4" class="align-middle">
+            Fugas
+            <!-- Ícono con tooltip (Bootstrap 5) -->
+            <button
+              type="button"
+              class="btn btn-sm btn-light ms-2 align-middle"
+              data-bs-toggle="tooltip"
+              data-bs-html="true"
+              data-bs-trigger="hover focus"
+              data-bs-placement="right"
+              data-bs-container="body"
+              title="El semáforo indica la desviación entre la presión actual y la presión nominal.">
+              <i class="fas fa-info-circle"></i>
+            </button>
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <!-- Número grande -->
+          <td rowspan="4" class="align-middle text-center" style="width:64px;">
+            <h1 class="display-1 fw-bold m-0">6</h1>
+          </td>
+
+          <td>Estado</td>
+          <td class="text-center fw-bold semaforo-estado
+                      {% if fugas.estado == 1 %}bg-semaforo-verde
+                      {% elif fugas.estado == 2 %}bg-semaforo-amarillo
+                      {% elif fugas.estado == 3 %}bg-semaforo-rojo
+                      {% else %}bg-neutral{% endif %}"
+              id="v6_estado">
             {{ fugas.estado }}
-        </td>
+          </td>
 
-        <td rowspan="4" class="text-center align-middle font-italic" style="font-size: 1.1rem;" id="v6_message">
-          Con esta configuración, el sistema de parpadeo indica visualmente el nivel de desviación de la presión actual frente a la presión nominal.
-        </td>
-      </tr>
+          <!-- Texto explicativo oculto: vive en el tooltip -->
+          <td rowspan="4" class="text-center align-middle font-italic d-none" id="v6_message" style="font-size:1.1rem;">
+            Con esta configuración, el sistema de parpadeo indica visualmente el nivel de desviación de la presión actual frente a la presión nominal.
+          </td>
+        </tr>
 
-      <!-- Fila 2: Porcentaje de fugas -->
-      <tr>
-        <td>Fugas</td>
-        <td class="text-center" id="v6_porcentaje">{{ fugas.fugas_percent }}%</td>
-      </tr>
+        <tr>
+          <td>Fugas</td>
+          <td class="text-center" id="v6_porcentaje">{{ fugas.fugas_percent }}%</td>
+        </tr>
 
-      <!-- Fila 3: Presión nominal -->
-      <tr>
-        <td>P. nominal</td>
-        <td class="text-center" id="v6_p_nominal">{{ fugas.p_nominal }}</td>
-      </tr>
+        <tr>
+          <td>P. nominal</td>
+          <td class="text-center" id="v6_p_nominal">{{ fugas.p_nominal }}</td>
+        </tr>
 
-      <!-- Fila 4: Presión actual -->
-      <tr>
-        <td>P. actual</td>
-        <td class="text-center" id="v6_p_actual">{{ fugas.p_actual }}</td>
-      </tr>
-    </tbody>
-  </table>
-        </div>
-
-  
-        <!-- Presión Total y Porcentaje de Fuga -->
-        <div class="col-md-3">
-            <table class="table table-bordered">
-                <thead>
-                    <tr class="bg-secondary text-white text-center">
-                        <th colspan="2">Presión Total Medida (Ventilador)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Presión total inicial medida (Pa)</td>
-                        <td class="text-center" id="v6_presion_hace30m">{{ fugas.presion_inicial }}</td>
-                    </tr>
-                    <tr>
-                        <td>Presión total final medida (Pa)</td>
-                        <td class="text-center" id="v6_presion_actual">{{ fugas.presion_final }}</td>
-                    </tr>
-                    <tr>
-                        <td>% de Fuga</td>
-                        <td class="text-center" id="v6_porcentaje2">{{ fugas.porcentaje_fuga }}%</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-  
-        <!-- Semáforo de Fugas -->
-        <div class="col-md-4">
-            <table class="table table-bordered">
-                <thead class="bg-secondary text-white text-center">
-                    <tr>
-                    <th>Semáforo</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                    <td class="text-center fw-bold semaforo-estado bg-semaforo-verde">
-                        Fugas &lt; 5%
-                    </td>
-                    </tr>
-                    <tr>
-                    <td class="text-center fw-bold semaforo-estado bg-semaforo-amarillo">
-                        5% &lt; Fugas &lt; 10%
-                    </td>
-                    </tr>
-                    <tr>
-                    <td class="text-center fw-bold semaforo-estado bg-semaforo-rojo">
-                        Fugas &gt; 10%
-                    </td>
-                    </tr>
-                </tbody>
-            </table>
-
-        </div>
-
-    </div>
+        <tr>
+          <td>P. actual</td>
+          <td class="text-center" id="v6_p_actual">{{ fugas.p_actual }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-  <hr/>
-  
+
+  <!-- 2) Presión Total y % Fuga -->
+  <div class="col-12 col-lg-3 d-flex">
+    <table class="table table-bordered mb-0 w-100">
+      <thead>
+        <tr class="bg-secondary text-white text-center">
+          <th colspan="2">Presión Total Medida (Ventilador)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Presión inicial (Pa)</td>
+          <td class="text-center" id="v6_presion_hace30m">{{ fugas.presion_inicial }}</td>
+        </tr>
+        <tr>
+          <td>Presión final (Pa)</td>
+          <td class="text-center" id="v6_presion_actual">{{ fugas.presion_final }}</td>
+        </tr>
+        <tr>
+          <td>% de Fuga</td>
+          <td class="text-center" id="v6_porcentaje2">{{ fugas.porcentaje_fuga }}%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 3) Umbrales / Leyenda -->
+  <div class="col-12 col-lg-3 d-flex">
+    <table class="table table-bordered mb-0 w-100">
+      <thead class="bg-secondary text-white text-center">
+        <tr>
+          <th>Rango</th>
+          <th>Interpretación</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-center">&lt; 5%</td>
+          <td class="text-center">Fugas bajas</td>
+        </tr>
+        <tr>
+          <td class="text-center">5% – 10%</td>
+          <td class="text-center">Fugas moderadas</td>
+        </tr>
+        <tr>
+          <td class="text-center">&gt; 10%</td>
+          <td class="text-center">Fugas altas</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 4) Semáforo de Fugas -->
+  <div class="col-12 col-lg-3 d-flex">
+    <table class="table table-bordered mb-0 w-100">
+      <thead class="bg-secondary text-white text-center">
+        <tr>
+          <th>Semáforo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-center fw-bold semaforo-estado bg-semaforo-verde" style="height:30px; font-size:14px;">
+            Fugas &lt; 5%
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center fw-bold semaforo-estado bg-semaforo-amarillo" style="height:30px; font-size:13px;">
+            5% &lt; Fugas &lt; 10%
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center fw-bold semaforo-estado bg-semaforo-rojo" style="height:30px; font-size:13px;">
+            Fugas &gt; 10%
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<hr/>
+
+<!-- Inicializa tooltips (Bootstrap 5) -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (el) {
+      return new bootstrap.Tooltip(el, {
+        container: 'body',
+        trigger: 'hover focus',
+        html: true,
+        placement: el.getAttribute('data-bs-placement') || 'top'
+      });
+    });
+  });
+</script>

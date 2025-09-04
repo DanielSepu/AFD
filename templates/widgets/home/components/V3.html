@@ -1,60 +1,67 @@
-<div class="row align-items-start my-4">
+<div class="row g-3 align-items-start my-4"><!-- g-3 = espacios iguales entre columnas -->
 
-  <!-- Estado y Fórmula -->
-  <div class="col-md-5">
-  <table class="table table-bordered">
-    <thead>
-      <tr class="bg-secondary text-white text-center">
-        <th colspan="4">TGBH</th>
-      </tr>
-    </thead>
+  <!-- 1) Estado y Fórmula -->
+  <div class="col-12 col-lg-3 d-flex">
+    <table class="table table-bordered mb-0 w-100">
+      <thead>
+        <tr class="bg-secondary text-white text-center">
+          <th colspan="4" class="align-middle">
+            TGBH
+            <button
+              type="button"
+              class="btn btn-sm btn-light ms-2 align-middle"
+              data-bs-toggle="tooltip"
+              data-bs-html="true"
+              data-bs-trigger="hover focus"
+              data-bs-placement="right"
+              data-bs-container="body"
+              title="TGBH = 0.7 × t° bulbo húmedo + 0.3 × t° bulbo seco">
+              <i class="fas fa-info-circle"></i>
+            </button>
+          </th>
+        </tr>
+      </thead>
 
-    <tbody>
-      <!-- Fila 1: Número grande + Estado + fórmula -->
-      <tr>
-        <td rowspan="4" class="align-middle text-center" style="width: 100px;">
-          <h1 class="display-1 fw-bold m-0">3</h1>
-        </td>
-        <td>Estado</td>
-        <td class="text-center semaforo-estado
-                  {% if tgbh.estado == 1 %}bg-semaforo-verde
-                  {% elif tgbh.estado == 2 %}bg-semaforo-amarillo
-                  {% else %}bg-semaforo-rojo{% endif %}"
-            id="v3_estado">
-          {{ tgbh.estado }}
-        </td>
+      <tbody>
+        <tr>
+          <td rowspan="4" class="align-middle text-center" style="width:64px;">
+            <h1 class="display-1 fw-bold m-0">3</h1>
+          </td>
+          <td>Estado</td>
+          <td class="text-center semaforo-estado
+                    {% if tgbh.estado == 1 %}bg-semaforo-verde
+                    {% elif tgbh.estado == 2 %}bg-semaforo-amarillo
+                    {% else %}bg-semaforo-rojo{% endif %}"
+              id="v3_estado">
+            {{ tgbh.estado }}
+          </td>
 
-        <td rowspan="4" class="text-center align-middle font-italic" style="font-size: 1.2rem;">
-          TGBH = 0.7 × t° bulbo húmedo <br />+ 0.3 × t° bulbo seco
-        </td>
-      </tr>
+          <!-- Oculta la fórmula (vive en el tooltip) -->
+          <td rowspan="4" class="d-none"></td>
+        </tr>
 
-      <!-- Fila 2: Mínimo -->
-      <tr>
-        <td>Min</td>
-        <td class="text-center" id="v3_min">{{ tgbh.min }}</td>
-      </tr>
+        <tr>
+          <td>Min</td>
+          <td class="text-center" id="v3_min">{{ tgbh.min }}</td>
+        </tr>
 
-      <!-- Fila 3: Máximo -->
-      <tr>
-        <td>Max</td>
-        <td class="text-center" id="v3_max">{{ tgbh.max }}</td>
-      </tr>
+        <tr>
+          <td>Max</td>
+          <td class="text-center" id="v3_max">{{ tgbh.max }}</td>
+        </tr>
 
-      <!-- Fila 4: Valor actual TGBH -->
-      <tr>
-        <td>TGBH frente</td>
-        <td class="text-center" id="v3_tgbh">{{ tgbh.tgbh_frente }}</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+        <tr>
+          <td>TGBH frente</td>
+          <td class="text-center" id="v3_tgbh">{{ tgbh.tgbh_frente }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-
-  <!-- Niveles de Carga de Trabajo -->
-  <div class="col-md-3">
-    <table class="table table-bordered">
-      <thead class="thead-light bg-secondary text-white text-center">
+  <!-- 2) Niveles de Carga de Trabajo -->
+  <div class="col-12 col-lg-3 d-flex">
+    <table class="table table-bordered mb-0 w-100">
+      <thead class="bg-secondary text-white text-center">
         <tr>
           <th rowspan="2">Nivel de carga de trabajo</th>
           <th colspan="4">Trabajo / Descanso</th>
@@ -93,55 +100,78 @@
     </table>
   </div>
 
-  <!-- TGBH y Semáforo -->
-  <div class="col-md-4">
-    <table class="table table-bordered">
-  <thead class="bg-secondary text-white text-center">
-    <tr>
-      <th colspan="2">TGBH y Semáforo</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>TGBH</td>
-      <td class="text-center" id="v3_tgbh2">{{ tgbh.tgbh }}</td>
-    </tr>
-    <tr>
-      <td>T° b. húmedo</td>
-      <td class="text-center" id="v3_tbh">{{ tgbh.temp_bulbo_humedo }}</td>
-    </tr>
-    <tr>
-      <td>T° b. seco</td>
-      <td class="text-center" id="v3_tbs">{{ tgbh.temp_bulbo_seco }}</td>
-    </tr>
-    <tr>
-      <td>Nivel de carga</td>
-      <td class="text-center" id="v3_nivel_carga">{{ tgbh.nivel_carga }}</td>
-    </tr>
-    <table style="border-collapse: collapse; width: 100%;">
-      <tr>
-        <td rowspan="3" style="text-align: center; vertical-align: middle; width: 20%; font-size: 13px; padding:5px;">
-          Semáforo
-        </td>
-        <td class="text-center semaforo-estado bg-semaforo-rojo" style="height: 30px; font-size: 13px;">
-          TGBH sobre el Rango de T°
-        </td>
-      </tr>
-      <tr>
-        <td class="text-center semaforo-estado bg-semaforo-amarillo" style="height: 30px; font-size: 13px;">
-          TGBH dentro del Rango de T°
-        </td>
-      </tr>
-      <tr>
-        <td class="text-center semaforo-estado bg-semaforo-verde" style="height: 30px; font-size: 14px;">
-          TGBH bajo del Rango de T°
-        </td>
-      </tr>
+  <!-- 3) TGBH y Datos -->
+  <div class="col-12 col-lg-3 d-flex">
+    <table class="table table-bordered mb-0 w-100">
+      <thead class="bg-secondary text-white text-center">
+        <tr>
+          <th colspan="2">TGBH y Datos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>TGBH</td>
+          <td class="text-center" id="v3_tgbh2">{{ tgbh.tgbh }}</td>
+        </tr>
+        <tr>
+          <td>T° b. húmedo</td>
+          <td class="text-center" id="v3_tbh">{{ tgbh.temp_bulbo_humedo }}</td>
+        </tr>
+        <tr>
+          <td>T° b. seco</td>
+          <td class="text-center" id="v3_tbs">{{ tgbh.temp_bulbo_seco }}</td>
+        </tr>
+        <tr>
+          <td>Nivel de carga</td>
+          <td class="text-center" id="v3_nivel_carga">{{ tgbh.nivel_carga }}</td>
+        </tr>
+      </tbody>
     </table>
-  </tbody>
-</table>
+  </div>
+
+  <!-- 4) Semáforo -->
+  <div class="col-12 col-lg-3 d-flex">
+    <table class="table table-bordered mb-0 w-100">
+      <thead class="bg-secondary text-white text-center">
+        <tr>
+          <th>Semáforo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-center fw-bold semaforo-estado bg-semaforo-verde" style="height:30px; font-size:14px;">
+            TGBH bajo del Rango de T°
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center fw-bold semaforo-estado bg-semaforo-amarillo" style="height:30px; font-size:13px;">
+            TGBH dentro del Rango de T°
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center fw-bold semaforo-estado bg-semaforo-rojo" style="height:30px; font-size:13px;">
+            TGBH sobre el Rango de T°
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
 </div>
 
-</div>
 <hr/>
+
+<!-- Tooltips Bootstrap 5 -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (el) {
+      return new bootstrap.Tooltip(el, {
+        container: 'body',
+        trigger: 'hover focus',
+        html: true,
+        placement: el.getAttribute('data-bs-placement') || 'top'
+      });
+    });
+  });
+</script>

@@ -1,103 +1,139 @@
-<div class="row align-items-start my-4" style="background-color: #ffffff;">
-    <!-- Información de Estado y Descripción -->
-    <div class="col-md-5">
-        <table class="table table-bordered mb-0">
-            <thead>
-                <tr class="bg-secondary text-white text-center" style="background-color: #ffffff;">
-                    <th colspan="4">Potencia</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td rowspan="3" class="align-middle text-center" style="width: 100px; background-color: #ffffff;">
-                        <h1 class="display-1 fw-bold m-0">7</h1>
-                    </td>
-                    <td>Estado</td>
-                    <td class="text-center semaforo-estado 
-                            {% if potencia.estado == 1 %}bg-semaforo-verde
-                            {% elif potencia.estado == 2 %}bg-semaforo-amarillo
-                            {% else %}bg-semaforo-rojo{% endif %}" 
-                        id="v7_estado">
-                        {{ potencia.estado }}
-                    </td>
+<div class="row g-3 align-items-start my-4" style="background-color:#ffffff;">
 
-                    <td rowspan="2" id="v7_formula" class="text-center align-middle font-italic p-4" style="font-size: 1.2rem;">
-                        La potencia consumida frente a la potencia instalada es un indicador visual que representa la proporción entre la potencia eléctrica utilizada y la capacidad total de un sistema.
-                    </td>
-                </tr>
-                <tr>
-                    <td>Potencia</td>
-                    <td class="text-center" id="v7_potencia_porcent">{{ potencia.potencia_percent }}%</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-  
-    <!-- Rango de Potencia -->
-    <div class="col-md-3">
-        <table class="table table-bordered mb-0">
-            <thead class="text-center fw-bold" style="background-color: #ffffff;">
-                <tr class="bg-secondary text-white text-center">
-                    <th>Potencia instalada</th>
-                    <th>Potencia consumida</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="text-center" id="v7_power">{{ potencia.instalada }}</td>
-                    <td class="text-center" id="v7_potencia_consumida">{{ potencia.consumida }}</td>
-                </tr>
-            </tbody>
-        </table>
-        <table class="table table-bordered mt-2">
-            <thead class="text-center fw-bold" style="background-color: #ffffff;">
-                <tr class="bg-secondary text-white text-center">
-                    <th>Limites potencia</th>
-                    <th>Valor</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="text-center">Limite inferior</td>
-                    <td class="text-center">0%</td>
-                </tr>
-                <tr>
-                    <td class="text-center">Límite superior</td>
-                    <td class="text-center">99%</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-  
-    <!-- Semáforo de Potencia -->
-    <div class="col-md-4">
-        <table class="table table-bordered mb-0">
-  <thead class="bg-secondary text-white text-center">
-    <tr>
-      <th>Semáforo</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td class="text-center fw-bold semaforo-estado bg-semaforo-verde">
-        Potencia &lt; 95%
-      </td>
-    </tr>
-    <tr>
-      <td class="text-center fw-bold semaforo-estado bg-semaforo-amarillo">
-        95% &lt; Potencia &lt; 99%
-      </td>
-    </tr>
-    <tr>
-      <td class="text-center fw-bold semaforo-estado bg-semaforo-rojo">
-        Potencia &gt; 99%
-      </td>
-    </tr>
-  </tbody>
-</table>
+  <!-- 1) Información de Estado -->
+  <div class="col-12 col-lg-3 d-flex">
+    <table class="table table-bordered mb-0 w-100">
+      <thead>
+        <tr class="bg-secondary text-white text-center">
+          <th colspan="4" class="align-middle">
+            Potencia
+            <!-- Ícono con tooltip (Bootstrap 5) -->
+            <button
+              type="button"
+              class="btn btn-sm btn-light ms-2 align-middle"
+              data-bs-toggle="tooltip"
+              data-bs-html="true"
+              data-bs-trigger="hover focus"
+              data-bs-placement="right"
+              data-bs-container="body"
+              title="La potencia consumida frente a la potencia instalada representa la proporción entre la potencia eléctrica utilizada y la capacidad total del sistema.">
+              <i class="fas fa-info-circle"></i>
+            </button>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <!-- Número grande, ancho unificado -->
+          <td rowspan="3" class="align-middle text-center" style="width:64px;">
+            <h1 class="display-1 fw-bold m-0">7</h1>
+          </td>
 
+          <td>Estado</td>
+          <td class="text-center semaforo-estado
+                      {% if potencia.estado == 1 %}bg-semaforo-verde
+                      {% elif potencia.estado == 2 %}bg-semaforo-amarillo
+                      {% else %}bg-semaforo-rojo{% endif %}"
+              id="v7_estado">
+            {{ potencia.estado }}
+          </td>
 
-    </div>
+          <!-- Oculto: vive en el tooltip -->
+          <td rowspan="2" id="v7_formula" class="text-center align-middle font-italic p-3 d-none" style="font-size:1.1rem;">
+            La potencia consumida frente a la potencia instalada es un indicador visual que representa la proporción entre la potencia eléctrica utilizada y la capacidad total de un sistema.
+          </td>
+        </tr>
+
+        <tr>
+          <td>Potencia</td>
+          <td class="text-center" id="v7_potencia_porcent">{{ potencia.potencia_percent }}%</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-  
-  
+
+  <!-- 2) Rango de Potencia -->
+  <div class="col-12 col-lg-3 d-flex">
+    <table class="table table-bordered mb-0 w-100">
+      <thead class="bg-secondary text-white text-center">
+        <tr>
+          <th>Potencia instalada</th>
+          <th>Potencia consumida</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-center" id="v7_power">{{ potencia.instalada }}</td>
+          <td class="text-center" id="v7_potencia_consumida">{{ potencia.consumida }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 3) Límites de Potencia -->
+  <div class="col-12 col-lg-3 d-flex">
+    <table class="table table-bordered mb-0 w-100">
+      <thead class="bg-secondary text-white text-center">
+        <tr>
+          <th>Límites potencia</th>
+          <th>Valor</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-center">Límite inferior</td>
+          <td class="text-center">0%</td>
+        </tr>
+        <tr>
+          <td class="text-center">Límite superior</td>
+          <td class="text-center">99%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 4) Semáforo de Potencia (derecha) -->
+  <div class="col-12 col-lg-3 d-flex">
+    <table class="table table-bordered mb-0 w-100">
+      <thead class="bg-secondary text-white text-center">
+        <tr>
+          <th>Semáforo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-center fw-bold semaforo-estado bg-semaforo-verde" style="height:30px; font-size:14px;">
+            Potencia &lt; 95%
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center fw-bold semaforo-estado bg-semaforo-amarillo" style="height:30px; font-size:13px;">
+            95% &lt; Potencia &lt; 99%
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center fw-bold semaforo-estado bg-semaforo-rojo" style="height:30px; font-size:13px;">
+            Potencia &gt; 99%
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+<hr/>
+
+<!-- Inicializa tooltips (Bootstrap 5) -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (el) {
+      return new bootstrap.Tooltip(el, {
+        container: 'body',
+        trigger: 'hover focus',
+        html: true,
+        placement: el.getAttribute('data-bs-placement') || 'top'
+      });
+    });
+  });
+</script>

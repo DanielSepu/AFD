@@ -1,16 +1,30 @@
-<div class="row align-items-start my-4">
+<div class="row g-3 align-items-start my-4">
 
-  <!-- Información Principal -->
-  <div class="col-md-5">
-    <table class="table table-bordered">
+  <!-- 1) Información principal -->
+  <div class="col-12 col-lg-3 d-flex">
+    <table class="table table-bordered mb-0 w-100">
       <thead>
         <tr class="bg-secondary text-white text-center">
-          <th colspan="4">Punto de Stall</th>
+          <th colspan="4" class="align-middle">
+            Punto de Stall
+            <!-- Ícono con tooltip (Bootstrap 5) -->
+            <button
+              type="button"
+              class="btn btn-sm btn-light ms-2 align-middle"
+              data-bs-toggle="tooltip"
+              data-bs-html="true"
+              data-bs-trigger="hover focus"
+              data-bs-placement="right"
+              data-bs-container="body"
+              title="El punto de STALL es el punto de operación donde el ventilador no debe funcionar.<br>Se calcula con la curva del ventilador y corresponde a la presión total máxima.">
+              <i class="fas fa-info-circle"></i>
+            </button>
+          </th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td rowspan="4" class="align-middle text-center" style="width: 100px;">
+          <td rowspan="3" class="align-middle text-center" style="width:64px;">
             <h1 class="display-1 fw-bold m-0">5</h1>
           </td>
           <td>Estado</td>
@@ -21,9 +35,10 @@
               id="v5_estado">
             {{ punto_stall.estado }}
           </td>
-
-          <td rowspan="4" id="v5_formula" class="text-center align-middle font-italic" style="font-size: 1.2rem;">
-            El punto de STALL es el punto de operación donde el ventilador no debe funcionar. Se calcula con la curva del ventilador y corresponde a la presión total máxima.
+          <!-- Fórmula/explicación oculta: vive en el tooltip -->
+          <td rowspan="3" id="v5_formula" class="text-center align-middle font-italic d-none">
+            El punto de STALL es el punto de operación donde el ventilador no debe funcionar. 
+            Se calcula con la curva del ventilador y corresponde a la presión total máxima.
           </td>
         </tr>
         <tr>
@@ -32,11 +47,9 @@
         </tr>
         <tr>
           <td colspan="2">
-            <div class="text-start">
-              {% comment %}
-              Verde => El ventilador se encuentra operando BAJO un 90%.<br>
-              Rojo => El ventilador se encuentra operando entre un 90% y 100% de su capacidad.
-              {% endcomment %}
+            <div class="text-start small text-muted">
+              Verde: opera &lt; 90% de capacidad.<br>
+              Rojo: opera entre 90% y 100% de su capacidad.
             </div>
           </td>
         </tr>
@@ -44,9 +57,9 @@
     </table>
   </div>
 
-  <!-- Rango de Operación -->
-  <div class="col-md-3">
-    <table class="table table-bordered">
+  <!-- 2) Rango de Operación -->
+  <div class="col-12 col-lg-3 d-flex">
+    <table class="table table-bordered mb-0 w-100">
       <thead class="bg-secondary text-white text-center">
         <tr>
           <th colspan="2">Rango de Operación</th>
@@ -54,7 +67,7 @@
       </thead>
       <tbody>
         <tr>
-          <td>Presión total sistema (pt2)</td>
+          <td>Presión total sistema (pt1)</td>
           <td class="text-center" id="v5_pt2">{{ punto_stall.presion_sistema }}</td>
         </tr>
         <tr>
@@ -65,29 +78,74 @@
     </table>
   </div>
 
-  <!-- Semáforo -->
-  <div class="col-md-4">
-    <table class="table table-bordered">
-  <thead class="bg-secondary text-white text-center">
-    <tr>
-      <th>Semáforo</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td class="text-center semaforo-estado bg-semaforo-verde">
-        90% &lt; Pto Stall
-      </td>
-    </tr>
-    <tr>
-      <td class="text-center semaforo-estado bg-semaforo-rojo">
-        Pto stall &gt; 90%
-      </td>
-    </tr>
-  </tbody>
-</table>
+  <!-- 3) Datos / Leyenda -->
+  <div class="col-12 col-lg-3 d-flex">
+    <table class="table table-bordered mb-0 w-100">
+      <thead class="bg-secondary text-white text-center">
+        <tr>
+          <th colspan="2">Datos de Stall</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Capacidad segura</td>
+          <td class="text-center">≤ 90%</td>
+        </tr>
+        <tr>
+          <td>Zona de alerta</td>
+          <td class="text-center">≈ 90%</td>
+        </tr>
+        <tr>
+          <td>Zona crítica</td>
+          <td class="text-center">&gt; 90%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 4) Semáforo (derecha) -->
+  <div class="col-12 col-lg-3 d-flex">
+    <table class="table table-bordered mb-0 w-100">
+      <thead class="bg-secondary text-white text-center">
+        <tr>
+          <th>Semáforo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-center fw-bold semaforo-estado bg-semaforo-verde" style="height:30px; font-size:14px;">
+            Pto Stall ≤ 90%
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center fw-bold semaforo-estado bg-semaforo-amarillo" style="height:30px; font-size:13px;">
+            Pto Stall cercano al 90%
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center fw-bold semaforo-estado bg-semaforo-rojo" style="height:30px; font-size:13px;">
+            Pto Stall &gt; 90%
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
 </div>
 
-</div>
 <hr/>
+
+<!-- Tooltips Bootstrap 5 -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (el) {
+      return new bootstrap.Tooltip(el, {
+        container: 'body',
+        trigger: 'hover focus',
+        html: true,
+        placement: el.getAttribute('data-bs-placement') || 'top'
+      });
+    });
+  });
+</script>

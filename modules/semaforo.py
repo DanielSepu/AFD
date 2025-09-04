@@ -121,7 +121,7 @@ class Semaforo:
 
         # Filtrar solo columnas numéricas antes de calcular la media
         numeric_sensor_data = self.sensorData.select_dtypes(include='number')
-        dataframe_transpose = numeric_sensor_data.mean().round(2)
+        dataframe_transpose = numeric_sensor_data.mean().round(1)
         dataframe_sensor = pd.DataFrame([dataframe_transpose])
 
         dict_sensor = dict(dataframe_sensor.iloc[0].to_dict())
@@ -143,11 +143,11 @@ class Semaforo:
 
         # Mostrar vdf
         numeric_vdf_data = self.vdfData.select_dtypes(include='number')
-        dataframe_vdfDatatranspose = numeric_vdf_data.mean().round(2).to_frame().transpose()
+        dataframe_vdfDatatranspose = numeric_vdf_data.mean().round(1).to_frame().transpose()
         dataframe_vdfDatatranspose = dataframe_vdfDatatranspose.iloc[0]
         dataframe_vdfDatatranspose = dataframe_vdfDatatranspose.iloc[1:]
 
-        dataframe_transpose_vdf = numeric_vdf_data.mean().round(2)
+        dataframe_transpose_vdf = numeric_vdf_data.mean().round(1)
         dataframe_vdf = pd.DataFrame([dataframe_transpose_vdf])
         self.detalle["vdf"] = dataframe_vdf.to_html(index=False)
 
@@ -286,14 +286,15 @@ class Semaforo:
         self.detalle["colores"].append(color)
 
         self.detalle["v1"] = {
-            'Q2': round(Q2, 3),
-            'Qf': round(Qf, 3),
-            'lc': round(Lc, 3),
-            'pt2': round(pt2, 3),
-            'lf': round(lf, 3),
+            'Q2': round(Q2, 1),
+            'Qf': round(Qf, 1),
+            'lc': round(Lc, 1),
+            'pt2': round(pt2, 1),
+            'lf': round(lf, 1),
             'formula': formula,
             'color': color
         }
+        
         # logger_AFD.debug(f"---> caudal: Lc: {Lc} Qf: {Qf} Q2: {Q2} pt2: {pt2} lf: {lf}")
         return Qf
     
@@ -333,9 +334,9 @@ class Semaforo:
         formula = 'velocidad_del_aire = Q1/Area_galeria'
         color = self.calcular_semaforo_v2(velocidad_del_aire)
         self.detalle['v2'] = {
-            'Q1': round(Q1, 3),
-            'Area_galeria': round(Area_galeria, 3),
-            'velocidad_del_aire': round(velocidad_del_aire, 3),
+            'Q1': round(Q1, 1),
+            'Area_galeria': round(Area_galeria, 1),
+            'velocidad_del_aire': round(velocidad_del_aire, 1),
             'color': color,
             'formula': formula
         }
@@ -387,9 +388,9 @@ class Semaforo:
         nivel_carga, min, max, color = self.calcular_estado_v3(tgbh)
         
         self.detalle['v3'] = {
-            'tbh': round(tbh, 3),
-            'tbs': round(tbs, 3),
-            'tgbh': round(tgbh, 3),
+            'tbh': round(tbh, 1),
+            'tbs': round(tbs, 1),
+            'tgbh': round(tgbh, 1),
             'color': color,
             'min': min,
             'max': max,
@@ -426,12 +427,12 @@ class Semaforo:
         formula = "Lc = 3 * (Q1-Q2) * (pt1-pt2) / ( 2 * L *(pow(pt1,1.5)  - pow(pt2,1.5) )) * 100 * pow(1000,0.5)"
         color = self.calcular_semaforo_v4(Lc)
         self.detalle['v4'] = {
-            'Q1': round(Q1, 3),
-            'Q2': round(Q2,3),
-            'pt1': round(pt1,3),
-            'pt2': round(pt2,3),
-            'L': round(L,3),
-            'Lc': round(Lc, 3),
+            'Q1': round(Q1, 1),
+            'Q2': round(Q2, 1),
+            'pt1': round(pt1, 1),
+            'pt2': round(pt2, 1),
+            'L': round(L, 1),
+            'Lc': round(Lc, 1),
             'color': color,
             'formula': formula,
         }
@@ -451,7 +452,8 @@ class Semaforo:
         # obtener el valor maximo del dataframe que contiene la curva ajustada
         presion_maxima_curvaAjustada = presion_total_df['presion'].max()
         fila = presion_total_df.loc[presion_total_df['presion'] == presion_maxima_curvaAjustada ]
-        stall = pt1 / presion_maxima_curvaAjustada * 100
+        
+        
         
         df_fan = pd.DataFrame(data=dict(self.project.curva_diseno.datos_curva), dtype=float)
         rpm_del_proyecto = self.project.curva_diseno.rpm
@@ -468,12 +470,18 @@ class Semaforo:
         
         presion_maxima_curvaAjustada = df_total_pressure["presion"].max()
         presion_maxima = calcular_la_presion_maxima(item_sensors, df_total_pressure, indice_max) 
+
+        stall = (pt1 / presion_maxima_curvaAjustada)
+        porcentaje_stall = stall*100
+        logger_AFD.info(f"pt1: {pt1} presion_maxima_curvaAjustada: {presion_maxima_curvaAjustada}")
+
+
         color = self.calcular_semaforo_v5(presion_maxima)
-        logger_AFD.info(f"punto de stall: {presion_maxima}")
+        logger_AFD.info(f"punto de stall: {stall}")
         self.detalle['v5'] = {
-            'pt2': round(pt1,3),
-            'presion_maxima': round(presion_maxima_curvaAjustada,3),
-            'stall': f"{round(stall,3)} %",
+            'pt2': round(pt1, 1),
+            'presion_maxima': round(presion_maxima_curvaAjustada, 1),
+            'stall': f"{round(porcentaje_stall, 1)} %",
             'color': self.calcular_semaforo_v5(stall),
             'formula': "stall = pt1 / presion_maxima_curvaAjustada * 100"
         }
@@ -496,19 +504,19 @@ class Semaforo:
         tolerancia_amarillo = config.tolerancia_maxima/100
 
         if porcentaje <= tolerancia_verde:
-            mensaje = f"El porcentaje de caída ({round(porcentaje*100, 2)}%) se encuentra dentro del rango permitido ({round(tolerancia_verde*100, 2)}% - {round(tolerancia_amarillo*100, 2)}%)."
+            mensaje = f"El porcentaje de caída ({round(porcentaje*100, 1)}%) se encuentra dentro del rango permitido ({round(tolerancia_verde*100, 1)}% - {round(tolerancia_amarillo*100, 1)}%)."
             
             return mensaje, "verde"
         elif porcentaje > tolerancia_verde and porcentaje <= tolerancia_amarillo:
-            mensaje = f"El porcentaje de caída ({round(porcentaje*100, 2)}%) esta fuera del rango normal ({round(tolerancia_verde*100, 2)}%)."
+            mensaje = f"El porcentaje de caída ({round(porcentaje*100, 1)}%) esta fuera del rango normal ({round(tolerancia_verde*100, 1)}%)."
             
             return mensaje, "amarillo"
         else:
             semaforo.esta_bloqueado = True
-            semaforo.motivo_bloqueo = f"Fuga crítica detectada. Caída del {round(porcentaje*100, 2)}%"
+            semaforo.motivo_bloqueo = f"Fuga crítica detectada. Caída del {round(porcentaje*100, 1)}%"
             semaforo.color_actual = "rojo"
             semaforo.save()
-            mensaje = f"El porcentaje de caída ({round(porcentaje*100, 2)}%) supera el máximo permitido ({round(tolerancia_amarillo*100, 2)}%)."
+            mensaje = f"El porcentaje de caída ({round(porcentaje*100, 1)}%) supera el máximo permitido ({round(tolerancia_amarillo*100, 1)}%)."
             return mensaje, "rojo"
 
 
@@ -571,8 +579,8 @@ class Semaforo:
         # TODO: si el valor del calculo es negativo, se convierte a positivo, si es positivo se ignora
         self.detalle['v6'] = {
             "intervalo en segundos": 30,
-            "presion actual": round(mean_5m, 3),
-            "presion hace30m": round(mean_30m, 3),
+            "presion actual": round(mean_5m, 1),
+            "presion hace30m": round(mean_30m, 1),
             "porcentaje": f"{int(porcentaje*100)} %",
             "formula": formula,
             "message": message,
@@ -640,9 +648,9 @@ class Semaforo:
         color = self.calcular_semaforo_v7(potencia)
         self.detalle["colores"].append(color)
         self.detalle['v7'] = {
-            "power": round(power, 3),
-            "potencia_consumida": round(potencia_consumida, 3),
-            "potencia_porcent": round(potencia, 3),
+            "power": round(power, 1),
+            "potencia_consumida": round(potencia_consumida, 1),
+            "potencia_porcent": round(potencia, 1),
             "color": color,
             "formula": formula
         }
@@ -696,7 +704,7 @@ class Semaforo:
         elif isinstance(obj, float):
             if math.isnan(obj) or math.isinf(obj):
                 return None  # o "NaN", o 0.0, según prefieras
-            return round(obj, 3)
+            return round(obj, 1)
         return obj
 
 

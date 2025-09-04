@@ -179,6 +179,8 @@ function actualizarV1(v1) {
 }
 
 function actualizarV2(v2) {
+  console.log("contenido de v2")
+  console.log(v2)
   setColorClass($('#v2_estado'), v2.color);
   $('#v2_vel_aire_min').text(v2.Vmin);
   $('#v2_q_ventilador_min').text(v2.q_ventilador);

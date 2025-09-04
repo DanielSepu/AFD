@@ -337,7 +337,7 @@ class FanDesignView(FanCalculationsMixin, TemplateView):
             semaforo.calcular_estado_final(proyecto)
             # context['semaforo'] = semaforo.detalle
 
-            logger_AFD.info(f"valor de Q1: {semaforo.detalle['v2']['Q1']}")
+            logger_AFD.info(f"valor de presion_maxima: {presion_maxima}")
             
             
             context.update({

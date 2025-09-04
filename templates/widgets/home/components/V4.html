@@ -1,23 +1,42 @@
-<div class="row align-items-start my-4">
+<div class="row g-3 align-items-start my-4">
 
-  <!-- Información Principal -->
-  <div class="col-md-5">
-    <table class="table table-bordered">
+  <!-- 1) Información principal -->
+  <div class="col-12 col-lg-3 d-flex">
+    <table class="table table-bordered mb-0 w-100">
       <thead>
         <tr class="bg-secondary text-white text-center">
-          <th colspan="4">Leakage Coefficient (Lc)</th>
+          <th colspan="4" class="align-middle">
+            Leakage Coefficient (Lc)
+            <!-- Ícono con tooltip (Bootstrap 5) -->
+            <button
+              type="button"
+              class="btn btn-sm btn-light ms-2 align-middle"
+              data-bs-toggle="tooltip"
+              data-bs-html="true"
+              data-bs-trigger="hover focus"
+              data-bs-placement="right"
+              data-bs-container="body"
+              title="El Lc se encuentra operando dentro de los rangos admitidos.">
+              <i class="fas fa-info-circle"></i>
+            </button>
+          </th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td rowspan="3" class="align-middle text-center" style="width: 100px;">
+          <td rowspan="3" class="align-middle text-center" style="width:64px;">
             <h1 class="display-1 fw-bold m-0">4</h1>
           </td>
           <td>Estado</td>
-          <td class="text-center" id="v4_estado" style="">
+          <td class="text-center semaforo-estado
+                    {% if lc.estado == 1 %}bg-semaforo-verde
+                    {% elif lc.estado == 2 %}bg-semaforo-amarillo
+                    {% else %}bg-semaforo-rojo{% endif %}"
+              id="v4_estado">
             {{ lc.estado }}
           </td>
-          <td rowspan="3" class="text-center align-middle font-italic" id="v4_formula" style="font-size: 1.2rem;">
+          <!-- Oculto: vive en el tooltip -->
+          <td rowspan="3" class="text-center align-middle font-italic d-none" id="v4_formula" style="font-size:1.2rem;">
             El Lc se encuentra operando dentro de los rangos admitidos.
           </td>
         </tr>
@@ -27,43 +46,109 @@
         </tr>
         <tr>
           <td colspan="2">
-            <div class="text-start" id="v4_values">
-            </div>
+            <div class="text-start" id="v4_values"></div>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- Semáforo -->
-  <div class="col-md-3">
-    <table class="table table-bordered">
-  <thead class="bg-secondary text-white text-center">
-    <tr>
-      <th>Semáforo</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td class="text-center semaforo-estado bg-semaforo-verde">
-        Lc &lt; 0.5
-      </td>
-    </tr>
-    <tr>
-      <td class="text-center semaforo-estado bg-semaforo-amarillo">
-        0.5 &lt; Lc &lt; 1
-      </td>
-    </tr>
-    <tr>
-      <td class="text-center semaforo-estado bg-semaforo-rojo">
-        Lc &gt; 1
-      </td>
-    </tr>
-  </tbody>
-</table>
+  <!-- 2) Datos de Lc -->
+  <div class="col-12 col-lg-3 d-flex">
+    <table class="table table-bordered mb-0 w-100">
+      <thead class="bg-secondary text-white text-center">
+        <tr>
+          <th colspan="2">Datos de Lc</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Valor actual</td>
+          <td class="text-center">{{ lc.valor }}</td>
+        </tr>
+        <tr>
+          <td>Estado (1/2/3)</td>
+          <td class="text-center">{{ lc.estado }}</td>
+        </tr>
+        <tr>
+          <td>Notas</td>
+          <td class="text-center">
+            <small class="text-muted">Valores recientes / observaciones</small>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 3) Umbrales -->
+  <div class="col-12 col-lg-3 d-flex">
+    <table class="table table-bordered mb-0 w-100">
+      <thead class="bg-secondary text-white text-center">
+        <tr>
+          <th>Umbral</th>
+          <th>Rango</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-center">Verde</td>
+          <td class="text-center">Lc &lt; 0.5</td>
+        </tr>
+        <tr>
+          <td class="text-center">Amarillo</td>
+          <td class="text-center">0.5 &lt; Lc &lt; 1</td>
+        </tr>
+        <tr>
+          <td class="text-center">Rojo</td>
+          <td class="text-center">Lc &gt; 1</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 4) Semáforo (derecha) -->
+  <div class="col-12 col-lg-3 d-flex">
+    <table class="table table-bordered mb-0 w-100">
+      <thead class="bg-secondary text-white text-center">
+        <tr>
+          <th>Semáforo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-center fw-bold semaforo-estado bg-semaforo-verde" style="height:30px; font-size:14px;">
+            Lc &lt; 0.5
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center fw-bold semaforo-estado bg-semaforo-amarillo" style="height:30px; font-size:13px;">
+            0.5 &lt; Lc &lt; 1
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center fw-bold semaforo-estado bg-semaforo-rojo" style="height:30px; font-size:13px;">
+            Lc &gt; 1
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
 </div>
 
-
-</div>
 <hr/>
+
+<!-- Inicializa tooltips (Bootstrap 5) -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (el) {
+      return new bootstrap.Tooltip(el, {
+        container: 'body',
+        trigger: 'hover focus',
+        html: true,
+        placement: el.getAttribute('data-bs-placement') || 'top'
+      });
+    });
+  });
+</script>

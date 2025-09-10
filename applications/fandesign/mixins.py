@@ -77,6 +77,8 @@ class FanCalculationsMixin(SensorDataMixin, ProjectMixin):
             return ultima_med.ps1 / caudal**2
         except AttributeError:
             return None
+        except ZeroDivisionError:
+            raise ValueError("el caudal ha caido a cero y no se puede calcular la resistencia.")
 
     def build_scatter_records(self, df, x_field, y_field, x_label, y_label):
         records = df[[x_field, y_field]].to_dict(orient='records')

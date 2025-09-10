@@ -484,7 +484,7 @@ class SistemaPartidaForm(forms.ModelForm):
 
 class TipoEquipamientodieselForm(forms.ModelForm):
     nombre = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el nombre del equipo disel'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el nombre del equipo diésel'})
     )
 
     class Meta:
@@ -496,8 +496,8 @@ class Caracteristicas_VentiladorForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el nombre del accesorio'})
     )
     factor_choque = forms.IntegerField(
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Factor de choque 2'}),
-        label='Factor de choque'
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Factor de choque (X)'}),
+        label='Factor de choque (X)'
     )
     class Meta:
         model = Caracteristicas_Ventilador

@@ -182,8 +182,6 @@ function actualizarV1(v1) {
 }
 
 function actualizarV2(v2) {
-  console.log("contenido de v2")
-  console.log(v2)
   setColorClass($('#v2_estado'), v2.color);
   $('#v2_vel_aire_min').text(v2.Vmin);
   $('#v2_q_ventilador_min').text(v2.q_ventilador);
@@ -237,7 +235,10 @@ function actualizarV5(v5) {
 }
 
 function actualizarV6(v6) {
-  console.info(v6);
+  if (!v6) {
+    console.error("Error: v6 está vacío o no definido");
+    return;
+  }
   setColorClass($('#v6_estado'), v6.color);
 
   if (v6.color === "verde") {
@@ -263,7 +264,6 @@ function actualizarV6(v6) {
 
 function actualizarV7(v7) {
   setColorClass($('#v7_estado'), v7.color);
-
   $('#v7_power').text(v7.power);
   $('#v7_potencia_consumida').text(v7.potencia_consumida);
   $('#v7_potencia_porcent').text(v7.potencia_porcent);

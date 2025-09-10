@@ -53,66 +53,42 @@
     </table>
   </div>
 
-  <!-- 2) Datos de Lc -->
+  <!-- 2) Variable / Valor (antes estaba en la posición 3, ahora ocupa la 2) -->
   <div class="col-12 col-lg-3 d-flex">
     <table class="table table-bordered mb-0 w-100">
       <thead class="bg-secondary text-white text-center">
         <tr>
-          <th colspan="2">Datos de Lc</th>
+          <th>Variable</th>
+          <th>Valor</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>Valor actual</td>
-          <td class="text-center">{{ lc.valor }}</td>
+          <td class="text-center">Dist. sensores (m)</td>
+          <td class="text-center" id="v4_dist">—</td>
         </tr>
         <tr>
-          <td>Estado (1/2/3)</td>
-          <td class="text-center">{{ lc.estado }}</td>
+          <td class="text-center">Q1 (m³/s)</td>
+          <td class="text-center" id="v4_q1">—</td>
         </tr>
         <tr>
-          <td>Notas</td>
-          <td class="text-center">
-            <small class="text-muted">Valores recientes / observaciones</small>
-          </td>
+          <td class="text-center">Q2 (m³/s)</td>
+          <td class="text-center" id="v4_q2">—</td>
+        </tr>
+        <tr>
+          <td class="text-center">Pt1 (Pa)</td>
+          <td class="text-center" id="v4_pt1">—</td>
+        </tr>
+        <tr>
+          <td class="text-center">Pt2 (Pa)</td>
+          <td class="text-center" id="v4_pt2">—</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- 3) Umbrales -->
-  <div class="col-12 col-lg-3 d-flex">
-    <table class="table table-bordered mb-0 w-100">
-  <thead class="bg-secondary text-white text-center">
-    <tr>
-      <th>Variable</th>
-      <th>Valor</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td class="text-center">Dist. sensores (m)</td>
-      <td class="text-center" id="v4_dist">—</td>
-    </tr>
-    <tr>
-      <td class="text-center">Q1 (m³/s)</td>
-      <td class="text-center" id="v4_q1">—</td>
-    </tr>
-    <tr>
-      <td class="text-center">Q2 (m³/s)</td>
-      <td class="text-center" id="v4_q2">—</td>
-    </tr>
-    <tr>
-      <td class="text-center">Pt1 (Pa)</td>
-      <td class="text-center" id="v4_pt1">—</td>
-    </tr>
-    <tr>
-      <td class="text-center">Pt2 (Pa)</td>
-      <td class="text-center" id="v4_pt2">—</td>
-    </tr>
-  </tbody>
-</table>
-  </div>
+  <!-- 3) Espacio vacío (antes estaba la tabla Datos de Lc) -->
+  <div class="col-12 col-lg-3 d-flex"></div>
 
   <!-- 4) Semáforo (derecha) -->
   <div class="col-12 col-lg-3 d-flex">

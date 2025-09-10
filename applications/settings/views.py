@@ -137,6 +137,7 @@ class AdminPageView(TemplateView, AdminFormHandlersMixin):
             return handler(request)
 
         return redirect(reverse_lazy('settings:admin_page'))
+    
 class ConfigSemaforoView(TemplateView):
     template_name = 'widgets/manager/pages/config_semaforo.html'
 

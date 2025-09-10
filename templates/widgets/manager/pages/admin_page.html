@@ -49,7 +49,7 @@
           <h2>Intervalos de actualización</h2>
           <form class="card p-3" method="post" action="{% url 'settings:admin_page' %}">
             {% csrf_token %}
-            <input type="hidden" name="form_type" value="intervalo">
+            <input type="hidden" name="form_type" value="semaforo_form">
             <div class="row align-items-center">
               {{simuladorjson_form}}
               <!-- Botón de envío -->

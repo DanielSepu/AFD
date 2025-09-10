@@ -41,12 +41,13 @@ class AdminFormHandlersMixin:
         return redirect(reverse_lazy("settings:admin_page"))
 
     def handle_semaforo_form_interval(self, request):
+        print(request.POST)
         try:
-            semaforo = int(request.POST.get('semaforo'))
+            semaforo = int(request.POST.get('insert_interval'))
             intervalos = IntervalosDeActualizacion.objects.latest('id')
             intervalos.semaforo = semaforo
             intervalos.save()
-            reschedule_historiadores(semaforo)
+            reschedule_historiadores()
         except Exception as e:
             print(f"Error al actualizar semáforo: {e}")
         return redirect(reverse_lazy('settings:admin_page'))

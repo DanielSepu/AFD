@@ -262,59 +262,59 @@ class Historial(models.Model):
         blank=True, null=True
     )
     q1     = models.FloatField(
-        verbose_name="Caudal Q1",
+        verbose_name="Caudal Q1 (m³/s)",
         blank=True, null=True
     )
     qf     = models.FloatField(
-        verbose_name="Caudal de la frente",
+        verbose_name="Caudal de la frente (m³/s)",
         blank=True, null=True
     )
 
     # Otras pérdidas y presiones
     pct_sys = models.FloatField(
-        verbose_name="Pérdida choque total sistema ducto circular/ovalado",
+        verbose_name="P. choque total sistema ducto circular/ovalado (Pa)",
         blank=True, null=True
     )
     pd_v    = models.FloatField(
-        verbose_name="Presión dinámica ventilador",
+        verbose_name="P. dinámica ventilador (Pa)",
         blank=True, null=True
     )
     pe_v    = models.FloatField(
-        verbose_name="Presión estática ventilador",
+        verbose_name="P. estática ventilador (Pa)",
         blank=True, null=True
     )
     pd_e    = models.FloatField(
-        verbose_name="Presión dinámica entrada",
+        verbose_name="P. dinámica entrada (Pa)",
         blank=True, null=True
     )
     pcs_dc  = models.FloatField(
-        verbose_name="Pérdida choque salida ducto",
+        verbose_name="P. choque salida ducto (Pa)",
         blank=True, null=True
     )
     pta_v   = models.FloatField(
-        verbose_name="Pérdida total accesorios ventilador",
+        verbose_name="P. total accesorios ventilador (Pa)",
         blank=True, null=True
     )
 
     # Temperaturas y presiones
     tbs      = models.FloatField(
-        verbose_name="Temperatura bulbo seco",
+        verbose_name="T. bulbo seco (°C)",
         blank=True, null=True
     )
     tbh      = models.FloatField(
-        verbose_name="Temperatura bulbo húmedo",
+        verbose_name="T. bulbo húmedo (°C)",
         blank=True, null=True
     )
     presion_t = models.FloatField(
-        verbose_name="Presión total",
+        verbose_name="Presión total (Pa)",
         blank=True, null=True
     )
     lc       = models.FloatField(
-        verbose_name="Temperatura seca sensor",
+        verbose_name="T. seca sensor (°C)",
         blank=True, null=True
     )
     tgbh     = models.FloatField(
-        verbose_name="TGBH",  
+        verbose_name="TGBH (°C)",  
         blank=True, null=True
     )
 

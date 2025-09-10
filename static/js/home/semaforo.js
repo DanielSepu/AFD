@@ -209,9 +209,9 @@ function actualizarV4(v4) {
   $('#v4_lc').text(v4.Lc);
 
   const info = 
-`L: ${v4.L}      Q1: ${v4.Q1}
-Q2: ${v4.Q2}     pt1: ${v4.pt1}
-pt2: ${v4.pt2}`;
+`L: ${v4.L}      Q1 (m³/s): ${v4.Q1}
+Q2 (m³/s): ${v4.Q2}     pt1 (Pa): ${v4.pt1}
+pt2 (Pa): ${v4.pt2}`;
   $('#v4_values').css('white-space', 'pre').text(info);
   $('#v4_formula').text(v4.formula);
 }

@@ -4,6 +4,15 @@ const toleranceTable = {
   "fan pressure":      { AN1: 0.01, AN2: 0.025, AN3: 0.05, AN4: 0.10 },
   "power":             { AN1: 0.02, AN2: 0.03,  AN3: 0.08, AN4: 0.16 }
 };
+const unidades = {
+  presion: "Pa",
+  caudal: "m³/s",
+  potencia: "kw"
+};
+
+const getKeyWithUnit = (key) => {
+  return unidades[key] ? `${key} (${unidades[key]})` : key;
+};
 function createFanChart(
   dataOriginal,
   dataAjustada,
@@ -12,8 +21,7 @@ function createFanChart(
   toleranceGrade,
   toleranceParam
 ) {
-  console.log(dataOriginal);
-  console.log(dataAjustada);
+
   const graphContainer = document.getElementById(chart_type);
   graphContainer.innerHTML = "";
   const wrapper = document.getElementById("graphContainer");
@@ -23,6 +31,8 @@ function createFanChart(
   // Considerar ambos conjuntos de datos para escalas
   const allData = [...dataOriginal, ...dataAjustada];
   const [xKey, yKey] = Object.keys(allData[0]);
+  
+
   const maxX = Math.max(d3.max(allData, d => d[xKey]), promedios[0]);
   const maxY = Math.max(d3.max(allData, d => d[yKey]), promedios[1]);
   const x = d3.scaleLinear().domain([0, maxX]).range([margin.left * 2, width - margin.right]);
@@ -61,8 +71,8 @@ function createFanChart(
   // Ejes y etiquetas
   svg.append("g").attr("transform", `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x));
   svg.append("g").attr("transform", `translate(${margin.left * 2},0)`).call(d3.axisLeft(y));
-  svg.append("text").attr("x", width / 2).attr("y", height).style("text-anchor", "middle").text(xKey);
-  svg.append("text").attr("transform", "rotate(-90)").attr("x", -height / 2).attr("y", margin.left / 2).style("text-anchor", "middle").text(yKey);
+  svg.append("text").attr("x", width / 2).attr("y", height).style("text-anchor", "middle").text(getKeyWithUnit(xKey));
+  svg.append("text").attr("transform", "rotate(-90)").attr("x", -height / 2).attr("y", margin.left / 2).style("text-anchor", "middle").text(getKeyWithUnit(yKey));
 
   // Puntos de dataOriginal
   svg.selectAll(".dot-original").data(dataOriginal).enter().append("circle")
@@ -121,9 +131,9 @@ function createFanChart(
 
   // Leyenda (opcional)
   svg.append("circle").attr("cx", width - 120).attr("cy", 30).attr("r", 6).attr("fill", "#2074b7");
-  svg.append("text").attr("x", width - 110).attr("y", 35).text("Original").style("font-size", "12px").attr("alignment-baseline", "middle");
+  svg.append("text").attr("x", width - 110).attr("y", 35).text("Diseño").style("font-size", "12px").attr("alignment-baseline", "middle");
   svg.append("circle").attr("cx", width - 120).attr("cy", 50).attr("r", 6).attr("fill", "#c72c41");
-  svg.append("text").attr("x", width - 110).attr("y", 55).text("Ajustada").style("font-size", "12px").attr("alignment-baseline", "middle");
+  svg.append("text").attr("x", width - 110).attr("y", 55).text("Actual").style("font-size", "12px").attr("alignment-baseline", "middle");
 
   graphContainer.appendChild(svg.node());
 }

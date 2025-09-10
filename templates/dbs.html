@@ -1,39 +1,25 @@
-
 {% extends "base.html" %}
 {% load static %}
 
-{% block head_extra_meta %}{# <meta> tags go here #}{% endblock %}
+{% block head_extra_meta %}{% endblock head_extra_meta %}
+{% block head_css %}{% endblock head_css %}
+{% block head_js %}{% endblock head_js %}
+{% block head_title %}{% endblock head_title %}
 
-{% block head_css %}{# additional <link> tags for CSS #}{% endblock %}
+{# Clases para el contenedor principal del body #}
+{% block body_container_classes %}mx-0 w-100 mw-100{% endblock body_container_classes %}
 
-{% block head_js %}{# <script defer> tags for deferred JS only #}{% endblock head_js %}
-
-{% block head_title %}{# Page title. Base page has " | VentApp"; follow this pattern for sub-page titling #}{% endblock %}
-
-{# Add classes to the main <div> wrapping body content #}
-{% block body_container_classes %}mx-0 w-100 mw-100{% endblock %}
 {% block navbar_section %}
-   {% include 'widgets/dbs/navbar.html' %}
-{% endblock %}
+  {% include "widgets/dbs/navbar.html" %}
+{% endblock navbar_section %}
+
 {% block body_content %}
-   
-{% endblock %}
+  {# Contenido de la página /dbs aquí #}
+{% endblock body_content %}
 
 {% block body_js %}
-{# Inline or other types of JS <script> tags here. #}
-{# Recuerda que ya tenemos jQuery y el paquete de Bootstrap con Popper cargados. #}
-   <script src="{% static 'js/d3.v7.js' %}"></script>
-   {% comment %} <script src="{% static 'js/scatterplot.js' %}"></script> {% endcomment %}
-   <script src="{% static 'js/fancurveplot.js' %}"></script>
-
-
-{% endblock %}
-
-ck %}
-
-k %}
-
-
-
-{% endblock %}
-
+  {# Ya están cargados jQuery y Bootstrap con Popper #}
+  <script src="{% static 'js/d3.v7.js' %}"></script>
+  {# <script src="{% static 'js/scatterplot.js' %}"></script> #}
+  <script src="{% static 'js/fancurveplot.js' %}"></script>
+{% endblock body_js %}

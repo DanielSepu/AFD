@@ -1,6 +1,6 @@
 <div class="row g-3 align-items-start my-4">
 
-  <!-- 1) Velocidad del aire (mín y máx) -->
+  <!-- 1) Velocidad del aire (mínima) -->
   <div class="col-12 col-lg-3 d-flex">
     <table class="table table-bordered mb-0 w-100">
       <thead>
@@ -24,13 +24,12 @@
       <tbody>
         <tr>
           <!-- Número grande -->
-          <td rowspan="8" class="align-middle text-center" style="width:64px;">
+          <td rowspan="4" class="align-middle text-center" style="width:64px;">
             <h1 class="display-1 fw-bold m-0">2</h1>
           </td>
           <td colspan="2" class="text-center fw-bold bg-light">Velocidad mínima</td>
-          <td rowspan="8" id="v2_formula" class="d-none"></td>
+          <td rowspan="4" id="v2_formula" class="d-none"></td>
         </tr>
-
         <tr>
           <td>Estado</td>
           <td class="text-center semaforo-estado
@@ -42,14 +41,39 @@
           </td>
         </tr>
         <tr>
-          <td>V min</td>
+          <td>V min (m/s)</td>
           <td class="text-center" id="v2_vmin">{{ velocidad_min.v_min }}</td>
         </tr>
         <tr>
-          <td>Vel. aire (actual)</td>
+          <td>Vel. aire actual (m/s)</td>
           <td class="text-center" id="v2_vel_aire_min">{{ velocidad_min.vel_aire_actual }}</td>
         </tr>
+      </tbody>
+    </table>
+  </div>
 
+  <!-- 2) Velocidad del aire -> Velocidad máxima -->
+  <div class="col-12 col-lg-3 d-flex">
+    <table class="table table-bordered mb-0 w-100">
+      <thead>
+        <tr class="bg-secondary text-white text-center">
+          <th colspan="2" class="align-middle">
+            Velocidad del aire
+            <button
+              type="button"
+              class="btn btn-sm btn-light ms-2 align-middle"
+              data-bs-toggle="tooltip"
+              data-bs-html="true"
+              data-bs-trigger="hover focus"
+              data-bs-placement="right"
+              data-bs-container="body"
+              title="Velocidad máxima permitida por el diseño/criterio técnico.">
+              <i class="fas fa-info-circle"></i>
+            </button>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
         <tr>
           <td colspan="2" class="text-center fw-bold bg-light">Velocidad máxima</td>
         </tr>
@@ -64,18 +88,14 @@
           </td>
         </tr>
         <tr>
-          <td>V max</td>
+          <td>V max (m/s)</td>
           <td class="text-center" id="v2_vmax">{{ velocidad_max.v_max }}</td>
-        </tr>
-        <tr>
-          <td>ΔV (V max − actual)</td>
-          <td class="text-center" id="v2_delta_max">{{ velocidad_max.delta }}</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- 2) Requisitos de Velocidad -->
+  <!-- 3) Requisitos de Velocidad del Aire -->
   <div class="col-12 col-lg-3 d-flex">
     <table class="table table-bordered mb-0 w-100">
       <thead class="bg-secondary text-white text-center">
@@ -85,41 +105,16 @@
       </thead>
       <tbody>
         <tr>
-          <td>Q1</td>
+          <td>Q1 (m³/s)</td>
           <td id="v2_Q1"></td>
         </tr>
         <tr>
-          <td>Área de la galería [m²]</td>
+          <td>Área de la galería (m²)</td>
           <td id="v2_area_galeria"></td>
         </tr>
         <tr>
-          <td>Velocidad del aire [m/s]</td>
+          <td>Velocidad del aire (m/s)</td>
           <td id="v2_vel_aire"></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- 3) Datos adicionales (ejemplo) -->
-  <div class="col-12 col-lg-3 d-flex">
-    <table class="table table-bordered mb-0 w-100">
-      <thead class="bg-secondary text-white text-center">
-        <tr>
-          <th colspan="2">Datos adicionales</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Vel. mínima requerida</td>
-          <td class="text-center">{{ velocidad_min.v_min }}</td>
-        </tr>
-        <tr>
-          <td>Vel. máxima permitida</td>
-          <td class="text-center">{{ velocidad_max.v_max }}</td>
-        </tr>
-        <tr>
-          <td>ΔV calculada</td>
-          <td class="text-center">{{ velocidad_max.delta }}</td>
         </tr>
       </tbody>
     </table>

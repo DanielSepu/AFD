@@ -496,7 +496,7 @@ class Caracteristicas_VentiladorForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el nombre del accesorio'})
     )
     factor_choque = forms.IntegerField(
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Factor de choque'}),
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Factor de choque 2'}),
         label='Factor de choque'
     )
     class Meta:

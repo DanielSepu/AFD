@@ -160,12 +160,15 @@ function aplicarTooltips(tooltipValues) {
 function actualizarV1(v1) {
   setColorClass($('#v1_estado'), v1.color);
   setColorClass($('#color-caudal-frente'), v1.color);
-
+  $('#v1_Vmin').text(v1.Vmin);
+  $('#v1_Vmax').text(v1.Vmax);
+  $('#v1_Q1').text(v1.Q1);
   $('#v1_Q2').text(v1.Q2);
   $('#v1_q_frente').text(v1.Qf);
   $('#v1_pt2').text(v1.pt2);
   $('#v1_lc').text(v1.lc);
   $('#v1_lf').text(v1.lf);
+  $('#v1_caudal_requerido').text(v1.caudal_requerido);
   $('#v1_formula').text(v1.formula);
 
   const $semaforo = $('#v1_semaforo');
@@ -208,11 +211,11 @@ function actualizarV4(v4) {
   setColorClass($('#v4_estado'), v4.color);
   $('#v4_lc').text(v4.Lc);
 
-  const info = 
-`L: ${v4.L}      Q1 (m³/s): ${v4.Q1}
-Q2 (m³/s): ${v4.Q2}     pt1 (Pa): ${v4.pt1}
-pt2 (Pa): ${v4.pt2}`;
-  $('#v4_values').css('white-space', 'pre').text(info);
+  $('#v4_dist').text(v4.L);
+  $('#v4_q1').text(v4.Q1);
+  $('#v4_q2').text(v4.Q2);
+  $('#v4_pt1').text(v4.pt1);
+  $('#v4_pt2').text(v4.pt2);
   $('#v4_formula').text(v4.formula);
 }
 

@@ -23,3 +23,7 @@
 .semaforo-luz, .semaforo-estado, .semaforo-badge, td, th {
   transition: background-color .25s ease, color .25s ease;
 }
+
+.semaforo-estado{
+  width: 4.5em;
+}

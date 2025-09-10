@@ -15,7 +15,7 @@
               data-bs-trigger="hover focus"
               data-bs-placement="right"
               data-bs-container="body"
-              title="Q<sub>f</sub> = Velocidad del aire × Área del ducto<br />Unidad: m³/s">
+              title="Q<sub>f</sub> = Q2 - Lc*0.5*pt2*(lf/100000)">
               <i class="fas fa-info-circle"></i>
             </button>
           </th>
@@ -29,7 +29,7 @@
             <h1 class="display-1 fw-bold m-0">1</h1>
           </td>
           <td>Estado</td>
-          <td id="v1_estado" class="text-center semaforo-estado">—</td>
+          <td id="v1_estado" colspan="1" class="text-center semaforo-estado">—</td>
           <td rowspan="4" class="d-none"></td>
         </tr>
 
@@ -41,10 +41,6 @@
           <td>Q Frente (m³/s)</td>
           <td class="text-center" id="v1_q_frente">{{ caudal_de_frente.q_frente }}</td>
         </tr>
-        <tr>
-          <td>ΔQ (Q<sub>f</sub> − Lc) (m³/s)</td>
-          <td class="text-center" id="v1_delta">{{ caudal_de_frente.delta }}</td>
-        </tr>
       </tbody>
     </table>
   </div>
@@ -54,9 +50,9 @@
     <table class="table table-bordered mb-0 w-100">
       <thead class="bg-secondary text-white text-center">
         <tr>
-          <th>Q2 </th>
-          <th>Lf</th>
-          <th>Pt2</th>
+          <th>Q2 (m³/s)</th>
+          <th>Lf (%)</th>
+          <th>Pt2 (Pa)</th>
         </tr>
       </thead>
       <tbody>
@@ -78,17 +74,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>Q Frente (m³/s)</td>
-          <td class="text-center">{{ caudal_de_frente.q_frente }}</td>
-        </tr>
-        <tr>
-          <td>Requerido (m³/s)</td>
-          <td class="text-center">{{ caudal_de_frente.q_requerido }}</td>
-        </tr>
-        <tr>
-          <td>ΔQ (m³/s)</td>
-          <td class="text-center">{{ caudal_de_frente.delta }}</td>
+          <td>Q Requerido (m³/s)</td>
+          <td class="text-center" id="v1_caudal_requerido">{{ caudal_de_frente.caudal_requerido }}</td>
         </tr>
       </tbody>
     </table>

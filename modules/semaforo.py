@@ -110,6 +110,7 @@ class Semaforo:
         self.project = None
         self.Q1 = None 
         self.Q2 = None 
+        self.caudal_requerido = 0
         self.detalle = {
             "colores": [],
         }
@@ -235,18 +236,18 @@ class Semaforo:
         Qf=int(Qf)
         equipamiento_diesel = self.project.equipamientos.all()
         
-        caudal_requerido = 0 
+
         for equipo in equipamiento_diesel:
-            caudal_requerido += equipo.qr_calculado
+            self.caudal_requerido += equipo.qr_calculado
         dic_ = {
             "Qf": Qf,
-            "caudal requerido": caudal_requerido
+            "caudal requerido": self.caudal_requerido
         }
 
-        if caudal_requerido < Qf:
+        if self.caudal_requerido < Qf:
             color = "rojo"
             return  color
-        if caudal_requerido > Qf :
+        if self.caudal_requerido > Qf :
             color = "verde"
             return color
         raise Exception(f"No se logro calcular un valor para el semaforo valor: {Qf}")
@@ -286,12 +287,14 @@ class Semaforo:
 
         color = self.calcular_semaforo_v1(Qf)
         self.detalle["colores"].append(color)
-
+        v_minima = 0.25
+        v_max =  2.5
         self.detalle["v1"] = {
             'Q2': round(Q2, 1),
             'Qf': round(Qf, 1),
             'lc': round(Lc, 1),
             'pt2': round(pt2, 1),
+            'caudal_requerido': round(self.caudal_requerido, 1),
             'lf': round(lf, 1),
             'formula': formula,
             'color': color

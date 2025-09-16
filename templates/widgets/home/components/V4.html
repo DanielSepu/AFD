@@ -53,7 +53,7 @@
     </table>
   </div>
 
-  <!-- 2) Variable / Valor (antes estaba en la posición 3, ahora ocupa la 2) -->
+  <!-- 2) Variable / Valor -->
   <div class="col-12 col-lg-3 d-flex">
     <table class="table table-bordered mb-0 w-100">
       <thead class="bg-secondary text-white text-center">
@@ -68,11 +68,11 @@
           <td class="text-center" id="v4_dist">—</td>
         </tr>
         <tr>
-          <td class="text-center">Q1 (m³/s)</td>
+          <td class="text-center">Q₁ (m³/s)</td>
           <td class="text-center" id="v4_q1">—</td>
         </tr>
         <tr>
-          <td class="text-center">Q2 (m³/s)</td>
+          <td class="text-center">Q₂ (m³/s)</td>
           <td class="text-center" id="v4_q2">—</td>
         </tr>
         <tr>
@@ -87,7 +87,7 @@
     </table>
   </div>
 
-  <!-- 3) Espacio vacío (antes estaba la tabla Datos de Lc) -->
+  <!-- 3) Espacio vacío -->
   <div class="col-12 col-lg-3 d-flex"></div>
 
   <!-- 4) Semáforo (derecha) -->
@@ -100,17 +100,17 @@
       </thead>
       <tbody>
         <tr>
-          <td class="text-center fw-bold semaforo-estado bg-semaforo-verde" style="height:30px; font-size:14px;">
+          <td class="text-center semaforo-estado bg-semaforo-verde">
             Lc &lt; 0.5
           </td>
         </tr>
         <tr>
-          <td class="text-center fw-bold semaforo-estado bg-semaforo-amarillo" style="height:30px; font-size:13px;">
+          <td class="text-center semaforo-estado bg-semaforo-amarillo">
             0.5 &lt; Lc &lt; 1
           </td>
         </tr>
         <tr>
-          <td class="text-center fw-bold semaforo-estado bg-semaforo-rojo" style="height:30px; font-size:13px;">
+          <td class="text-center semaforo-estado bg-semaforo-rojo">
             Lc &gt; 1
           </td>
         </tr>
@@ -121,6 +121,21 @@
 </div>
 
 <hr/>
+
+<!-- Estilos comunes (inclúyelos una sola vez por página) -->
+<style>
+  .bg-semaforo-verde   { background-color:#2ecc71 !important; color:#111 !important; }
+  .bg-semaforo-amarillo{ background-color:#f1c40f !important; color:#111 !important; }
+  .bg-semaforo-rojo    { background-color:#e74c3c !important; color:#fff !important; }
+
+  .semaforo-estado,
+  .semaforo-estado * {
+    font: 600 1rem/1.5 var(--bs-body-font-family, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif) !important;
+    text-align: center !important;
+    margin: 0;
+    padding: .5rem .25rem;
+  }
+</style>
 
 <!-- Inicializa tooltips (Bootstrap 5) -->
 <script>

@@ -27,7 +27,7 @@
           <td rowspan="4" class="align-middle text-center" style="width:64px;">
             <h1 class="display-1 fw-bold m-0">3</h1>
           </td>
-          <td>Estado</td>
+          <td >Estado</td>
           <td class="text-center semaforo-estado
                     {% if tgbh.estado == 1 %}bg-semaforo-verde
                     {% elif tgbh.estado == 2 %}bg-semaforo-amarillo
@@ -137,17 +137,17 @@
       </thead>
       <tbody>
         <tr>
-          <td class="text-center fw-bold semaforo-estado bg-semaforo-verde" style="height:30px; font-size:14px;">
+          <td class="text-center semaforo-estado bg-semaforo-verde">
             TGBH bajo del Rango de T°
           </td>
         </tr>
         <tr>
-          <td class="text-center fw-bold semaforo-estado bg-semaforo-amarillo" style="height:30px; font-size:13px;">
+          <td class="text-center semaforo-estado bg-semaforo-amarillo">
             TGBH dentro del Rango de T°
           </td>
         </tr>
         <tr>
-          <td class="text-center fw-bold semaforo-estado bg-semaforo-rojo" style="height:30px; font-size:13px;">
+          <td class="text-center semaforo-estado bg-semaforo-rojo">
             TGBH sobre el Rango de T°
           </td>
         </tr>
@@ -158,6 +158,24 @@
 </div>
 
 <hr/>
+
+<!-- (Opcional) Incluye este bloque solo si aún no tienes los estilos comunes pegados antes -->
+<style>
+  .bg-semaforo-verde   { background-color:#2ecc71 !important; color:#111 !important; }
+  .bg-semaforo-amarillo{ background-color:#f1c40f !important; color:#111 !important; }
+  .bg-semaforo-rojo    { background-color:#e74c3c !important; color:#fff !important; }
+
+  .semaforo-estado,
+  .semaforo-estado * {
+    font-family: var(--bs-body-font-family, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif) !important;
+    font-size: var(--bs-body-font-size, 1rem) !important;
+    font-weight: 600 !important;
+    line-height: var(--bs-body-line-height, 1.5) !important;
+    text-align: center !important;
+    margin: 0;
+    padding: .5rem .25rem;
+  }
+</style>
 
 <!-- Tooltips Bootstrap 5 -->
 <script>

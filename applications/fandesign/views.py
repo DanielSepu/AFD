@@ -146,7 +146,7 @@ def fandesign(request):
 
             for k,v in enumerate(scatter_data_fan_list):
                v['CAUDAL (m³/s)'] = v['caudal']
-               v['PRESION (Pa)'] = v['presion']
+               v['Presión (Pa)'] = v['presion']
                del v['caudal']
                del v['presion']
 
@@ -156,7 +156,7 @@ def fandesign(request):
             scatter_data_fan_list_inicial = df_fan[['caudal','potencia']].to_dict(orient='records')
             for k,v in enumerate(scatter_data_fan_list_inicial):
                v['CAUDAL (m³/s)'] = v['caudal']
-               v['POTENCIA (kW)'] = v['potencia']
+               v['Potencia (kW)'] = v['potencia']
                del v['caudal']
                del v['potencia']
             

@@ -29,13 +29,13 @@
             <h1 class="display-1 fw-bold m-0">1</h1>
           </td>
           <td>Estado</td>
-          <td id="v1_estado" colspan="1" class="text-center semaforo-estado">—</td>
+          <td id="v1_estado" colspan="1" class="text-center semaforo-estado"></td>
           <td rowspan="4" class="d-none"></td>
         </tr>
 
         <tr>
-          <td>Lc (%)</td>
-          <td class="text-center" id="v1_lc">{{ caudal_de_frente.q_requerido }}</td>
+          <td>Q Requerido (m³/s)</td>
+          <td class="text-center" id="v1_q_req">{{ caudal_de_frente.q_requerido }}</td>
         </tr>
         <tr>
           <td>Q Frente (m³/s)</td>
@@ -50,7 +50,7 @@
     <table class="table table-bordered mb-0 w-100">
       <thead class="bg-secondary text-white text-center">
         <tr>
-          <th>Q2 (m³/s)</th>
+          <th>Q₂ (m³/s)</th>
           <th>Lf (%)</th>
           <th>Pt2 (Pa)</th>
         </tr>
@@ -65,7 +65,7 @@
     </table>
   </div>
 
-  <!-- 3) Datos adicionales (ejemplo: repetir o añadir más métricas si se requieren) -->
+  <!-- 3) Datos adicionales -->
   <div class="col-12 col-lg-3 d-flex">
     <table class="table table-bordered mb-0 w-100">
       <thead class="bg-secondary text-white text-center">
@@ -74,6 +74,7 @@
         </tr>
       </thead>
       <tbody>
+        <tr>
           <td>Q Requerido (m³/s)</td>
           <td class="text-center" id="v1_caudal_requerido">{{ caudal_de_frente.caudal_requerido }}</td>
         </tr>
@@ -91,7 +92,7 @@
       </thead>
       <tbody>
         <tr>
-          <td id="v1_semaforo" class="text-center semaforo-estado fw-bold">—</td>
+          <td id="v1_semaforo" class="text-center semaforo-estado">—</td>
         </tr>
       </tbody>
     </table>
@@ -100,11 +101,24 @@
 
 <hr/>
 
-<!-- Estilos comunes de colores -->
+<!-- Estilos comunes para unificar tipografía y color en todos los semáforos -->
 <style>
-  .bg-semaforo-verde   { background-color:#2ecc71!important; color:#111!important; }
-  .bg-semaforo-amarillo{ background-color:#f1c40f!important; color:#111!important; }
-  .bg-semaforo-rojo    { background-color:#e74c3c!important; color:#fff!important; }
+  /* Fondo y color de texto de cada estado */
+  .bg-semaforo-verde   { background-color:#2ecc71 !important; color:#111 !important; }
+  .bg-semaforo-amarillo{ background-color:#f1c40f !important; color:#111 !important; }
+  .bg-semaforo-rojo    { background-color:#e74c3c !important; color:#fff !important; }
+
+  /* Tipografía uniforme para cualquier celda/banda de semáforo */
+  .semaforo-estado,
+  .semaforo-estado * {
+    font-family: var(--bs-body-font-family, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif) !important;
+    font-size: var(--bs-body-font-size, 1rem) !important;
+    font-weight: 600 !important; /* mismo grosor en todos */
+    line-height: var(--bs-body-line-height, 1.5) !important;
+    text-align: center !important;
+    margin: 0;
+    padding: .5rem .25rem;
+  }
 </style>
 
 <script>
@@ -112,38 +126,46 @@
     // Tooltips Bootstrap 5
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(el => new bootstrap.Tooltip(el, {
-      container:'body',
-      trigger:'hover focus',
-      html:true,
-      placement:el.getAttribute('data-bs-placement')||'top'
+      container: 'body',
+      trigger: 'hover focus',
+      html: true,
+      placement: el.getAttribute('data-bs-placement') || 'top'
     }));
 
-    // Semáforo dinámico
-    const TOLERANCIA = 0.05;
-    const qFrente = parseFloat((document.getElementById('v1_q_frente')?.textContent||'0').replace(',','.'));
-    const lc = parseFloat((document.getElementById('v1_lc')?.textContent||'0').replace(',','.'));
-    const delta = qFrente - lc;
+    // --- Semáforo dinámico (Caudal en la frente) ---
+    const TOLERANCIA = 0.05; // 5%
+    const val = el => (el?.textContent || '').trim().replace(/\s/g,'').replace(',', '.');
+
+    const qFrente = parseFloat(val(document.getElementById('v1_q_frente')));
+    const qReq    = parseFloat(val(document.getElementById('v1_q_req')));
 
     const celdaSemaforo = document.getElementById('v1_semaforo');
-    const celdaEstado = document.getElementById('v1_estado');
+    const celdaEstado   = document.getElementById('v1_estado');
 
-    function limpiaClases(el){ el.classList.remove('bg-semaforo-verde','bg-semaforo-amarillo','bg-semaforo-rojo'); }
+    function limpiaClases(el) {
+      el.classList.remove('bg-semaforo-verde', 'bg-semaforo-amarillo', 'bg-semaforo-rojo');
+    }
 
-    let texto='', clase='', estado=0;
+    if (!isNaN(qFrente) && !isNaN(qReq)) {
+      const delta = qFrente - qReq;
+      let texto = '', clase = '', estado = 0;
 
-    if(!isNaN(qFrente)&&!isNaN(lc)){
-      if(delta>=0){
-        texto='Caudal sobre requerimiento'; clase='bg-semaforo-verde'; estado=1;
-      } else if(Math.abs(delta)<=lc*TOLERANCIA){
-        texto='Caudal cercano al requerimiento'; clase='bg-semaforo-amarillo'; estado=2;
+      if (delta >= 0) {
+        texto = 'Caudal sobre requerimiento';  clase = 'bg-semaforo-verde';   estado = 1;
+      } else if (Math.abs(delta) <= qReq * TOLERANCIA) {
+        texto = 'Caudal cercano al requerimiento'; clase = 'bg-semaforo-amarillo'; estado = 2;
       } else {
-        texto='Caudal bajo requerimiento'; clase='bg-semaforo-rojo'; estado=3;
+        texto = 'Caudal bajo requerimiento';   clase = 'bg-semaforo-rojo';    estado = 3;
       }
 
-      limpiaClases(celdaSemaforo); celdaSemaforo.classList.add(clase); celdaSemaforo.textContent=texto;
-      limpiaClases(celdaEstado); celdaEstado.classList.add(clase); celdaEstado.textContent=estado;
+      limpiaClases(celdaSemaforo); celdaSemaforo.classList.add('semaforo-estado', clase); celdaSemaforo.textContent = texto;
+      limpiaClases(celdaEstado);   celdaEstado.classList.add('semaforo-estado', clase);   celdaEstado.textContent   = estado;
     } else {
-      celdaSemaforo.textContent='—'; celdaEstado.textContent='—';
+      // Valores no numéricos: deja guiones y sin color
+      celdaSemaforo.textContent = '—';
+      celdaEstado.textContent   = '—';
+      limpiaClases(celdaSemaforo);
+      limpiaClases(celdaEstado);
     }
   });
 </script>

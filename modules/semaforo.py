@@ -560,7 +560,7 @@ class Semaforo:
             color = "rojo"
         
         
-        registro_mas_reciente = SensorsData.objects.using('sensorDB').all().last()
+        registro_mas_reciente = SensorsData.objects.using('sensorDB').latest('ts')
         if not registro_mas_reciente:
             logger_AFD.warning("No hay registros en SensorsData.")
             message ="No hay registros almacenados para el sensor"
@@ -568,7 +568,7 @@ class Semaforo:
 
         # obtener los promedios de la presion en 5 minutos y 30 minutos
         try:
-            mean_30m, mean_5m = self.auxiliar_fugas()
+            mean_30m, mean_5m = self.auxiliar_fugas(registro_mas_reciente)
         except Exception as e:
             raise Exception(str(e))
 
@@ -591,13 +591,11 @@ class Semaforo:
             "message": message,
             "color": color
         }
-
-        # logger_AFD.debug(f"Resultado fugas_v6: {self.detalle['v6']}")
-
         return color
 
-    def auxiliar_fugas(self):
-        ahora = timezone.now()
+    def auxiliar_fugas(self, registro_mas_reciente):
+
+        ahora = registro_mas_reciente.ts
         ventana_50m = ahora - timedelta(minutes=50)
         qs = (
             SensorsData.objects

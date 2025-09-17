@@ -10,12 +10,19 @@ const toleranceTable = {
 const unidades = {
   presion: "Pa",
   caudal: "m³/s",
-  potencia: "kw"
+  potencia: "kW"
+};
+
+const capitalizeFirst = (str) => {
+  if (!str) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
 const getKeyWithUnit = (key) => {
-  return unidades[key] ? `${key} (${unidades[key]})` : key;
+  const base = unidades[key] ? `${key} (${unidades[key]})` : key;
+  return capitalizeFirst(base);
 };
+
 
 function createFanChart(
   dataOriginal,

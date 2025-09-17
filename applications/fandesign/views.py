@@ -116,8 +116,8 @@ def fandesign(request):
             
             scatter_data_fan_list = curva_ajusta_x_densidad[['caudal','presion']].to_dict(orient='records')
             for k,v in enumerate(scatter_data_fan_list):
-               v['CAUDAL (m³/s)'] = v['caudal']
-               v['PRESION (Pa)'] = v['presion']
+               v['Caudal (m³/s)'] = v['caudal']
+               v['Presión (Pa)'] = v['presion']
                del v['caudal']
                del v['presion']
 
